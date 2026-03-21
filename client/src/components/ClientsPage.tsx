@@ -1,20 +1,10 @@
 import { useState } from "react";
 import Icon from "./Icon";
 import { fmt } from "../utils";
+import { useApp } from "../context/AppContext";
 
-interface ClientsPageProps {
-  clients: any[];
-  setClients: (fn: any) => void;
-  invoices: any[];
-  toast: (msg: string) => void;
-}
-
-export default function ClientsPage({
-  clients,
-  setClients,
-  invoices,
-  toast,
-}: ClientsPageProps) {
+export default function ClientsPage() {
+  const { clients, setClients, invoices, showToast: toast } = useApp();
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({
     name: "",

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Icon from "./Icon";
+import { useApp } from "../context/AppContext";
 
 // ToggleRow extracted to avoid calling useState inside .map() (hooks-in-loop violation)
 interface ToggleRowProps {
@@ -86,17 +87,8 @@ const NOTIFICATION_ROWS = [
   },
 ];
 
-interface SettingsPageProps {
-  templates: any[];
-  setTemplates: (fn: any) => void;
-  toast: (msg: string) => void;
-}
-
-export default function SettingsPage({
-  templates,
-  setTemplates,
-  toast,
-}: SettingsPageProps) {
+export default function SettingsPage() {
+  const { templates, setTemplates, showToast: toast } = useApp();
   const [profile, setProfile] = useState({
     name: "Lucky Eze",
     business: "DevCraft Studio",

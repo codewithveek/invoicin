@@ -1,19 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Icon from "./Icon";
 import { isOverdue, fmt, currencySymbol } from "../utils";
 import { statusBadge, typeBadge } from "../utils/badges";
+import { useApp } from "../context/AppContext";
 
-interface InvoiceListProps {
-  invoices: any[];
-  onNew: () => void;
-  onView: (inv: any) => void;
-}
-
-export default function InvoiceList({
-  invoices,
-  onNew,
-  onView,
-}: InvoiceListProps) {
+export default function InvoiceList() {
+  const { invoices } = useApp();
+  const navigate = useNavigate();
+  const onNew = () => navigate("/invoices/new");
+  const onView = (inv: any) => navigate("/invoices/" + inv.id);
   const [filter, setFilter] = useState("all");
 
   const filters: [string, string][] = [

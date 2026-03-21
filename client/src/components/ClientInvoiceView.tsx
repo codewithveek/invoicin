@@ -1,17 +1,17 @@
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Icon from "./Icon";
 import InvoicePreviewCard from "./InvoicePreviewCard";
+import { useApp } from "../context/AppContext";
 
-interface ClientInvoiceViewProps {
-  invoice: any;
-  onBack: () => void;
-}
-
-export default function ClientInvoiceView({
-  invoice,
-  onBack,
-}: ClientInvoiceViewProps) {
+export default function ClientInvoiceView() {
+  const { id } = useParams<{ id: string }>();
+  const { invoices } = useApp();
+  const navigate = useNavigate();
+  const invoice = invoices.find((i) => i.id === id);
   const [paid, setPaid] = useState(false);
+
+  if (!invoice) return <div className="pg fade">Invoice not found.</div>;
 
   return (
     <div
@@ -52,7 +52,7 @@ export default function ClientInvoiceView({
           </span>
           <span>{"\u00b7"} Secure invoice</span>
         </div>
-        <button className="btn bg btn-sm" onClick={onBack}>
+        <button className="btn bg btn-sm" onClick={() => navigate(-1)}>
           <Icon n="chevL" s={12} />
           Back to Dashboard
         </button>

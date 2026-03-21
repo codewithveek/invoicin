@@ -1,14 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import Icon from "./Icon";
 import { isOverdue, fmt, currencySymbol } from "../utils";
 import { statusBadge, typeBadge } from "../utils/badges";
+import { useApp } from "../context/AppContext";
 
-interface DashboardProps {
-  invoices: any[];
-  onNew: () => void;
-  onView: (inv: any) => void;
-}
-
-export default function Dashboard({ invoices, onNew, onView }: DashboardProps) {
+export default function Dashboard() {
+  const { invoices } = useApp();
+  const navigate = useNavigate();
+  const onNew = () => navigate("/invoices/new");
+  const onView = (inv: any) => navigate("/invoices/" + inv.id);
   const paid = invoices.filter((i) => i.status === "paid");
   const pending = invoices.filter((i) => ["sent", "viewed"].includes(i.status));
   const overdue = invoices.filter(

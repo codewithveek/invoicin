@@ -1,6 +1,13 @@
 import { useState } from "react";
+import {
+  Routes,
+  Route,
+  Outlet,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { S } from "./styles";
-import { DEMO_CLIENTS, DEMO_TEMPLATES, DEMO_INVOICES } from "./data";
+import { useApp } from "./context/AppContext";
 import { isOverdue } from "./utils";
 import Toast from "./components/Toast";
 import Icon from "./components/Icon";
@@ -12,120 +19,61 @@ import ClientInvoiceView from "./components/ClientInvoiceView";
 import ClientsPage from "./components/ClientsPage";
 import SettingsPage from "./components/SettingsPage";
 
-export default function InvoiceApp() {
-  const [view, setView] = useState("dashboard");
-  const [invoices, setInvoices] = useState(DEMO_INVOICES);
-  const [clients, setClients] = useState(DEMO_CLIENTS);
-  const [templates, setTemplates] = useState(DEMO_TEMPLATES);
-  const [activeInvoice, setActiveInvoice] = useState<any>(null);
+function AppShell() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { invoices, toastMsg, clearToast } = useApp();
   const [sbOpen, setSbOpen] = useState(false);
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  const showToast = (msg: string) => {
-    setToastMsg(null);
-    setTimeout(() => setToastMsg(msg), 50);
-  };
+  const overdue = invoices.filter(isOverdue).length;
+  const path = location.pathname;
 
-  const overdue = invoices.filter((i) => isOverdue(i)).length;
-
-  function go(id: string) {
-    setView(id);
-    setActiveInvoice(null);
-    setSbOpen(false);
-  }
-
-  function onCreated(inv: any) {
-    setInvoices((p) => [inv, ...p]);
-    setActiveInvoice(inv);
-    setView("detail");
-    setSbOpen(false);
-    showToast("Invoice created");
-  }
-
-  function onUpdate(inv: any) {
-    setInvoices((p) => p.map((i) => (i.id === inv.id ? inv : i)));
-    setActiveInvoice(inv);
-  }
-
-  function viewInvoice(inv: any) {
-    setActiveInvoice(inv);
-    setView("detail");
-  }
+  // Detect the current invoice ID from the URL for contextual sidebar items
+  const invoiceIdMatch = path.match(/^\/invoices\/([^/]+)/);
+  const currentInvoiceId = invoiceIdMatch?.[1];
+  const activeInvoice =
+    currentInvoiceId && currentInvoiceId !== "new"
+      ? invoices.find((i) => i.id === currentInvoiceId)
+      : null;
 
   const NAV = [
-    { id: "dashboard", lbl: "Dashboard", icon: "grid", badge: null },
-    { id: "invoices", lbl: "Invoices", icon: "file", badge: overdue || null },
-    { id: "clients", lbl: "Clients", icon: "users", badge: null },
-    { id: "settings", lbl: "Settings", icon: "settings", badge: null },
+    { path: "/", lbl: "Dashboard", icon: "grid", badge: null as number | null },
+    {
+      path: "/invoices",
+      lbl: "Invoices",
+      icon: "file",
+      badge: overdue || (null as number | null),
+    },
+    {
+      path: "/clients",
+      lbl: "Clients",
+      icon: "users",
+      badge: null as number | null,
+    },
+    {
+      path: "/settings",
+      lbl: "Settings",
+      icon: "settings",
+      badge: null as number | null,
+    },
   ];
 
-  const render = () => {
-    if (view === "create")
-      return (
-        <CreateInvoice
-          clients={clients}
-          templates={templates}
-          onCreated={onCreated}
-          onCancel={() => setView("dashboard")}
-        />
-      );
-    if (view === "detail" && activeInvoice)
-      return (
-        <InvoiceDetail
-          invoice={activeInvoice}
-          onBack={() => {
-            setActiveInvoice(null);
-            setView("invoices");
-          }}
-          onUpdate={onUpdate}
-          toast={showToast}
-        />
-      );
-    if (view === "client-view" && activeInvoice)
-      return (
-        <ClientInvoiceView
-          invoice={activeInvoice}
-          onBack={() => setView("detail")}
-        />
-      );
-    if (view === "invoices")
-      return (
-        <InvoiceList
-          invoices={invoices}
-          onNew={() => setView("create")}
-          onView={viewInvoice}
-        />
-      );
-    if (view === "clients")
-      return (
-        <ClientsPage
-          clients={clients}
-          setClients={setClients}
-          invoices={invoices}
-          toast={showToast}
-        />
-      );
-    if (view === "settings")
-      return (
-        <SettingsPage
-          templates={templates}
-          setTemplates={setTemplates}
-          toast={showToast}
-        />
-      );
-    return (
-      <Dashboard
-        invoices={invoices}
-        onNew={() => setView("create")}
-        onView={viewInvoice}
-      />
-    );
-  };
+  function isNavActive(navPath: string) {
+    if (navPath === "/") return path === "/" || path === "/dashboard";
+    if (navPath === "/invoices")
+      return path.startsWith("/invoices") && path !== "/invoices/new";
+    return path.startsWith(navPath);
+  }
+
+  function go(p: string) {
+    navigate(p);
+    setSbOpen(false);
+  }
 
   return (
     <>
       <style>{S}</style>
-      {toastMsg && <Toast msg={toastMsg} onClose={() => setToastMsg(null)} />}
+      {toastMsg && <Toast msg={toastMsg} onClose={clearToast} />}
       <div className="app">
         <div
           className={"overlay" + (sbOpen ? " open" : "")}
@@ -145,19 +93,14 @@ export default function InvoiceApp() {
           <nav className="sb-nav">
             {NAV.map((n) => (
               <button
-                key={n.id}
-                className={
-                  "ni" +
-                  (view === n.id || (view === "detail" && n.id === "invoices")
-                    ? " on"
-                    : "")
-                }
-                onClick={() => go(n.id)}
+                key={n.path}
+                className={"ni" + (isNavActive(n.path) ? " on" : "")}
+                onClick={() => go(n.path)}
               >
                 <Icon
                   n={n.icon}
                   s={15}
-                  c={view === n.id ? "var(--gdk)" : "var(--tx3)"}
+                  c={isNavActive(n.path) ? "var(--gdk)" : "var(--tx3)"}
                 />
                 {n.lbl}
                 {n.badge && <span className="ni-badge">{n.badge}</span>}
@@ -165,31 +108,31 @@ export default function InvoiceApp() {
             ))}
             <div className="sb-div" />
             <button
-              className={"ni" + (view === "create" ? " on" : "")}
-              onClick={() => {
-                setView("create");
-                setSbOpen(false);
-              }}
+              className={"ni" + (path === "/invoices/new" ? " on" : "")}
+              onClick={() => go("/invoices/new")}
             >
               <Icon
                 n="plus"
                 s={15}
-                c={view === "create" ? "var(--gdk)" : "var(--tx3)"}
+                c={path === "/invoices/new" ? "var(--gdk)" : "var(--tx3)"}
               />
               New Invoice
             </button>
             {activeInvoice && (
               <button
-                className={"ni" + (view === "detail" ? " on" : "")}
-                onClick={() => {
-                  setView("detail");
-                  setSbOpen(false);
-                }}
+                className={
+                  "ni" + (path === `/invoices/${activeInvoice.id}` ? " on" : "")
+                }
+                onClick={() => go(`/invoices/${activeInvoice.id}`)}
               >
                 <Icon
                   n="file"
                   s={15}
-                  c={view === "detail" ? "var(--gdk)" : "var(--tx3)"}
+                  c={
+                    path === `/invoices/${activeInvoice.id}`
+                      ? "var(--gdk)"
+                      : "var(--tx3)"
+                  }
                 />
                 <span
                   style={{
@@ -204,16 +147,20 @@ export default function InvoiceApp() {
             )}
             {activeInvoice?.linkId && (
               <button
-                className={"ni" + (view === "client-view" ? " on" : "")}
-                onClick={() => {
-                  setView("client-view");
-                  setSbOpen(false);
-                }}
+                className={
+                  "ni" +
+                  (path === `/invoices/${activeInvoice.id}/client` ? " on" : "")
+                }
+                onClick={() => go(`/invoices/${activeInvoice.id}/client`)}
               >
                 <Icon
                   n="eye"
                   s={15}
-                  c={view === "client-view" ? "var(--gdk)" : "var(--tx3)"}
+                  c={
+                    path === `/invoices/${activeInvoice.id}/client`
+                      ? "var(--gdk)"
+                      : "var(--tx3)"
+                  }
                 />
                 Client View
               </button>
@@ -252,9 +199,26 @@ export default function InvoiceApp() {
               <Icon n="menu" s={20} />
             </button>
           </div>
-          {render()}
+          <Outlet />
         </div>
       </div>
     </>
+  );
+}
+
+export default function InvoiceApp() {
+  return (
+    <Routes>
+      <Route element={<AppShell />}>
+        <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="invoices" element={<InvoiceList />} />
+        <Route path="invoices/new" element={<CreateInvoice />} />
+        <Route path="invoices/:id" element={<InvoiceDetail />} />
+        <Route path="invoices/:id/client" element={<ClientInvoiceView />} />
+        <Route path="clients" element={<ClientsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+      </Route>
+    </Routes>
   );
 }

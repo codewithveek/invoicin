@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Icon from "./Icon";
 import InvoicePreviewCard from "./InvoicePreviewCard";
 import {
@@ -19,20 +20,11 @@ import {
   PAYMENT_TERMS_PRESETS,
   INVOICE_TYPES,
 } from "../constants";
+import { useApp } from "../context/AppContext";
 
-interface CreateInvoiceProps {
-  clients: any[];
-  templates: any[];
-  onCreated: (inv: any) => void;
-  onCancel: () => void;
-}
-
-export default function CreateInvoice({
-  clients,
-  templates,
-  onCreated,
-  onCancel,
-}: CreateInvoiceProps) {
+export default function CreateInvoice() {
+  const { clients, templates, setInvoices, showToast } = useApp();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [busy, setBusy] = useState(false);
   const [showClientPicker, setShowClientPicker] = useState(false);
@@ -106,7 +98,9 @@ export default function CreateInvoice({
       events: [{ type: "created", ts: ts() }],
     };
     setBusy(false);
-    onCreated(inv);
+    setInvoices((p) => [inv, ...p]);
+    showToast("Invoice created");
+    navigate("/invoices/" + inv.id);
   }
 
   return (
@@ -128,7 +122,7 @@ export default function CreateInvoice({
               <Icon n="chevL" s={13} /> Edit
             </button>
           )}
-          <button className="btn bs" onClick={onCancel}>
+          <button className="btn bs" onClick={() => navigate(-1)}>
             Cancel
           </button>
         </div>

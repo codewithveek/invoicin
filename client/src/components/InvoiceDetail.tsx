@@ -1,24 +1,18 @@
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Icon from "./Icon";
 import InvoicePreviewCard from "./InvoicePreviewCard";
 import { isOverdue, currencySymbol, fmt, dateStr, ts, wait } from "../utils";
 import { MOCK_RATES, TAX_TYPES, STATUS_META } from "../constants";
 import { statusBadge, typeBadge } from "../utils/badges";
+import { useApp } from "../context/AppContext";
 
-interface InvoiceDetailProps {
-  invoice: any;
-  onBack: () => void;
-  onUpdate: (inv: any) => void;
-  toast: (msg: string) => void;
-}
-
-export default function InvoiceDetail({
-  invoice,
-  onBack,
-  onUpdate,
-  toast,
-}: InvoiceDetailProps) {
-  const [inv, setInv] = useState(invoice);
+export default function InvoiceDetail() {
+  const { id } = useParams<{ id: string }>();
+  const { invoices, setInvoices, showToast: toast } = useApp();
+  const navigate = useNavigate();
+  const invoice = invoices.find((i) => i.id === id);
+  const [inv, setInv] = useState<any>(invoice ?? null);
   const [sendModal, setSendModal] = useState(false);
   const [shareModal, setShareModal] = useState(false);
   const [markPaidModal, setMarkPaidModal] = useState(false);
@@ -26,6 +20,13 @@ export default function InvoiceDetail({
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [reminderBusy, setReminderBusy] = useState(false);
+
+  if (!invoice) return <div className="pg fade">Invoice not found.</div>;
+
+  const syncInvoice = (updated: any) => {
+    setInv(updated);
+    setInvoices((p) => p.map((i) => (i.id === updated.id ? updated : i)));
+  };
 
   const effectiveStatus = isOverdue(inv) ? "overdue" : inv.status;
   const shareUrl = `app.invoiceapp.co/i/${inv.linkId}`;
@@ -43,8 +44,7 @@ export default function InvoiceDetail({
       status: "sent",
       events: [...inv.events, { type: "sent", ts: ts() }],
     };
-    setInv(updated);
-    onUpdate(updated);
+    syncInvoice(updated);
     setSendModal(false);
     setSending(false);
     toast("Invoice sent to " + inv.client.email);
@@ -57,8 +57,7 @@ export default function InvoiceDetail({
       ...inv,
       events: [...inv.events, { type: "sent", ts: ts() + " (reminder)" }],
     };
-    setInv(updated);
-    onUpdate(updated);
+    syncInvoice(updated);
     setReminderBusy(false);
     toast("Reminder sent");
   }
@@ -71,8 +70,7 @@ export default function InvoiceDetail({
       ngn: Math.round(inv.total * MOCK_RATES[inv.currency]),
       events: [...inv.events, { type: "paid", ts: ts() }],
     };
-    setInv(updated);
-    onUpdate(updated);
+    syncInvoice(updated);
     setMarkPaidModal(false);
     toast("Invoice marked as paid");
   }
@@ -83,8 +81,7 @@ export default function InvoiceDetail({
       status: "cancelled",
       events: [...inv.events, { type: "cancelled", ts: ts() }],
     };
-    setInv(updated);
-    onUpdate(updated);
+    syncInvoice(updated);
     toast("Invoice cancelled");
   }
 
@@ -246,7 +243,10 @@ export default function InvoiceDetail({
         </div>
       )}
 
-      <button className="btn bg btn-sm mb4" onClick={onBack}>
+      <button
+        className="btn bg btn-sm mb4"
+        onClick={() => navigate("/invoices")}
+      >
         <Icon n="chevL" s={13} /> Back
       </button>
 
