@@ -7,11 +7,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Hono } from "hono";
-import { invoicesRouter } from "./routes/invoices";
-import { invoicesPublicRouter } from "./routes/invoicesPublic";
-import { clientsRouter } from "./routes/clients";
-import { templatesRouter } from "./routes/templates";
-import { internalRouter } from "./routes/internal";
+import { invoicesRouter } from "./invoices";
+import { invoicesPublicRouter } from "./invoicesPublic";
+import { clientsRouter } from "./clients";
+import { templatesRouter } from "./templates";
+import { internalRouter } from "./internal";
 
 const invoiceRouter = new Hono();
 

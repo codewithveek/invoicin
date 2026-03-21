@@ -10,7 +10,7 @@ import { db } from "../db";
 import { invoices, users } from "../schema";
 import { logEvent } from "../helpers";
 import type { InvoiceItem } from "../schema/types";
-import { sendReminderEmail } from "../invoiceapp-email";
+import { sendReminderEmail } from "../email";
 import { APP_URL } from "../config";
 
 export const internalRouter = new Hono();
