@@ -29,7 +29,7 @@ internalRouter.post("/overdue-check", async (c) => {
     .where(
       and(
         inArray(invoices.status, ["sent", "viewed"]),
-        lte(invoices.dueDate, today)
+        lte(invoices.dueDate, new Date(today))
       )
     );
 
@@ -42,7 +42,7 @@ internalRouter.post("/overdue-check", async (c) => {
         .update(invoices)
         .set({ status: "overdue", updatedAt: new Date() })
         .where(eq(invoices.id, inv.id));
-      await logEvent(inv.id, "overdue", {}, "system");
+      await logEvent(inv.id, "status_changed", { status: "overdue" }, "system");
       updated++;
     }
 
@@ -72,9 +72,28 @@ internalRouter.post("/overdue-check", async (c) => {
         try {
           await sendReminderEmail({
             invoice: {
-              ...inv,
+              id: inv.id,
+              linkId: inv.linkId,
+              type: inv.type ?? "standard",
+              clientName: inv.clientName,
+              clientEmail: inv.clientEmail ?? "",
+              currency: inv.currency,
               items: inv.items as InvoiceItem[],
               total: parseFloat(inv.total),
+              taxType: inv.taxType ?? undefined,
+              taxRate:
+                inv.taxRate != null ? parseFloat(inv.taxRate) : undefined,
+              taxAmount:
+                inv.taxAmount != null ? parseFloat(inv.taxAmount) : undefined,
+              deposit:
+                inv.deposit != null ? parseFloat(inv.deposit) : undefined,
+              issueDate: inv.issueDate as unknown as string,
+              dueDate:
+                inv.dueDate != null
+                  ? (inv.dueDate as unknown as string)
+                  : undefined,
+              terms: inv.terms ?? undefined,
+              notes: inv.notes ?? undefined,
             },
             freelancer: {
               name: freelancer.name,

@@ -15,12 +15,13 @@ import {
   index,
   uniqueIndex,
 } from "drizzle-orm/mysql-core";
+import { id } from "./helpers";
 
 // ── USERS ─────────────────────────────────────────────────────────────────────
 export const users = mysqlTable(
   "users",
   {
-    id: varchar("id", { length: 36 }).primaryKey(), // ULID
+    id,
     email: varchar("email", { length: 255 }).notNull().unique(),
     name: varchar("name", { length: 255 }).notNull(),
     businessName: varchar("business_name", { length: 255 }),
@@ -43,7 +44,7 @@ export const users = mysqlTable(
 export const clients = mysqlTable(
   "clients",
   {
-    id: varchar("id", { length: 36 }).primaryKey(),
+    id,
     userId: varchar("user_id", { length: 36 }).notNull(),
     name: varchar("name", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).notNull(),
@@ -64,7 +65,7 @@ export const clients = mysqlTable(
 export const invoiceTemplates = mysqlTable(
   "invoice_templates",
   {
-    id: varchar("id", { length: 36 }).primaryKey(),
+    id,
     userId: varchar("user_id", { length: 36 }).notNull(),
     name: varchar("name", { length: 255 }).notNull(),
     // items: [{ desc: string, qty: number, price: number | null }]
@@ -146,7 +147,7 @@ export const invoices = mysqlTable(
     ),
 
     // Reminder tracking
-    remindersSent: boolean("reminders_sent").default(false),
+    remindersSent: int("reminders_sent").default(0),
     lastReminderAt: timestamp("last_reminder_at"),
 
     // Timestamps
@@ -167,7 +168,7 @@ export const invoices = mysqlTable(
 export const invoiceEvents = mysqlTable(
   "invoice_events",
   {
-    id: varchar("id", { length: 36 }).primaryKey(),
+    id,
     invoiceId: varchar("invoice_id", { length: 36 }).notNull(),
     // type: created | sent | viewed | downloaded | paid | cancelled | disputed |
     //        reminder_sent | partial_payment | note_added
@@ -204,7 +205,7 @@ export const invoiceEvents = mysqlTable(
 export const partialPayments = mysqlTable(
   "partial_payments",
   {
-    id: varchar("id", { length: 36 }).primaryKey(),
+    id,
     invoiceId: varchar("invoice_id", { length: 36 }).notNull(),
     amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
     currency: varchar("currency", { length: 10 }).notNull(),

@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "",
+    "dev": "tsx watch app.ts",
+    "start": "node dist/app.js",
+    "build": "tsc",
     "db:gen": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate"
@@ -13,20 +15,25 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@hono/node-server": "^1.14.3",
     "@hono/zod-validator": "^0.7.6",
     "@react-email/components": "^1.0.10",
     "@react-pdf/renderer": "^4.3.2",
+    "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.12.8",
     "mysql2": "^3.20.0",
     "react": "^19.2.4",
     "resend": "^6.9.4",
     "ulid": "^3.0.2",
+    "uuid": "^13.0.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
-    "drizzle-kit": "^0.31.10"
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.3"
   }
 }
