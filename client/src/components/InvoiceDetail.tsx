@@ -6,13 +6,14 @@ import { isOverdue, currencySymbol, fmt, dateStr, ts, wait } from "../utils";
 import { MOCK_RATES, TAX_TYPES, STATUS_META } from "../constants";
 import { statusBadge, typeBadge } from "../utils/badges";
 import { useApp } from "../context/AppContext";
+import type { AppInvoice } from "../types";
 
 export default function InvoiceDetail() {
   const { id } = useParams<{ id: string }>();
   const { invoices, setInvoices, showToast: toast } = useApp();
   const navigate = useNavigate();
   const invoice = invoices.find((i) => i.id === id);
-  const [inv, setInv] = useState<any>(invoice ?? null);
+  const [inv, setInv] = useState<AppInvoice>(invoice!);
   const [sendModal, setSendModal] = useState(false);
   const [shareModal, setShareModal] = useState(false);
   const [markPaidModal, setMarkPaidModal] = useState(false);
@@ -23,7 +24,7 @@ export default function InvoiceDetail() {
 
   if (!invoice) return <div className="pg fade">Invoice not found.</div>;
 
-  const syncInvoice = (updated: any) => {
+  const syncInvoice = (updated: AppInvoice) => {
     setInv(updated);
     setInvoices((p) => p.map((i) => (i.id === updated.id ? updated : i)));
   };
@@ -34,12 +35,12 @@ export default function InvoiceDetail() {
     effectiveStatus
   );
   const canMarkPaid = !["paid", "cancelled", "draft"].includes(effectiveStatus);
-  const viewCount = inv.events.filter((e: any) => e.type === "viewed").length;
+  const viewCount = inv.events.filter((e) => e.type === "viewed").length;
 
   async function sendEmail() {
     setSending(true);
     await wait(1200);
-    const updated = {
+    const updated: AppInvoice = {
       ...inv,
       status: "sent",
       events: [...inv.events, { type: "sent", ts: ts() }],
@@ -53,7 +54,7 @@ export default function InvoiceDetail() {
   async function sendReminder() {
     setReminderBusy(true);
     await wait(900);
-    const updated = {
+    const updated: AppInvoice = {
       ...inv,
       events: [...inv.events, { type: "sent", ts: ts() + " (reminder)" }],
     };
@@ -63,7 +64,7 @@ export default function InvoiceDetail() {
   }
 
   function markPaid() {
-    const updated = {
+    const updated: AppInvoice = {
       ...inv,
       status: "paid",
       paid: new Date().toISOString().split("T")[0],
@@ -76,7 +77,7 @@ export default function InvoiceDetail() {
   }
 
   function cancel() {
-    const updated = {
+    const updated: AppInvoice = {
       ...inv,
       status: "cancelled",
       events: [...inv.events, { type: "cancelled", ts: ts() }],
@@ -465,7 +466,7 @@ export default function InvoiceDetail() {
             <div className="card">
               <div className="card-ttl">Line Items</div>
               <div className="inv-items" style={{ margin: 0 }}>
-                {inv.items.map((it: any, i: number) => (
+                {inv.items.map((it, i: number) => (
                   <div key={i} className="ii-row">
                     <div>
                       <div>{it.desc}</div>
@@ -474,7 +475,8 @@ export default function InvoiceDetail() {
                     <span style={{ fontFamily: "var(--mo)", fontWeight: 600 }}>
                       {currencySymbol(inv.currency)}
                       {fmt(
-                        (parseFloat(it.price) || 0) * (parseInt(it.qty) || 1)
+                        (parseFloat(String(it.price)) || 0) *
+                          (parseInt(String(it.qty)) || 1)
                       )}
                     </span>
                   </div>
@@ -482,8 +484,8 @@ export default function InvoiceDetail() {
                 {inv.tax && (
                   <div className="ii-row">
                     <span style={{ color: "var(--tx3)" }}>
-                      {TAX_TYPES.find((t) => t.id === inv.tax.type)?.label} (
-                      {inv.tax.rate}%)
+                      {TAX_TYPES.find((t) => t.id === inv.tax?.type)?.label} (
+                      {inv.tax?.rate}%)
                     </span>
                     <span style={{ fontFamily: "var(--mo)" }}>
                       {currencySymbol(inv.currency)}
@@ -676,8 +678,7 @@ export default function InvoiceDetail() {
                     ],
                     [
                       "Sent",
-                      inv.events.filter((e: any) => e.type === "sent").length +
-                        "x",
+                      inv.events.filter((e) => e.type === "sent").length + "x",
                       "b-blue",
                     ],
                   ] as [string, string | number, string][]
@@ -732,10 +733,7 @@ export default function InvoiceDetail() {
                     style={{ fontSize: 11, color: "var(--pu)", opacity: 0.8 }}
                   >
                     Last viewed:{" "}
-                    {
-                      inv.events.filter((e: any) => e.type === "viewed").pop()
-                        ?.ts
-                    }
+                    {inv.events.filter((e) => e.type === "viewed").pop()?.ts}
                   </div>
                 </div>
               )}
@@ -743,7 +741,7 @@ export default function InvoiceDetail() {
             <div className="card">
               <div className="card-ttl">Activity Log</div>
               <div className="timeline">
-                {[...inv.events].reverse().map((ev: any, i: number) => {
+                {[...inv.events].reverse().map((ev, i: number) => {
                   const iconMap: Record<string, string> = {
                     created: "tag",
                     sent: "send",

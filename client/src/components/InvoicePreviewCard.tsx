@@ -1,9 +1,10 @@
 import Icon from "./Icon";
 import { currencySymbol, fmt, fmtNGN, dateStr, calcTotal } from "../utils";
 import { MOCK_RATES, TAX_TYPES } from "../constants";
+import type { AppInvoice } from "../types";
 
 interface InvoicePreviewCardProps {
-  inv: any;
+  inv: AppInvoice;
   freelancer?: { name?: string; business?: string };
 }
 
@@ -89,7 +90,7 @@ export default function InvoicePreviewCard({
         </div>
 
         <div className="inv-items">
-          {inv.items.map((it: any, i: number) => (
+          {inv.items.map((it, i: number) => (
             <div key={i} className="ii-row">
               <span>
                 {it.desc}
@@ -99,15 +100,18 @@ export default function InvoicePreviewCard({
               </span>
               <span style={{ fontFamily: "var(--mo)", fontWeight: 600 }}>
                 {S2}
-                {fmt((parseFloat(it.price) || 0) * (parseInt(it.qty) || 1))}
+                {fmt(
+                  (parseFloat(String(it.price)) || 0) *
+                    (parseInt(String(it.qty)) || 1)
+                )}
               </span>
             </div>
           ))}
           {inv.tax && (
             <div className="ii-row">
               <span style={{ color: "var(--tx3)" }}>
-                {TAX_TYPES.find((t) => t.id === inv.tax.type)?.label} (
-                {inv.tax.rate}%)
+                {TAX_TYPES.find((t) => t.id === inv.tax?.type)?.label} (
+                {inv.tax?.rate}%)
               </span>
               <span style={{ fontFamily: "var(--mo)" }}>
                 {S2}

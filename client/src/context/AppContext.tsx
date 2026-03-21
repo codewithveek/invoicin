@@ -1,13 +1,14 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { DEMO_CLIENTS, DEMO_TEMPLATES, DEMO_INVOICES } from "../data";
+import type { AppInvoice, AppClient, AppTemplate } from "../types";
 
 interface AppContextType {
-  invoices: any[];
-  setInvoices: React.Dispatch<React.SetStateAction<any[]>>;
-  clients: any[];
-  setClients: React.Dispatch<React.SetStateAction<any[]>>;
-  templates: any[];
-  setTemplates: React.Dispatch<React.SetStateAction<any[]>>;
+  invoices: AppInvoice[];
+  setInvoices: React.Dispatch<React.SetStateAction<AppInvoice[]>>;
+  clients: AppClient[];
+  setClients: React.Dispatch<React.SetStateAction<AppClient[]>>;
+  templates: AppTemplate[];
+  setTemplates: React.Dispatch<React.SetStateAction<AppTemplate[]>>;
   toastMsg: string | null;
   showToast: (msg: string) => void;
   clearToast: () => void;
@@ -49,6 +50,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useApp() {
   const ctx = useContext(AppContext);
   if (!ctx) throw new Error("useApp must be used within AppProvider");

@@ -3,12 +3,13 @@ import Icon from "./Icon";
 import { isOverdue, fmt, currencySymbol } from "../utils";
 import { statusBadge, typeBadge } from "../utils/badges";
 import { useApp } from "../context/AppContext";
+import type { AppInvoice, InvoiceEvent } from "../types";
 
 export default function Dashboard() {
   const { invoices } = useApp();
   const navigate = useNavigate();
   const onNew = () => navigate("/invoices/new");
-  const onView = (inv: any) => navigate("/invoices/" + inv.id);
+  const onView = (inv: AppInvoice) => navigate("/invoices/" + inv.id);
   const paid = invoices.filter((i) => i.status === "paid");
   const pending = invoices.filter((i) => ["sent", "viewed"].includes(i.status));
   const overdue = invoices.filter(
@@ -21,8 +22,10 @@ export default function Dashboard() {
   const overdueAmt = overdue.reduce((s, i) => s + i.total, 0);
 
   const recentActivity = invoices
-    .flatMap((inv) => (inv.events || []).map((e: any) => ({ ...e, inv })))
-    .sort((a: any, b: any) => b.ts.localeCompare(a.ts))
+    .flatMap((inv) =>
+      (inv.events || []).map((e: InvoiceEvent) => ({ ...e, inv }))
+    )
+    .sort((a, b) => b.ts.localeCompare(a.ts))
     .slice(0, 6);
 
   const activityIcon = (type: string): [string, string] =>
@@ -187,7 +190,7 @@ export default function Dashboard() {
                 No activity yet.
               </div>
             ) : (
-              recentActivity.map((ev: any, i: number) => {
+              recentActivity.map((ev, i: number) => {
                 const [ico, cls] = activityIcon(ev.type);
                 return (
                   <div key={i} className="af-item">

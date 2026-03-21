@@ -69,7 +69,7 @@ interface FreelancerData {
   email: string;
 }
 
-const csym = (c: string) => ({ USD:"$", GBP:"\u00a3", EUR:"\u20ac", CAD:"C$", AUD:"A$", NGN:"\u20a6" }[c] || "$");
+const currencySymbol = (c: string) => ({ USD:"$", GBP:"\u00a3", EUR:"\u20ac", CAD:"C$", AUD:"A$", NGN:"\u20a6" }[c] || "$");
 const fmt  = (n: number, d = 2) => n.toLocaleString("en", { minimumFractionDigits: d, maximumFractionDigits: d });
 
 // ── INVOICE EMAIL TEMPLATE ────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ function InvoiceEmailTemplate({ invoice, freelancer, appUrl, previewText }: {
   appUrl: string;
   previewText?: string;
 }) {
-  const S = csym(invoice.currency);
+  const S = currencySymbol(invoice.currency);
   const typeLabel = { standard:"Invoice", proforma:"Proforma Invoice", deposit:"Deposit Invoice", credit:"Credit Note" }[invoice.type] || "Invoice";
   const invoiceUrl = `${appUrl}/i/${invoice.linkId}`;
 
@@ -183,7 +183,7 @@ function ReminderEmailTemplate({ invoice, freelancer, appUrl, daysOverdue }: {
   appUrl: string;
   daysOverdue: number;
 }) {
-  const S = csym(invoice.currency);
+  const S = currencySymbol(invoice.currency);
   const invoiceUrl = `${appUrl}/i/${invoice.linkId}`;
   const isFirstReminder = daysOverdue <= 1;
 
@@ -235,7 +235,7 @@ export async function sendInvoiceEmail({ invoice, freelancer, appUrl }: {
   appUrl: string;
 }) {
   const typeLabel = { standard:"Invoice", proforma:"Proforma Invoice", deposit:"Deposit Invoice", credit:"Credit Note" }[invoice.type] || "Invoice";
-  const S = csym(invoice.currency);
+  const S = currencySymbol(invoice.currency);
 
   const { data, error } = await resend.emails.send({
     from: `${freelancer.businessName || freelancer.name} via InvoiceApp <${FROM}>`,
@@ -261,7 +261,7 @@ export async function sendReminderEmail({ invoice, freelancer, appUrl, daysOverd
   appUrl: string;
   daysOverdue: number;
 }) {
-  const S = csym(invoice.currency);
+  const S = currencySymbol(invoice.currency);
   const subject = daysOverdue <= 1
     ? `Reminder: Invoice ${invoice.id} is due today`
     : `Overdue: Invoice ${invoice.id} — ${S}${fmt(invoice.total)} is ${daysOverdue} days past due`;
@@ -290,7 +290,7 @@ export async function sendPaymentConfirmationEmail({ invoice, freelancer, appUrl
   freelancer: FreelancerData;
   appUrl: string;
 }) {
-  const S = csym(invoice.currency);
+  const S = currencySymbol(invoice.currency);
 
   const { data, error } = await resend.emails.send({
     from: `${freelancer.businessName || freelancer.name} via InvoiceApp <${FROM}>`,

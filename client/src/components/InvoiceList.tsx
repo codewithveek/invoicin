@@ -4,12 +4,13 @@ import Icon from "./Icon";
 import { isOverdue, fmt, currencySymbol } from "../utils";
 import { statusBadge, typeBadge } from "../utils/badges";
 import { useApp } from "../context/AppContext";
+import type { AppInvoice } from "../types";
 
 export default function InvoiceList() {
   const { invoices } = useApp();
   const navigate = useNavigate();
   const onNew = () => navigate("/invoices/new");
-  const onView = (inv: any) => navigate("/invoices/" + inv.id);
+  const onView = (inv: AppInvoice) => navigate("/invoices/" + inv.id);
   const [filter, setFilter] = useState("all");
 
   const filters: [string, string][] = [

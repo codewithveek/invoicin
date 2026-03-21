@@ -15,7 +15,7 @@ export default function ClientsPage() {
 
   function add() {
     if (!form.name || !form.email) return;
-    setClients((p: any[]) => [...p, { id: "c" + Date.now(), ...form }]);
+    setClients((p) => [...p, { id: "c" + Date.now(), ...form }]);
     setForm({ name: "", email: "", address: "", phone: "" });
     setShowAdd(false);
     toast("Client added");
@@ -98,11 +98,11 @@ export default function ClientsPage() {
         </button>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {clients.map((c: any) => {
-          const cInvs = invoices.filter((i: any) => i.client.email === c.email);
+        {clients.map((c) => {
+          const cInvs = invoices.filter((i) => i.client.email === c.email);
           const cTotal = cInvs
-            .filter((i: any) => i.status === "paid")
-            .reduce((s: number, i: any) => s + i.total, 0);
+            .filter((i) => i.status === "paid")
+            .reduce((s: number, i) => s + i.total, 0);
           return (
             <div
               key={c.id}

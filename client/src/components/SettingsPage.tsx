@@ -110,7 +110,7 @@ export default function SettingsPage() {
 
   function addTemplate() {
     if (!tplForm.name) return;
-    setTemplates((p: any[]) => [...p, { id: "t" + Date.now(), ...tplForm }]);
+    setTemplates((p) => [...p, { id: "t" + Date.now(), ...tplForm }]);
     setTplForm({ name: "", items: [{ desc: "", qty: 1, price: "" }] });
     setShowAddTemplate(false);
     toast("Template saved");
@@ -386,7 +386,7 @@ export default function SettingsPage() {
             </button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {templates.map((t: any) => (
+            {templates.map((t) => (
               <div
                 key={t.id}
                 className="card"
@@ -411,7 +411,7 @@ export default function SettingsPage() {
                   <div style={{ fontSize: 12, color: "var(--tx3)" }}>
                     {t.items.length} line items:{" "}
                     {t.items
-                      .map((i: any) => i.desc)
+                      .map((i) => i.desc)
                       .filter(Boolean)
                       .join(", ")}
                   </div>
@@ -419,7 +419,7 @@ export default function SettingsPage() {
                 <button
                   className="btn bd btn-sm"
                   onClick={() =>
-                    setTemplates((p: any[]) => p.filter((x) => x.id !== t.id))
+                    setTemplates((p) => p.filter((x) => x.id !== t.id))
                   }
                 >
                   <Icon n="trash" s={12} /> Delete

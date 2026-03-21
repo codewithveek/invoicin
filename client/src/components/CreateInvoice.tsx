@@ -21,6 +21,13 @@ import {
   INVOICE_TYPES,
 } from "../constants";
 import { useApp } from "../context/AppContext";
+import type {
+  AppClient,
+  AppTemplate,
+  AppInvoice,
+  InvoiceItem,
+  InvoiceType,
+} from "../types";
 
 export default function CreateInvoice() {
   const { clients, templates, setInvoices, showToast } = useApp();
@@ -30,7 +37,7 @@ export default function CreateInvoice() {
   const [showClientPicker, setShowClientPicker] = useState(false);
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [form, setForm] = useState({
-    type: "standard",
+    type: "standard" as InvoiceType,
     currency: "USD",
     dueDate: "",
     terms: "Net 14",
@@ -40,13 +47,17 @@ export default function CreateInvoice() {
     clientEmail: "",
     clientAddress: "",
   });
-  const [items, setItems] = useState([{ desc: "", qty: 1, price: "" }]);
+  const [items, setItems] = useState<InvoiceItem[]>([
+    { desc: "", qty: 1, price: "" },
+  ]);
   const [tax, setTax] = useState<{ type: string; rate: number } | null>(null);
   const [taxEnabled, setTaxEnabled] = useState(false);
   const [depositEnabled] = useState(false);
 
-  const setItem = (idx: number, f: string, v: any) =>
-    setItems((p) => p.map((it, i) => (i === idx ? { ...it, [f]: v } : it)));
+  const setItem = (idx: number, f: keyof InvoiceItem, v: string | number) =>
+    setItems((p) =>
+      p.map((it, i) => (i === idx ? ({ ...it, [f]: v } as InvoiceItem) : it))
+    );
 
   const { sub, taxAmt, gross, dep, total } = calcTotal(
     items,
@@ -56,11 +67,11 @@ export default function CreateInvoice() {
   const S2 = currencySymbol(form.currency);
   const canNext = form.clientName && items.some((i) => i.desc && i.price);
 
-  function applyTemplate(t: any) {
-    setItems(t.items.map((i: any) => ({ ...i })));
+  function applyTemplate(t: AppTemplate) {
+    setItems(t.items.map((i) => ({ ...i })));
     setShowTemplatePicker(false);
   }
-  function applyClient(c: any) {
+  function applyClient(c: AppClient) {
     setForm((p) => ({
       ...p,
       clientName: c.name,
@@ -98,7 +109,7 @@ export default function CreateInvoice() {
       events: [{ type: "created", ts: ts() }],
     };
     setBusy(false);
-    setInvoices((p) => [inv, ...p]);
+    setInvoices((p) => [inv as AppInvoice, ...p]);
     showToast("Invoice created");
     navigate("/invoices/" + inv.id);
   }
@@ -207,7 +218,9 @@ export default function CreateInvoice() {
                   <button
                     key={t.id}
                     className={`btn btn-sm ${form.type === t.id ? "bp" : "bs"}`}
-                    onClick={() => setForm((p) => ({ ...p, type: t.id }))}
+                    onClick={() =>
+                      setForm((p) => ({ ...p, type: t.id as InvoiceType }))
+                    }
                   >
                     {t.label}
                   </button>
@@ -723,25 +736,27 @@ export default function CreateInvoice() {
           }}
         >
           <InvoicePreviewCard
-            inv={{
-              id: "INV-PREVIEW",
-              client: {
-                name: form.clientName,
-                email: form.clientEmail,
-                address: form.clientAddress,
-              },
-              type: form.type,
-              currency: form.currency,
-              items: items.filter((i) => i.desc),
-              tax: taxEnabled ? tax : null,
-              taxAmt,
-              deposit: form.deposit,
-              total,
-              terms: form.terms,
-              notes: form.notes,
-              dueDate: form.dueDate,
-              created: new Date().toISOString().split("T")[0],
-            }}
+            inv={
+              {
+                id: "INV-PREVIEW",
+                client: {
+                  name: form.clientName,
+                  email: form.clientEmail,
+                  address: form.clientAddress,
+                },
+                type: form.type,
+                currency: form.currency,
+                items: items.filter((i) => i.desc),
+                tax: taxEnabled ? tax : null,
+                taxAmt,
+                deposit: form.deposit,
+                total,
+                terms: form.terms,
+                notes: form.notes,
+                dueDate: form.dueDate,
+                created: new Date().toISOString().split("T")[0],
+              } as AppInvoice
+            }
             freelancer={{ name: "Lucky Eze", business: "DevCraft Studio" }}
           />
           <div

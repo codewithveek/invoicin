@@ -1,4 +1,6 @@
-export const DEMO_CLIENTS = [
+import type { AppInvoice, AppClient, AppTemplate } from "../types";
+
+export const DEMO_CLIENTS: AppClient[] = [
   {
     id: "c1",
     name: "Acme Corp",
@@ -25,7 +27,7 @@ export const DEMO_CLIENTS = [
   },
 ];
 
-export const DEMO_TEMPLATES = [
+export const DEMO_TEMPLATES: AppTemplate[] = [
   {
     id: "t1",
     name: "Web Development",
@@ -52,7 +54,7 @@ export const DEMO_TEMPLATES = [
   },
 ];
 
-export const DEMO_INVOICES = [
+export const DEMO_INVOICES: AppInvoice[] = [
   {
     id: "INV-2026-0041",
     linkId: "ax9k2m1pqw",
