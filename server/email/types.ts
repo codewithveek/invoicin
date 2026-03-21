@@ -30,7 +30,10 @@ export interface FreelancerData {
 }
 
 export const currencySymbol = (c: string) =>
-  ({ USD: "$", GBP: "£", EUR: "€", CAD: "C$", AUD: "A$", NGN: "₦" }[c] || "$");
+  ({ USD: "$", GBP: "£", EUR: "€", CAD: "C$", AUD: "A$", NGN: "₦" })[c] || "$";
 
 export const fmt = (n: number, d = 2) =>
-  n.toLocaleString("en", { minimumFractionDigits: d, maximumFractionDigits: d });
+  n.toLocaleString("en", {
+    minimumFractionDigits: d,
+    maximumFractionDigits: d,
+  });

@@ -1,9 +1,26 @@
 import * as React from "react";
-import { Html, Head, Body, Container, Text, Preview } from "@react-email/components";
+import {
+  Html,
+  Head,
+  Body,
+  Container,
+  Text,
+  Preview,
+} from "@react-email/components";
 import { styles } from "./styles";
-import { currencySymbol, fmt, type InvoiceData, type FreelancerData } from "./types";
+import {
+  currencySymbol,
+  fmt,
+  type InvoiceData,
+  type FreelancerData,
+} from "./types";
 
-export function ReminderEmailTemplate({ invoice, freelancer, appUrl, daysOverdue }: {
+export function ReminderEmailTemplate({
+  invoice,
+  freelancer,
+  appUrl,
+  daysOverdue,
+}: {
   invoice: InvoiceData;
   freelancer: FreelancerData;
   appUrl: string;
@@ -33,16 +50,24 @@ export function ReminderEmailTemplate({ invoice, freelancer, appUrl, daysOverdue
               }}
             >
               <div style={styles.headerBadge}>
-                {isFirstReminder ? "PAYMENT REMINDER" : `${daysOverdue} DAYS OVERDUE`}
+                {isFirstReminder
+                  ? "PAYMENT REMINDER"
+                  : `${daysOverdue} DAYS OVERDUE`}
               </div>
               <div style={styles.headerName}>
-                {isFirstReminder ? "Just a friendly reminder" : "Payment is overdue"}
+                {isFirstReminder
+                  ? "Just a friendly reminder"
+                  : "Payment is overdue"}
               </div>
               <div style={styles.headerSub}>
-                Invoice {invoice.id} from {freelancer.businessName || freelancer.name}
+                Invoice {invoice.id} from{" "}
+                {freelancer.businessName || freelancer.name}
               </div>
               <div style={styles.amtLabel}>Amount due</div>
-              <div style={styles.amtBig}>{S}{fmt(invoice.total)}</div>
+              <div style={styles.amtBig}>
+                {S}
+                {fmt(invoice.total)}
+              </div>
             </div>
 
             <div style={styles.body_pad}>
@@ -50,14 +75,17 @@ export function ReminderEmailTemplate({ invoice, freelancer, appUrl, daysOverdue
                 Hi {invoice.clientName},{" "}
                 {isFirstReminder
                   ? `This is a friendly reminder that invoice ${invoice.id} for ${S}${fmt(invoice.total)} is due today.`
-                  : `Invoice ${invoice.id} for ${S}${fmt(invoice.total)} is now ${daysOverdue} days past its due date.`
-                }{" "}
-                If you have already made the payment, please disregard this message.
+                  : `Invoice ${invoice.id} for ${S}${fmt(invoice.total)} is now ${daysOverdue} days past its due date.`}{" "}
+                If you have already made the payment, please disregard this
+                message.
               </Text>
               <div style={{ textAlign: "center", padding: "8px 0" }}>
                 <a
                   href={invoiceUrl}
-                  style={{ ...styles.cta, backgroundColor: isFirstReminder ? "#16a34a" : "#dc2626" }}
+                  style={{
+                    ...styles.cta,
+                    backgroundColor: isFirstReminder ? "#16a34a" : "#dc2626",
+                  }}
                 >
                   View &amp; Pay Invoice
                 </a>
@@ -65,8 +93,18 @@ export function ReminderEmailTemplate({ invoice, freelancer, appUrl, daysOverdue
             </div>
 
             <div style={styles.stamp}>
-              <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#16a34a", flexShrink: 0 }} />
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#14532d" }}>Sent via InvoiceApp</div>
+              <div
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  backgroundColor: "#16a34a",
+                  flexShrink: 0,
+                }}
+              />
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#14532d" }}>
+                Sent via InvoiceApp
+              </div>
             </div>
           </div>
 
