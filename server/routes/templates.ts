@@ -1,50 +1,30 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Invoice template routes: list, create, delete
-// Mount at: app.route("/templates", templatesRouter)
+// Template routes — validation + auth + delegate to controller
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Hono } from "hono";
-import { eq, and } from "drizzle-orm";
-import { ulid } from "ulid";
-import { db } from "../db";
-import { invoiceTemplates } from "../schema";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
 import { type AppEnv, requireAuth } from "../middleware/auth";
+import { templateController } from "../controllers/template.controller";
 
 export const templatesRouter = new Hono<AppEnv>();
 
-// ── GET /templates ────────────────────────────────────────────────────────────
-templatesRouter.get("/", requireAuth, async (c) => {
-  const rows = await db
-    .select()
-    .from(invoiceTemplates)
-    .where(eq(invoiceTemplates.userId, c.get("userId")));
-  return c.json(rows);
+const createTemplateSchema = z.object({
+  name: z.string().min(1),
+  items: z.array(z.unknown()),
+  currency: z.string().optional(),
+  terms: z.string().optional(),
+  notes: z.string().optional(),
 });
 
-// ── POST /templates ───────────────────────────────────────────────────────────
-templatesRouter.post("/", requireAuth, async (c) => {
-  const userId = c.get("userId");
-  const body = await c.req.json<{
-    name: string;
-    items: unknown[];
-    currency?: string;
-    terms?: string;
-    notes?: string;
-  }>();
-  const tpl = { id: ulid(), userId, ...body };
-  await db.insert(invoiceTemplates).values(tpl);
-  return c.json(tpl, 201);
-});
-
-// ── DELETE /templates/:id ─────────────────────────────────────────────────────
-templatesRouter.delete("/:id", requireAuth, async (c) => {
-  await db
-    .delete(invoiceTemplates)
-    .where(
-      and(
-        eq(invoiceTemplates.id, c.req.param("id")),
-        eq(invoiceTemplates.userId, c.get("userId"))
-      )
-    );
-  return c.json({ success: true });
-});
+templatesRouter.get("/", requireAuth, (c) => templateController.list(c));
+templatesRouter.post(
+  "/",
+  requireAuth,
+  zValidator("json", createTemplateSchema),
+  (c) => templateController.create(c, c.req.valid("json"))
+);
+templatesRouter.delete("/:id", requireAuth, (c) =>
+  templateController.remove(c)
+);

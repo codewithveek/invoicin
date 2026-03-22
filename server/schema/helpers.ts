@@ -1,8 +1,6 @@
 import { varchar } from "drizzle-orm/mysql-core";
-import { v4 as uuidv4 } from "uuid";
+import { ulid } from "ulid";
 
 export const id = varchar("id", { length: 36 })
   .primaryKey()
-  .$defaultFn(() => {
-    return uuidv4();
-  });
+  .$defaultFn(() => ulid());

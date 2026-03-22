@@ -186,6 +186,7 @@ export const invoiceEvents = mysqlTable(
         "partial_payment",
         "note_added",
         "status_changed",
+        "client_confirmed_payment",
       ],
     }).notNull(),
     // Optional metadata: IP address, user agent, note text, payment amount, etc.
