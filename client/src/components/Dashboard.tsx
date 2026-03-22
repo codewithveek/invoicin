@@ -144,10 +144,10 @@ export default function Dashboard() {
                           {currencySymbol(inv.currency)}
                           {fmt(inv.total)}
                         </div>
-                        {inv.ngn && (
+                        {inv.homeTotal && inv.homeCurrency && (
                           <div className="t-ngn">
-                            {"₦"}
-                            {fmt(inv.ngn, 0)}
+                            {currencySymbol(inv.homeCurrency)}
+                            {fmt(inv.homeTotal, 0)}
                           </div>
                         )}
                       </td>

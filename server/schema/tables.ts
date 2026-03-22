@@ -29,6 +29,7 @@ export const users = mysqlTable(
     phone: varchar("phone", { length: 50 }),
     logoUrl: varchar("logo_url", { length: 500 }),
     defaultCurrency: varchar("default_currency", { length: 10 }).default("USD"),
+    homeCurrency: varchar("home_currency", { length: 10 }).default("NGN"),
     defaultTerms: varchar("default_terms", { length: 100 }).default("Net 14"),
     defaultNotes: text("default_notes"),
     passwordHash: varchar("password_hash", { length: 255 }),
@@ -127,9 +128,10 @@ export const invoices = mysqlTable(
     deposit: decimal("deposit", { precision: 5, scale: 2 }).default("0"), // % e.g. 50
     total: decimal("total", { precision: 12, scale: 2 }).notNull(),
 
-    // NGN equivalent at time of payment
-    ngnRate: decimal("ngn_rate", { precision: 12, scale: 2 }),
-    ngnTotal: decimal("ngn_total", { precision: 14, scale: 2 }),
+    // Home-currency equivalent at time of payment (currency set per user)
+    homeRate: decimal("home_rate", { precision: 12, scale: 2 }),
+    homeTotal: decimal("home_total", { precision: 14, scale: 2 }),
+    homeCurrency: varchar("home_currency", { length: 10 }),
 
     // Dates
     issueDate: date("issue_date").notNull(),

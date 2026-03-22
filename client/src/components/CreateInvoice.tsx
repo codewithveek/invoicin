@@ -5,7 +5,7 @@ import InvoicePreviewCard from "./InvoicePreviewCard";
 import {
   currencySymbol,
   fmt,
-  fmtNGN,
+  fmtHome,
   wait,
   uid,
   linkId,
@@ -15,10 +15,11 @@ import {
 import {
   CURRENCIES,
   CURRENCY_NAMES,
-  MOCK_RATES,
   TAX_TYPES,
   PAYMENT_TERMS_PRESETS,
   INVOICE_TYPES,
+  getRate,
+  USER,
 } from "../constants";
 import { useApp } from "../context/AppContext";
 import type {
@@ -105,7 +106,8 @@ export default function CreateInvoice() {
       paid: null,
       notes: form.notes,
       terms: form.terms,
-      ngn: null,
+      homeTotal: null,
+      homeCurrency: null,
       events: [{ type: "created", ts: ts() }],
     };
     setBusy(false);
@@ -346,7 +348,7 @@ export default function CreateInvoice() {
                       setForm((p) => ({ ...p, currency: e.target.value }))
                     }
                   >
-                    {CURRENCIES.filter((c) => c !== "NGN").map((c) => (
+                    {CURRENCIES.map((c) => (
                       <option key={c} value={c}>
                         {c} - {CURRENCY_NAMES[c]}
                       </option>
@@ -679,7 +681,7 @@ export default function CreateInvoice() {
               >
                 {CURRENCY_NAMES[form.currency]}
               </div>
-              {total > 0 && (
+              {total > 0 && form.currency !== USER.homeCurrency && (
                 <div
                   style={{
                     padding: "9px 12px",
@@ -695,7 +697,9 @@ export default function CreateInvoice() {
                       marginBottom: 3,
                     }}
                   >
-                    <span style={{ color: "var(--tx3)" }}>Est. NGN</span>
+                    <span style={{ color: "var(--tx3)" }}>
+                      Est. {USER.homeCurrency}
+                    </span>
                     <span
                       style={{
                         fontFamily: "var(--mo)",
@@ -703,13 +707,16 @@ export default function CreateInvoice() {
                         color: "var(--gdk)",
                       }}
                     >
-                      {"₦"}
-                      {fmtNGN(total * MOCK_RATES[form.currency])}
+                      {currencySymbol(USER.homeCurrency)}
+                      {fmtHome(
+                        total * getRate(form.currency, USER.homeCurrency)
+                      )}
                     </span>
                   </div>
                   <div style={{ fontSize: 10, color: "var(--tx3)" }}>
-                    at approx. {"₦"}
-                    {fmt(MOCK_RATES[form.currency], 0)}/{form.currency}
+                    at approx. {currencySymbol(USER.homeCurrency)}
+                    {fmt(getRate(form.currency, USER.homeCurrency), 0)}/
+                    {form.currency}
                   </div>
                 </div>
               )}

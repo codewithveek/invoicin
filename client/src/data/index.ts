@@ -72,7 +72,8 @@ export const DEMO_INVOICES: AppInvoice[] = [
     paid: "2026-03-22",
     notes: "",
     terms: "Net 14",
-    ngn: 4180050,
+    homeTotal: 4180050,
+    homeCurrency: "NGN",
     events: [
       { type: "created", ts: "Mar 18, 2026 9:00am" },
       { type: "sent", ts: "Mar 18, 2026 9:05am" },
@@ -99,7 +100,8 @@ export const DEMO_INVOICES: AppInvoice[] = [
     paid: null,
     notes: "Final deliverables shared on March 15.",
     terms: "Net 7",
-    ngn: null,
+    homeTotal: null,
+    homeCurrency: null,
     events: [
       { type: "created", ts: "Mar 16, 2026 11:00am" },
       { type: "sent", ts: "Mar 16, 2026 11:10am" },
@@ -126,7 +128,8 @@ export const DEMO_INVOICES: AppInvoice[] = [
     paid: null,
     notes: "50% deposit invoice. Remaining balance due on project completion.",
     terms: "Net 14",
-    ngn: null,
+    homeTotal: null,
+    homeCurrency: null,
     events: [
       { type: "created", ts: "Mar 14, 2026 2:00pm" },
       { type: "sent", ts: "Mar 14, 2026 2:15pm" },
@@ -149,7 +152,8 @@ export const DEMO_INVOICES: AppInvoice[] = [
     paid: "2026-03-12",
     notes: "",
     terms: "Net 14",
-    ngn: 1944600,
+    homeTotal: 1944600,
+    homeCurrency: "NGN",
     events: [
       { type: "created", ts: "Mar 10, 2026 10:00am" },
       { type: "sent", ts: "Mar 10, 2026 10:05am" },
@@ -174,7 +178,8 @@ export const DEMO_INVOICES: AppInvoice[] = [
     paid: null,
     notes: "",
     terms: "Net 14",
-    ngn: null,
+    homeTotal: null,
+    homeCurrency: null,
     events: [{ type: "created", ts: "Mar 20, 2026 4:00pm" }],
   },
 ];

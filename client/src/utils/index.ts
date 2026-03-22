@@ -1,10 +1,21 @@
 export const currencySymbol = (c: string) =>
   ((
-    { USD: "$", GBP: "£", EUR: "€", CAD: "C$", AUD: "A$", NGN: "₦" } as Record<
-      string,
-      string
-    >
-  )[c] ?? "$");
+    {
+      USD: "$",
+      GBP: "£",
+      EUR: "€",
+      CAD: "C$",
+      AUD: "A$",
+      NGN: "₦",
+      GHS: "₵",
+      KES: "KSh",
+      ZAR: "R",
+      EGP: "E£",
+      UGX: "USh",
+      TZS: "TSh",
+      XOF: "CFA",
+    } as Record<string, string>
+  )[c] ?? c + " ");
 
 export const fmt = (n: number | string, d = 2) =>
   parseFloat(String(n || 0)).toLocaleString("en", {
@@ -12,7 +23,8 @@ export const fmt = (n: number | string, d = 2) =>
     maximumFractionDigits: d,
   });
 
-export const fmtNGN = (n: number | string) =>
+/** Format a number in the freelancer's home currency locale. */
+export const fmtHome = (n: number | string) =>
   parseFloat(String(n || 0)).toLocaleString("en-NG", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,

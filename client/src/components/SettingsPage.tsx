@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Icon from "./Icon";
 import { useApp } from "../context/AppContext";
+import { CURRENCIES, CURRENCY_NAMES } from "../constants";
 
 // ToggleRow extracted to avoid calling useState inside .map() (hooks-in-loop violation)
 interface ToggleRowProps {
@@ -96,6 +97,8 @@ export default function SettingsPage() {
     phone: "",
     address: "",
     logo: "",
+    defaultCurrency: "USD",
+    homeCurrency: "NGN",
   });
   const [showAddTemplate, setShowAddTemplate] = useState(false);
   const [tplForm, setTplForm] = useState({
@@ -199,11 +202,39 @@ export default function SettingsPage() {
               <div className="card-ttl">Invoice Defaults</div>
               <div className="fgrid">
                 <div className="fg">
-                  <label>Default currency</label>
-                  <select>
-                    <option>USD</option>
-                    <option>GBP</option>
-                    <option>EUR</option>
+                  <label>Invoice currency (default)</label>
+                  <select
+                    value={profile.defaultCurrency}
+                    onChange={(e) =>
+                      setProfile((p) => ({
+                        ...p,
+                        defaultCurrency: e.target.value,
+                      }))
+                    }
+                  >
+                    {CURRENCIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c} — {CURRENCY_NAMES[c]}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="fg">
+                  <label>Home currency (for received amounts)</label>
+                  <select
+                    value={profile.homeCurrency}
+                    onChange={(e) =>
+                      setProfile((p) => ({
+                        ...p,
+                        homeCurrency: e.target.value,
+                      }))
+                    }
+                  >
+                    {CURRENCIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c} — {CURRENCY_NAMES[c]}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="fg">

@@ -53,7 +53,8 @@ export interface AppInvoice {
   paid: string | null;
   notes: string;
   terms: string;
-  ngn: number | null;
+  homeTotal: number | null;
+  homeCurrency: string | null;
   events: InvoiceEvent[];
 }
 

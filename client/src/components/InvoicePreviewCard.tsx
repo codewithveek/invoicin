@@ -1,16 +1,19 @@
 import Icon from "./Icon";
-import { currencySymbol, fmt, fmtNGN, dateStr, calcTotal } from "../utils";
-import { MOCK_RATES, TAX_TYPES } from "../constants";
+import { currencySymbol, fmt, fmtHome, dateStr, calcTotal } from "../utils";
+import { getRate, TAX_TYPES, USER } from "../constants";
 import type { AppInvoice } from "../types";
 
 interface InvoicePreviewCardProps {
   inv: AppInvoice;
   freelancer?: { name?: string; business?: string };
+  /** Freelancer's home currency; defaults to USER.homeCurrency */
+  homeCurrency?: string;
 }
 
 export default function InvoicePreviewCard({
   inv,
   freelancer,
+  homeCurrency = USER.homeCurrency,
 }: InvoicePreviewCardProps) {
   const S2 = currencySymbol(inv.currency);
   const { taxAmt, total } = calcTotal(inv.items, inv.tax, inv.deposit);
@@ -43,10 +46,13 @@ export default function InvoicePreviewCard({
           {S2}
           {fmt(inv.total || total)}
         </div>
-        {inv.currency !== "NGN" && (
+        {inv.currency !== homeCurrency && (
           <div className="inv-hd-ngn">
-            {"₦"}
-            {fmtNGN((inv.total || total) * MOCK_RATES[inv.currency])} NGN est.
+            {currencySymbol(homeCurrency)}
+            {fmtHome(
+              (inv.total || total) * getRate(inv.currency, homeCurrency)
+            )}{" "}
+            {homeCurrency} est.
           </div>
         )}
       </div>

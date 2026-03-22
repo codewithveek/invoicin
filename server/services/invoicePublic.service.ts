@@ -15,8 +15,14 @@ export const invoicePublicService = {
       await invoiceRepository.update(inv.id, { status: "viewed" });
     }
 
-    // Strip the internal userId before returning to the client
-    const { userId: _userId, ...publicInv } = inv;
+    // Strip internal fields before returning to the client
+    const {
+      userId: _userId,
+      homeRate: _homeRate,
+      homeTotal: _homeTotal,
+      homeCurrency: _homeCurrency,
+      ...publicInv
+    } = inv;
     return publicInv;
   },
 

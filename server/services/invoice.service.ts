@@ -36,6 +36,10 @@ export interface UpdateInvoiceInput {
   paidDate?: Date;
   notes?: string;
   dueDate?: Date;
+  /** Exchange rate used when marking as paid (invoice currency → home currency) */
+  homeRate?: number;
+  /** Freelancer home currency code at time of payment, e.g. "NGN" */
+  homeCurrency?: string;
 }
 
 export interface RecordPaymentInput {
@@ -76,6 +80,9 @@ export const invoiceService = {
       taxAmount: input.taxAmount != null ? String(input.taxAmount) : "0",
       deposit: input.deposit != null ? String(input.deposit) : "0",
       total: String(input.total),
+      homeRate: null,
+      homeTotal: null,
+      homeCurrency: null,
       items: input.items,
       dueDate: input.dueDate ?? null,
       terms: input.terms ?? null,
@@ -90,7 +97,20 @@ export const invoiceService = {
   async update(id: string, userId: string, input: UpdateInvoiceInput) {
     const inv = await invoiceRepository.findByIdAndUser(id, userId);
     if (!inv) throw new NotFoundError();
-    await invoiceRepository.update(id, input);
+
+    const { homeRate, homeCurrency, ...baseInput } = input;
+    const repoData: Parameters<typeof invoiceRepository.update>[1] = {
+      ...baseInput,
+    };
+
+    if (input.status === "paid" && homeRate != null && homeCurrency) {
+      const total = parseFloat(String(inv.total));
+      repoData.homeRate = String(homeRate);
+      repoData.homeTotal = String(Math.round(total * homeRate));
+      repoData.homeCurrency = homeCurrency;
+    }
+
+    await invoiceRepository.update(id, repoData);
     if (input.status && input.status !== inv.status) {
       await eventRepository.create(
         id,

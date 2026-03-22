@@ -1,4 +1,18 @@
-export const CURRENCIES = ["USD", "GBP", "EUR", "CAD", "AUD", "NGN"];
+export const CURRENCIES = [
+  "USD",
+  "GBP",
+  "EUR",
+  "CAD",
+  "AUD",
+  "NGN",
+  "GHS",
+  "KES",
+  "ZAR",
+  "EGP",
+  "UGX",
+  "TZS",
+  "XOF",
+];
 
 export const CURRENCY_NAMES: Record<string, string> = {
   USD: "US Dollar",
@@ -7,15 +21,46 @@ export const CURRENCY_NAMES: Record<string, string> = {
   CAD: "Canadian Dollar",
   AUD: "Australian Dollar",
   NGN: "Nigerian Naira",
+  GHS: "Ghanaian Cedi",
+  KES: "Kenyan Shilling",
+  ZAR: "South African Rand",
+  EGP: "Egyptian Pound",
+  UGX: "Ugandan Shilling",
+  TZS: "Tanzanian Shilling",
+  XOF: "West African CFA Franc",
 };
 
-export const MOCK_RATES: Record<string, number> = {
-  USD: 1618.5,
-  GBP: 2039.2,
-  EUR: 1746.8,
-  CAD: 1191.4,
-  AUD: 1043.7,
-  NGN: 1,
+// All rates expressed as units-per-1-USD (static fallback; refreshed by /api/rates)
+const USD_BASE: Record<string, number> = {
+  USD: 1,
+  GBP: 0.79,
+  EUR: 0.92,
+  CAD: 1.36,
+  AUD: 1.55,
+  NGN: 1618.5,
+  GHS: 15.7,
+  KES: 129.5,
+  ZAR: 18.4,
+  EGP: 50.5,
+  UGX: 3750,
+  TZS: 2640,
+  XOF: 603,
+};
+
+/** Returns how many units of `to` equal 1 unit of `from`. */
+export function getRate(from: string, to: string): number {
+  if (from === to) return 1;
+  const f = USD_BASE[from] ?? 1;
+  const t = USD_BASE[to] ?? 1;
+  return t / f;
+}
+
+/** Freelancer profile used for home-currency display across the app. */
+export const USER = {
+  name: "Lucky Eze",
+  business: "DevCraft Studio",
+  email: "lucky@devcraft.ng",
+  homeCurrency: "NGN",
 };
 
 export const STATUS_META: Record<

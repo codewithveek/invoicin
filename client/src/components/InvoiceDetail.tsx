@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Icon from "./Icon";
 import InvoicePreviewCard from "./InvoicePreviewCard";
 import { isOverdue, currencySymbol, fmt, dateStr, ts, wait } from "../utils";
-import { MOCK_RATES, TAX_TYPES, STATUS_META } from "../constants";
+import { TAX_TYPES, STATUS_META, getRate, USER } from "../constants";
 import { statusBadge, typeBadge } from "../utils/badges";
 import { useApp } from "../context/AppContext";
 import type { AppInvoice } from "../types";
@@ -64,11 +64,13 @@ export default function InvoiceDetail() {
   }
 
   function markPaid() {
+    const rate = getRate(inv.currency, USER.homeCurrency);
     const updated: AppInvoice = {
       ...inv,
       status: "paid",
       paid: new Date().toISOString().split("T")[0],
-      ngn: Math.round(inv.total * MOCK_RATES[inv.currency]),
+      homeTotal: Math.round(inv.total * rate),
+      homeCurrency: USER.homeCurrency,
       events: [...inv.events, { type: "paid", ts: ts() }],
     };
     syncInvoice(updated);
@@ -356,7 +358,7 @@ export default function InvoiceDetail() {
                     {fmt(inv.total)}
                   </div>
                 </div>
-                {inv.ngn && (
+                {inv.homeTotal && inv.homeCurrency && (
                   <div style={{ textAlign: "right" }}>
                     <div
                       style={{
@@ -368,7 +370,7 @@ export default function InvoiceDetail() {
                         marginBottom: 4,
                       }}
                     >
-                      Received (NGN)
+                      Received ({inv.homeCurrency})
                     </div>
                     <div
                       style={{
@@ -378,8 +380,8 @@ export default function InvoiceDetail() {
                         color: "var(--gdk)",
                       }}
                     >
-                      {"₦"}
-                      {fmt(inv.ngn, 0)}
+                      {currencySymbol(inv.homeCurrency)}
+                      {fmt(inv.homeTotal, 0)}
                     </div>
                   </div>
                 )}
