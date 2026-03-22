@@ -37,12 +37,22 @@ function fallbackRate(from: string, to: string) {
   return t / f;
 }
 
+// In-memory cache: key = "FROM:TO", value = { rate, expiresAt }
+const rateCache = new Map<string, { rate: number; expiresAt: number }>();
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
 const invoiceRouter = new Hono();
 
-// GET /api/rates?from=USD&to=NGN — returns the current exchange rate
+// GET /api/rates?from=USD&to=NGN — returns the current exchange rate (cached 24 h)
 invoiceRouter.get("/rates", async (c) => {
   const from = (c.req.query("from") || "USD").toUpperCase();
   const to = (c.req.query("to") || "NGN").toUpperCase();
+
+  const cacheKey = `${from}:${to}`;
+  const cached = rateCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    return c.json({ from, to, rate: cached.rate });
+  }
 
   const apiKey = process.env.FX_API_KEY;
   if (apiKey) {
@@ -55,6 +65,10 @@ invoiceRouter.get("/rates", async (c) => {
         conversion_rate?: number;
       };
       if (data.result === "success" && data.conversion_rate != null) {
+        rateCache.set(cacheKey, {
+          rate: data.conversion_rate,
+          expiresAt: Date.now() + CACHE_TTL_MS,
+        });
         return c.json({ from, to, rate: data.conversion_rate });
       }
     } catch {
