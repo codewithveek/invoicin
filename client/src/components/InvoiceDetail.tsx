@@ -861,6 +861,7 @@ export default function InvoiceDetail() {
           <InvoicePreviewCard
             inv={inv}
             freelancer={{ name: "Lucky Eze", business: "DevCraft Studio" }}
+            homeCurrency={inv.currency}
           />
           <div
             style={{

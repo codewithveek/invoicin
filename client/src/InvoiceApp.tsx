@@ -6,7 +6,6 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { S } from "./styles";
 import { useApp } from "./context/AppContext";
 import { isOverdue } from "./utils";
 import Toast from "./components/Toast";
@@ -72,7 +71,6 @@ function AppShell() {
 
   return (
     <>
-      <style>{S}</style>
       {toastMsg && <Toast msg={toastMsg} onClose={clearToast} />}
       <div className="app">
         <div

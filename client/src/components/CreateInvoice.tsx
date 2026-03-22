@@ -736,8 +736,8 @@ export default function CreateInvoice() {
         <div
           className="two-col"
           style={{
-            display: "grid",
-            gridTemplateColumns: "auto 1fr",
+            display: "flex",
+            flexWrap: "wrap",
             gap: 24,
             alignItems: "start",
           }}
@@ -765,13 +765,15 @@ export default function CreateInvoice() {
               } as AppInvoice
             }
             freelancer={{ name: "Lucky Eze", business: "DevCraft Studio" }}
+            homeCurrency={form.currency}
           />
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               gap: 12,
-              maxWidth: 280,
+              width: "100%",
+              maxWidth: 360,
             }}
           >
             <div className="card">
