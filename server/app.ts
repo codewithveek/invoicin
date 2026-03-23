@@ -23,7 +23,10 @@ app.use(
 app.get("/", (c) => c.json({ message: "Welcome to Invoicin API" }));
 
 // Mount better-auth handler — handles /api/auth/*
-app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
+app.on(["POST", "GET"], "/api/auth/**", async (c) => {
+  const response = await auth.handler(c.req.raw);
+  return new Response(response.body, response);
+});
 
 app.route("/api", invoiceRouter);
 

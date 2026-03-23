@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { authClient } from "../../lib/auth-client";
 import { userApi } from "../../api/user.api";
 import { CURRENCIES, CURRENCY_NAMES } from "../../constants";
+import Icon from "../shared/Icon";
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
@@ -55,7 +56,8 @@ export default function OnboardingPage() {
     return (
       <div style={styles.container}>
         <div style={styles.card}>
-          <p style={{ color: "var(--tx2)" }}>Loading…</p>
+          <Icon n="spin" s={24} c="var(--g)" />
+          <p style={{ color: "var(--tx2)", marginTop: 12 }}>Loading…</p>
         </div>
       </div>
     );
@@ -101,7 +103,15 @@ export default function OnboardingPage() {
 
           {error && <p style={styles.error}>{error}</p>}
 
-          <button type="submit" style={styles.submitBtn} disabled={submitting}>
+          <button
+            type="submit"
+            style={{
+              ...styles.submitBtn,
+              ...(submitting ? styles.disabled : {}),
+            }}
+            disabled={submitting}
+          >
+            {submitting && <Icon n="spin" s={16} c="#fff" />}
             {submitting ? "Setting up…" : "Continue"}
           </button>
         </form>
@@ -198,6 +208,14 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 600,
     cursor: "pointer",
     fontFamily: "var(--fn)",
-    marginTop: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  disabled: {
+    opacity: 0.6,
+    cursor: "not-allowed",
+    pointerEvents: "none" as const,
   },
 };

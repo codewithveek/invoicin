@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "dad839e0-79bc-4def-8dc4-6f8cf82a4dc7",
+  "id": "b81649d4-c123-4500-ad3d-f9700974229a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -946,6 +946,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "image": {
+          "name": "image",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "business_name": {
           "name": "business_name",
           "type": "varchar(255)",
@@ -1001,13 +1008,6 @@
         "default_notes": {
           "name": "default_notes",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "password_hash": {
-          "name": "password_hash",
-          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

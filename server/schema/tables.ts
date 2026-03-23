@@ -24,6 +24,7 @@ export const users = mysqlTable(
     id,
     email: varchar("email", { length: 255 }).notNull().unique(),
     name: varchar("name", { length: 255 }).notNull(),
+    image: varchar("image", { length: 500 }),
     businessName: varchar("business_name", { length: 255 }),
     address: text("address"),
     phone: varchar("phone", { length: 50 }),
@@ -32,7 +33,6 @@ export const users = mysqlTable(
     homeCurrency: varchar("home_currency", { length: 10 }).default("NGN"),
     defaultTerms: varchar("default_terms", { length: 100 }).default("Net 14"),
     defaultNotes: text("default_notes"),
-    passwordHash: varchar("password_hash", { length: 255 }),
     emailVerified: boolean("email_verified").default(false),
     plan: varchar("plan", { length: 20 }).default("free"), // free | pro | business
     onboarded: boolean("onboarded").default(false),
@@ -41,6 +41,9 @@ export const users = mysqlTable(
   },
   (t) => [uniqueIndex("users_email_idx").on(t.email)]
 );
+
+// Alias for better-auth drizzle adapter (expects "user" not "users")
+export const user = users;
 
 // ── BETTER-AUTH: SESSION ──────────────────────────────────────────────────────
 export const session = mysqlTable("session", {
