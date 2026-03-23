@@ -5,6 +5,6 @@ export default defineConfig({
   out: "./drizzle",
   schema: "./schema",
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    url: process.env.DATABASE_URL+'?ssl={"rejectUnauthorized":true}'!,
   },
 });

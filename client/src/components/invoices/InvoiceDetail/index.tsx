@@ -188,10 +188,7 @@ export default function InvoiceDetail() {
           <button className="btn bs btn-sm" onClick={() => setShareModal(true)}>
             <Icon n="link" s={13} /> Share Link
           </button>
-          <button
-            className="btn bg btn-sm"
-            onClick={handleDownloadPdf}
-          >
+          <button className="btn bg btn-sm" onClick={handleDownloadPdf}>
             <Icon n="download" s={13} /> PDF
           </button>
         </div>
@@ -246,7 +243,10 @@ export default function InvoiceDetail() {
         >
           <InvoicePreviewCard
             inv={inv}
-            freelancer={{ name: user?.name ?? "User", business: user?.businessName ?? "" }}
+            freelancer={{
+              name: user?.name ?? "User",
+              business: user?.businessName ?? "",
+            }}
             homeCurrency={inv.currency}
           />
           <div
@@ -257,10 +257,7 @@ export default function InvoiceDetail() {
               maxWidth: 260,
             }}
           >
-            <button
-              className="btn bp btn-full"
-              onClick={handleDownloadPdf}
-            >
+            <button className="btn bp btn-full" onClick={handleDownloadPdf}>
               <Icon n="download" s={14} c="#fff" /> Download PDF
             </button>
             <button

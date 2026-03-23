@@ -28,7 +28,9 @@ export default function Dashboard() {
       <div className="pg-hd">
         <div>
           <div className="pg-ttl">Dashboard</div>
-          <div className="pg-sub">Welcome back, {user?.name?.split(" ")[0] ?? "there"}</div>
+          <div className="pg-sub">
+            Welcome back, {user?.name?.split(" ")[0] ?? "there"}
+          </div>
         </div>
         <button className="btn bp" onClick={onNew}>
           <Icon n="plus" s={14} c="#fff" />

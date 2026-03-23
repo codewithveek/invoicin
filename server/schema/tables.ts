@@ -35,11 +35,51 @@ export const users = mysqlTable(
     passwordHash: varchar("password_hash", { length: 255 }),
     emailVerified: boolean("email_verified").default(false),
     plan: varchar("plan", { length: 20 }).default("free"), // free | pro | business
+    onboarded: boolean("onboarded").default(false),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
   },
   (t) => [uniqueIndex("users_email_idx").on(t.email)]
 );
+
+// ── BETTER-AUTH: SESSION ──────────────────────────────────────────────────────
+export const session = mysqlTable("session", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  token: varchar("token", { length: 255 }).notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  ipAddress: varchar("ip_address", { length: 255 }),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+// ── BETTER-AUTH: ACCOUNT ──────────────────────────────────────────────────────
+export const account = mysqlTable("account", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  accountId: varchar("account_id", { length: 255 }).notNull(),
+  providerId: varchar("provider_id", { length: 255 }).notNull(),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  accessTokenExpiresAt: timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope: varchar("scope", { length: 255 }),
+  idToken: text("id_token"),
+  password: varchar("password", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+// ── BETTER-AUTH: VERIFICATION ─────────────────────────────────────────────────
+export const verification = mysqlTable("verification", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  identifier: varchar("identifier", { length: 255 }).notNull(),
+  value: varchar("value", { length: 255 }).notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
 
 // ── CLIENTS ───────────────────────────────────────────────────────────────────
 export const clients = mysqlTable(

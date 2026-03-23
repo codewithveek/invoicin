@@ -526,9 +526,7 @@ export default function FormStep({
                   marginBottom: 3,
                 }}
               >
-                <span style={{ color: "var(--tx3)" }}>
-                  Est. {homeCurrency}
-                </span>
+                <span style={{ color: "var(--tx3)" }}>Est. {homeCurrency}</span>
                 <span
                   style={{
                     fontFamily: "var(--mo)",

@@ -110,7 +110,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
           navigate("/", { replace: true });
         }
         // Load data
-        await Promise.all([refreshInvoices(), refreshClients(), refreshTemplates()]);
+        await Promise.all([
+          refreshInvoices(),
+          refreshClients(),
+          refreshTemplates(),
+        ]);
       } catch {
         if (!cancelled) {
           setUser(null);
