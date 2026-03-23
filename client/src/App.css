@@ -585,7 +585,7 @@ select option {
   pointer-events: none;
 }
 .ipw input {
-  padding-left: 26px;
+  padding-left: 26px !important;
 }
 
 /* LINE ITEMS */

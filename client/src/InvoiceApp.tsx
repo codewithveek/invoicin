@@ -8,15 +8,15 @@ import {
 } from "react-router-dom";
 import { useApp } from "./context/AppContext";
 import { isOverdue } from "./utils";
-import Toast from "./components/Toast";
-import Icon from "./components/Icon";
-import Dashboard from "./components/Dashboard";
-import InvoiceList from "./components/InvoiceList";
-import CreateInvoice from "./components/CreateInvoice";
-import InvoiceDetail from "./components/InvoiceDetail";
-import ClientInvoiceView from "./components/ClientInvoiceView";
-import ClientsPage from "./components/ClientsPage";
-import SettingsPage from "./components/SettingsPage";
+import Toast from "./components/shared/Toast";
+import Icon from "./components/shared/Icon";
+import Dashboard from "./components/dashboard/index";
+import InvoiceList from "./components/invoices/InvoiceList";
+import CreateInvoice from "./components/invoices/CreateInvoice";
+import InvoiceDetail from "./components/invoices/InvoiceDetail";
+import ClientInvoiceView from "./components/public/ClientInvoiceView";
+import ClientsPage from "./components/clients/ClientsPage";
+import SettingsPage from "./components/settings";
 
 function AppShell() {
   const navigate = useNavigate();
