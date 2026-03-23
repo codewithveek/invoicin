@@ -51,8 +51,9 @@ export default function Dashboard() {
       <div
         className="two-col"
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 300px",
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
           gap: 18,
           alignItems: "start",
         }}

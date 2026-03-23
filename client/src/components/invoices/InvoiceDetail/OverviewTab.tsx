@@ -37,9 +37,22 @@ export default function OverviewTab({
   return (
     <div
       className="two-col"
-      style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 18 }}
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 18,
+      }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+          flex: 1,
+          minWidth: 280,
+        }}
+      >
         {/* Amount card */}
         <div className="card">
           <div
@@ -297,7 +310,13 @@ export default function OverviewTab({
       </div>
 
       {/* Sidebar */}
-      <div>
+      <div
+        style={
+          {
+            // flexGrow: 1,
+          }
+        }
+      >
         <div className="card mb3">
           <div className="card-ttl">Share</div>
           <div className="lbox mb3">
