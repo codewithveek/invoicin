@@ -5,10 +5,12 @@ import RecentInvoicesTable from "./RecentInvoicesTable";
 import ActivityFeed from "./ActivityFeed";
 import { isOverdue } from "../../utils";
 import { useInvoices } from "../../hooks/useInvoices";
+import { useApp } from "../../context/AppContext";
 import type { AppInvoice } from "../../types";
 
 export default function Dashboard() {
   const { invoices } = useInvoices();
+  const { user } = useApp();
   const navigate = useNavigate();
 
   const onNew = () => navigate("/invoices/new");
@@ -26,7 +28,7 @@ export default function Dashboard() {
       <div className="pg-hd">
         <div>
           <div className="pg-ttl">Dashboard</div>
-          <div className="pg-sub">Welcome back, Lucky</div>
+          <div className="pg-sub">Welcome back, {user?.name?.split(" ")[0] ?? "there"}</div>
         </div>
         <button className="btn bp" onClick={onNew}>
           <Icon n="plus" s={14} c="#fff" />

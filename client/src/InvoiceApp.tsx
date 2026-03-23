@@ -17,11 +17,13 @@ import InvoiceDetail from "./components/invoices/InvoiceDetail";
 import ClientInvoiceView from "./components/public/ClientInvoiceView";
 import ClientsPage from "./components/clients/ClientsPage";
 import SettingsPage from "./components/settings";
+import LoginPage from "./components/auth/LoginPage";
+import OnboardingPage from "./components/auth/OnboardingPage";
 
 function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { invoices, toastMsg, clearToast } = useApp();
+  const { invoices, toastMsg, clearToast, user, signOut } = useApp();
   const [sbOpen, setSbOpen] = useState(false);
 
   const overdue = invoices.filter(isOverdue).length;
@@ -165,11 +167,27 @@ function AppShell() {
             )}
           </nav>
           <div className="sb-user">
-            <div className="av">LE</div>
-            <div style={{ overflow: "hidden", flex: 1 }}>
-              <div className="av-name">Lucky Eze</div>
-              <div className="av-plan">DevCraft Studio</div>
+            <div className="av">
+              {(user?.name ?? "U").charAt(0).toUpperCase()}
             </div>
+            <div style={{ overflow: "hidden", flex: 1 }}>
+              <div className="av-name">{user?.name ?? "User"}</div>
+              <div className="av-plan">
+                {user?.businessName ?? user?.email ?? ""}
+              </div>
+            </div>
+            <button
+              onClick={signOut}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 4,
+              }}
+              title="Sign out"
+            >
+              <Icon n="close" s={14} c="var(--tx3)" />
+            </button>
           </div>
         </div>
 
@@ -205,8 +223,29 @@ function AppShell() {
 }
 
 export default function InvoiceApp() {
+  const { authLoading } = useApp();
+
+  if (authLoading) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: "var(--fn)",
+          color: "var(--tx3)",
+        }}
+      >
+        Loading…
+      </div>
+    );
+  }
+
   return (
     <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/onboarding" element={<OnboardingPage />} />
       <Route element={<AppShell />}>
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />

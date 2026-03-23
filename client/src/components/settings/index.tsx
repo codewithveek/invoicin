@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useTemplateMutations } from "../../hooks/useTemplates";
+import { useApp } from "../../context/AppContext";
+import { userApi } from "../../api/user.api";
 import ProfileTab from "./ProfileTab";
 import TemplatesTab from "./TemplatesTab";
 import NotificationsTab from "./NotificationsTab";
@@ -15,18 +16,36 @@ const TABS = [
 type TabKey = (typeof TABS)[number][0];
 
 export default function SettingsPage() {
-  const { showToast } = useTemplateMutations();
+  const { user, setUser, showToast } = useApp();
   const [activeTab, setActiveTab] = useState<TabKey>("profile");
   const [profile, setProfile] = useState({
-    name: "Lucky Eze",
-    business: "DevCraft Studio",
-    email: "lucky@devcraft.ng",
-    phone: "",
-    address: "",
-    logo: "",
-    defaultCurrency: "USD",
-    homeCurrency: "NGN",
+    name: user?.name ?? "",
+    business: user?.businessName ?? "",
+    email: user?.email ?? "",
+    phone: user?.phone ?? "",
+    address: user?.address ?? "",
+    logo: user?.logoUrl ?? "",
+    defaultCurrency: user?.defaultCurrency ?? "USD",
+    homeCurrency: user?.homeCurrency ?? "",
   });
+
+  async function handleSave() {
+    try {
+      const updated = await userApi.updateProfile({
+        name: profile.name,
+        businessName: profile.business,
+        phone: profile.phone,
+        address: profile.address,
+        logoUrl: profile.logo,
+        defaultCurrency: profile.defaultCurrency,
+        homeCurrency: profile.homeCurrency || undefined,
+      });
+      setUser(updated);
+      showToast("Profile saved");
+    } catch {
+      showToast("Failed to save profile");
+    }
+  }
 
   return (
     <div className="pg fade">
@@ -53,7 +72,7 @@ export default function SettingsPage() {
         <ProfileTab
           profile={profile}
           onChange={(patch) => setProfile((p) => ({ ...p, ...patch }))}
-          onSave={() => showToast("Profile saved")}
+          onSave={handleSave}
         />
       )}
       {activeTab === "templates" && <TemplatesTab />}

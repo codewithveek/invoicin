@@ -7,6 +7,8 @@ import {
   type RecordPaymentInput,
   type UpdateInvoiceInput,
 } from "../services/invoice.service";
+import { generateInvoicePDF } from "../pdf";
+import { userRepository } from "../repositories/user.repository";
 
 export const invoiceController = {
   async list(c: Context<AppEnv>) {
@@ -55,5 +57,48 @@ export const invoiceController = {
       input
     );
     return c.json({ success: true, ...result });
+  },
+
+  async downloadPdf(c: Context<AppEnv>) {
+    const inv = await invoiceService.get(
+      c.req.param("id") as string,
+      c.get("userId")
+    );
+    const user = await userRepository.findById(c.get("userId"));
+    const buffer = await generateInvoicePDF({
+      invoice: {
+        id: inv.id,
+        type: inv.type as string,
+        currency: inv.currency,
+        clientName: inv.clientName,
+        clientEmail: inv.clientEmail ?? undefined,
+        clientAddress: inv.clientAddress ?? undefined,
+        items: inv.items as { desc: string; qty: number; price: number }[],
+        taxType: inv.taxType ?? undefined,
+        taxRate: inv.taxRate != null ? Number(inv.taxRate) : undefined,
+        taxAmount: inv.taxAmount != null ? Number(inv.taxAmount) : undefined,
+        deposit: inv.deposit != null ? Number(inv.deposit) : undefined,
+        total: Number(inv.total),
+        dueDate: inv.dueDate
+          ? new Date(inv.dueDate).toISOString().split("T")[0]
+          : undefined,
+        terms: inv.terms ?? undefined,
+        notes: inv.notes ?? undefined,
+        issueDate: new Date(inv.issueDate).toISOString().split("T")[0],
+        status: inv.status as string,
+      },
+      freelancer: {
+        name: user?.name ?? "",
+        businessName: user?.businessName ?? undefined,
+        email: user?.email ?? "",
+        address: user?.address ?? undefined,
+      },
+    });
+    c.header("Content-Type", "application/pdf");
+    c.header(
+      "Content-Disposition",
+      `attachment; filename="invoice-${inv.id}.pdf"`
+    );
+    return c.body(buffer);
   },
 };

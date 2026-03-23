@@ -5,10 +5,10 @@ import {
   TAX_TYPES,
   PAYMENT_TERMS_PRESETS,
   INVOICE_TYPES,
-  USER,
 } from "../../../constants";
 import { currencySymbol, fmt, fmtHome, calcTotal } from "../../../utils";
 import { useRate } from "../../../hooks/useRates";
+import { useApp } from "../../../context/AppContext";
 import type { InvoiceItem, InvoiceType } from "../../../types";
 
 interface FormState {
@@ -67,7 +67,9 @@ export default function FormStep({
   );
   const S2 = currencySymbol(form.currency);
   const canNext = form.clientName && items.some((i) => i.desc && i.price);
-  const rate = useRate(form.currency, USER.homeCurrency);
+  const { user } = useApp();
+  const homeCurrency = user?.homeCurrency ?? "USD";
+  const rate = useRate(form.currency, homeCurrency);
 
   return (
     <div
@@ -508,7 +510,7 @@ export default function FormStep({
           <div style={{ fontSize: 11, color: "var(--tx3)", marginBottom: 12 }}>
             {CURRENCY_NAMES[form.currency]}
           </div>
-          {total > 0 && form.currency !== USER.homeCurrency && (
+          {total > 0 && form.currency !== homeCurrency && (
             <div
               style={{
                 padding: "9px 12px",
@@ -525,7 +527,7 @@ export default function FormStep({
                 }}
               >
                 <span style={{ color: "var(--tx3)" }}>
-                  Est. {USER.homeCurrency}
+                  Est. {homeCurrency}
                 </span>
                 <span
                   style={{
@@ -534,12 +536,12 @@ export default function FormStep({
                     color: "var(--gdk)",
                   }}
                 >
-                  {currencySymbol(USER.homeCurrency)}
+                  {currencySymbol(homeCurrency)}
                   {fmtHome(total * rate)}
                 </span>
               </div>
               <div style={{ fontSize: 10, color: "var(--tx3)" }}>
-                at approx. {currencySymbol(USER.homeCurrency)}
+                at approx. {currencySymbol(homeCurrency)}
                 {fmt(rate, 0)}/{form.currency}
               </div>
             </div>

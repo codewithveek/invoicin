@@ -1,107 +1,165 @@
 import { useState } from "react";
 import Icon from "../shared/Icon";
 import { useTemplates, useTemplateMutations } from "../../hooks/useTemplates";
+import type { AppTemplate } from "../../types";
+
+function TemplateModal({
+  initial,
+  onSave,
+  onClose,
+  title,
+}: {
+  initial?: AppTemplate;
+  onSave: (data: Omit<AppTemplate, "id">) => Promise<void>;
+  onClose: () => void;
+  title: string;
+}) {
+  const [form, setForm] = useState({
+    name: initial?.name ?? "",
+    items: initial?.items.length
+      ? initial.items.map((i) => ({
+          desc: i.desc,
+          qty: i.qty,
+          price: i.price,
+        }))
+      : [{ desc: "", qty: 1, price: "" as string | number }],
+  });
+  const [saving, setSaving] = useState(false);
+
+  async function submit() {
+    if (!form.name) return;
+    setSaving(true);
+    try {
+      await onSave(form);
+      onClose();
+    } catch {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="modal-bg" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-ttl">{title}</div>
+        <div className="modal-sub">
+          Save a set of line items you use frequently
+        </div>
+        <div className="fg mb4">
+          <label>Template name</label>
+          <input
+            placeholder="Web Development Package"
+            value={form.name}
+            onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+          />
+        </div>
+        {form.items.map((it, idx) => (
+          <div key={idx} className="fgrid mb2">
+            <div className="fg">
+              <label>Description</label>
+              <input
+                placeholder="Service"
+                value={it.desc}
+                onChange={(e) =>
+                  setForm((p) => ({
+                    ...p,
+                    items: p.items.map((x, i) =>
+                      i === idx ? { ...x, desc: e.target.value } : x
+                    ),
+                  }))
+                }
+              />
+            </div>
+            <div className="fg">
+              <label>Qty</label>
+              <input
+                type="number"
+                min="1"
+                value={it.qty}
+                onChange={(e) =>
+                  setForm((p) => ({
+                    ...p,
+                    items: p.items.map((x, i) =>
+                      i === idx ? { ...x, qty: Number(e.target.value) } : x
+                    ),
+                  }))
+                }
+              />
+            </div>
+          </div>
+        ))}
+        <button
+          className="btn bg btn-sm mb4"
+          onClick={() =>
+            setForm((p) => ({
+              ...p,
+              items: [
+                ...p.items,
+                { desc: "", qty: 1, price: "" as string | number },
+              ],
+            }))
+          }
+        >
+          <Icon n="plus" s={12} /> Add item
+        </button>
+        <div className="row">
+          <button
+            className="btn bp btn-full"
+            onClick={submit}
+            disabled={!form.name || saving}
+          >
+            <Icon n="check" s={13} c="#fff" />{" "}
+            {saving ? "Saving…" : initial ? "Save Changes" : "Save Template"}
+          </button>
+          <button className="btn bs" onClick={onClose}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function TemplatesTab() {
   const { templates } = useTemplates();
-  const { addTemplate, deleteTemplate } = useTemplateMutations();
-  const [showAddTemplate, setShowAddTemplate] = useState(false);
-  const [tplForm, setTplForm] = useState({
-    name: "",
-    items: [{ desc: "", qty: 1, price: "" }],
-  });
+  const { addTemplate, updateTemplate, deleteTemplate, showToast } =
+    useTemplateMutations();
+  const [showAdd, setShowAdd] = useState(false);
+  const [editing, setEditing] = useState<AppTemplate | null>(null);
 
-  function handleAdd() {
-    if (!tplForm.name) return;
-    addTemplate({ id: "t" + Date.now(), ...tplForm });
-    setTplForm({ name: "", items: [{ desc: "", qty: 1, price: "" }] });
-    setShowAddTemplate(false);
+  async function handleAdd(data: Omit<AppTemplate, "id">) {
+    await addTemplate(data);
+    showToast("Template created");
+  }
+
+  async function handleEdit(data: Omit<AppTemplate, "id">) {
+    if (!editing) return;
+    await updateTemplate(editing.id, data);
+    showToast("Template updated");
+    setEditing(null);
+  }
+
+  async function handleDelete(id: string) {
+    await deleteTemplate(id);
+    showToast("Template deleted");
   }
 
   return (
     <div>
-      {showAddTemplate && (
-        <div className="modal-bg" onClick={() => setShowAddTemplate(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-ttl">New Template</div>
-            <div className="modal-sub">
-              Save a set of line items you use frequently
-            </div>
-            <div className="fg mb4">
-              <label>Template name</label>
-              <input
-                placeholder="Web Development Package"
-                value={tplForm.name}
-                onChange={(e) =>
-                  setTplForm((p) => ({ ...p, name: e.target.value }))
-                }
-              />
-            </div>
-            {tplForm.items.map((it, idx) => (
-              <div key={idx} className="fgrid mb2">
-                <div className="fg">
-                  <label>Description</label>
-                  <input
-                    placeholder="Service"
-                    value={it.desc}
-                    onChange={(e) =>
-                      setTplForm((p) => ({
-                        ...p,
-                        items: p.items.map((x, i) =>
-                          i === idx ? { ...x, desc: e.target.value } : x
-                        ),
-                      }))
-                    }
-                  />
-                </div>
-                <div className="fg">
-                  <label>Qty</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={it.qty}
-                    onChange={(e) =>
-                      setTplForm((p) => ({
-                        ...p,
-                        items: p.items.map((x, i) =>
-                          i === idx ? { ...x, qty: Number(e.target.value) } : x
-                        ),
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-            ))}
-            <button
-              className="btn bg btn-sm mb4"
-              onClick={() =>
-                setTplForm((p) => ({
-                  ...p,
-                  items: [...p.items, { desc: "", qty: 1, price: "" }],
-                }))
-              }
-            >
-              <Icon n="plus" s={12} /> Add item
-            </button>
-            <div className="row">
-              <button
-                className="btn bp btn-full"
-                onClick={handleAdd}
-                disabled={!tplForm.name}
-              >
-                <Icon n="check" s={13} c="#fff" /> Save Template
-              </button>
-              <button
-                className="btn bs"
-                onClick={() => setShowAddTemplate(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+      {showAdd && (
+        <TemplateModal
+          onSave={handleAdd}
+          onClose={() => setShowAdd(false)}
+          title="New Template"
+        />
       )}
-
+      {editing && (
+        <TemplateModal
+          initial={editing}
+          onSave={handleEdit}
+          onClose={() => setEditing(null)}
+          title="Edit Template"
+        />
+      )}
       <div
         style={{
           display: "flex",
@@ -109,10 +167,7 @@ export default function TemplatesTab() {
           marginBottom: 16,
         }}
       >
-        <button
-          className="btn bp btn-sm"
-          onClick={() => setShowAddTemplate(true)}
-        >
+        <button className="btn bp btn-sm" onClick={() => setShowAdd(true)}>
           <Icon n="plus" s={13} c="#fff" /> New Template
         </button>
       </div>
@@ -141,12 +196,17 @@ export default function TemplatesTab() {
                   .join(", ")}
               </div>
             </div>
-            <button
-              className="btn bd btn-sm"
-              onClick={() => deleteTemplate(t.id)}
-            >
-              <Icon n="trash" s={12} /> Delete
-            </button>
+            <div style={{ display: "flex", gap: 6 }}>
+              <button className="btn bg btn-sm" onClick={() => setEditing(t)}>
+                <Icon n="settings" s={12} /> Edit
+              </button>
+              <button
+                className="btn bd btn-sm"
+                onClick={() => handleDelete(t.id)}
+              >
+                <Icon n="trash" s={12} /> Delete
+              </button>
+            </div>
           </div>
         ))}
         {templates.length === 0 && (

@@ -24,4 +24,29 @@ export const templateRepository = {
         and(eq(invoiceTemplates.id, id), eq(invoiceTemplates.userId, userId))
       );
   },
+
+  async update(
+    id: string,
+    userId: string,
+    data: Partial<
+      Pick<InvoiceTemplate, "name" | "items" | "currency" | "terms" | "notes">
+    >
+  ): Promise<void> {
+    await db
+      .update(invoiceTemplates)
+      .set(data)
+      .where(
+        and(eq(invoiceTemplates.id, id), eq(invoiceTemplates.userId, userId))
+      );
+  },
+
+  async findById(id: string, userId: string): Promise<InvoiceTemplate | null> {
+    const [row] = await db
+      .select()
+      .from(invoiceTemplates)
+      .where(
+        and(eq(invoiceTemplates.id, id), eq(invoiceTemplates.userId, userId))
+      );
+    return row ?? null;
+  },
 };

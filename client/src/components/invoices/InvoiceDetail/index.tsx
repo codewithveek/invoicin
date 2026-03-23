@@ -8,15 +8,24 @@ import ShareModal from "./ShareModal";
 import MarkPaidModal from "./MarkPaidModal";
 import OverviewTab from "./OverviewTab";
 import ActivityTab from "./ActivityTab";
-import { isOverdue, dateStr, ts, wait } from "../../../utils";
-import { getRate, USER } from "../../../constants";
+import { isOverdue, dateStr } from "../../../utils";
 import { useInvoice, useInvoiceMutations } from "../../../hooks/useInvoices";
+import { useApp } from "../../../context/AppContext";
 import type { AppInvoice } from "../../../types";
 
 export default function InvoiceDetail() {
   const { id } = useParams<{ id: string }>();
   const invoice = useInvoice(id!);
-  const { syncInvoice, showToast: toast } = useInvoiceMutations();
+  const {
+    syncInvoice,
+    sendInvoice,
+    remindInvoice,
+    updateInvoice,
+    recordPayment,
+    downloadPdf,
+    showToast: toast,
+  } = useInvoiceMutations();
+  const { user } = useApp();
   const navigate = useNavigate();
 
   const [inv, setInv] = useState<AppInvoice>(invoice!);
@@ -44,49 +53,61 @@ export default function InvoiceDetail() {
 
   async function sendEmail() {
     setSending(true);
-    await wait(1200);
-    update({
-      ...inv,
-      status: "sent",
-      events: [...inv.events, { type: "sent", ts: ts() }],
-    });
-    setSendModal(false);
-    setSending(false);
-    toast("Invoice sent to " + inv.client.email);
+    try {
+      await sendInvoice(inv.id);
+      update({ ...inv, status: "sent" });
+      setSendModal(false);
+      toast("Invoice sent to " + inv.client.email);
+    } catch {
+      toast("Failed to send invoice");
+    } finally {
+      setSending(false);
+    }
   }
 
   async function sendReminder() {
     setReminderBusy(true);
-    await wait(900);
-    update({
-      ...inv,
-      events: [...inv.events, { type: "sent", ts: ts() + " (reminder)" }],
-    });
-    setReminderBusy(false);
-    toast("Reminder sent");
+    try {
+      await remindInvoice(inv.id);
+      toast("Reminder sent");
+    } catch {
+      toast("Failed to send reminder");
+    } finally {
+      setReminderBusy(false);
+    }
   }
 
-  function markPaid() {
-    const rate = getRate(inv.currency, USER.homeCurrency);
-    update({
-      ...inv,
-      status: "paid",
-      paid: new Date().toISOString().split("T")[0],
-      homeTotal: Math.round(inv.total * rate),
-      homeCurrency: USER.homeCurrency,
-      events: [...inv.events, { type: "paid", ts: ts() }],
-    });
-    setMarkPaidModal(false);
-    toast("Invoice marked as paid");
+  async function markPaid() {
+    try {
+      await recordPayment(inv.id, {
+        amount: inv.total,
+        currency: inv.currency,
+        paidDate: new Date().toISOString().split("T")[0],
+      });
+      setMarkPaidModal(false);
+      toast("Invoice marked as paid");
+    } catch {
+      toast("Failed to mark as paid");
+    }
   }
 
-  function cancel() {
-    update({
-      ...inv,
-      status: "cancelled",
-      events: [...inv.events, { type: "cancelled", ts: ts() }],
-    });
-    toast("Invoice cancelled");
+  async function cancel() {
+    try {
+      await updateInvoice(inv.id, { status: "cancelled" });
+      update({ ...inv, status: "cancelled" });
+      toast("Invoice cancelled");
+    } catch {
+      toast("Failed to cancel invoice");
+    }
+  }
+
+  async function handleDownloadPdf() {
+    try {
+      await downloadPdf(inv.id);
+      toast("PDF downloaded");
+    } catch {
+      toast("Failed to download PDF");
+    }
   }
 
   function copyLink() {
@@ -169,7 +190,7 @@ export default function InvoiceDetail() {
           </button>
           <button
             className="btn bg btn-sm"
-            onClick={() => toast("Downloading PDF...")}
+            onClick={handleDownloadPdf}
           >
             <Icon n="download" s={13} /> PDF
           </button>
@@ -225,7 +246,7 @@ export default function InvoiceDetail() {
         >
           <InvoicePreviewCard
             inv={inv}
-            freelancer={{ name: "Lucky Eze", business: "DevCraft Studio" }}
+            freelancer={{ name: user?.name ?? "User", business: user?.businessName ?? "" }}
             homeCurrency={inv.currency}
           />
           <div
@@ -238,7 +259,7 @@ export default function InvoiceDetail() {
           >
             <button
               className="btn bp btn-full"
-              onClick={() => toast("Downloading PDF...")}
+              onClick={handleDownloadPdf}
             >
               <Icon n="download" s={14} c="#fff" /> Download PDF
             </button>

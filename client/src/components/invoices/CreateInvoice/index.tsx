@@ -4,12 +4,12 @@ import Icon from "../../shared/Icon";
 import FormStep from "./FormStep";
 import PreviewStep from "./PreviewStep";
 import { ClientPickerModal, TemplatePickerModal } from "./PickerModals";
-import { wait, uid, linkId, ts, calcTotal } from "../../../utils";
+import { calcTotal } from "../../../utils";
+import { invoicesApi } from "../../../api/invoices.api";
 import { useInvoiceMutations } from "../../../hooks/useInvoices";
 import { useClients } from "../../../hooks/useClients";
 import { useTemplates } from "../../../hooks/useTemplates";
 import type {
-  AppInvoice,
   AppClient,
   AppTemplate,
   InvoiceItem,
@@ -67,36 +67,38 @@ export default function CreateInvoice() {
 
   async function generate() {
     setBusy(true);
-    await wait(800);
-    const inv: AppInvoice = {
-      id: uid(),
-      linkId: linkId(),
-      client: {
-        name: form.clientName,
-        email: form.clientEmail,
-        address: form.clientAddress,
-      },
-      type: form.type,
-      currency: form.currency,
-      items: items.filter((i) => i.desc && i.price),
-      tax: taxEnabled ? tax : null,
-      taxAmt: taxEnabled ? taxAmt : 0,
-      deposit: depositEnabled ? form.deposit : 0,
-      total,
-      status: "draft",
-      created: new Date().toISOString().split("T")[0],
-      dueDate: form.dueDate,
-      paid: null,
-      notes: form.notes,
-      terms: form.terms,
-      homeTotal: null,
-      homeCurrency: null,
-      events: [{ type: "created", ts: ts() }],
-    };
-    setBusy(false);
-    createInvoice(inv);
-    showToast("Invoice created");
-    navigate("/invoices/" + inv.id);
+    try {
+      const cleanedItems = items
+        .filter((i) => i.desc && i.price)
+        .map((i) => ({
+          desc: i.desc,
+          qty: i.qty,
+          price: Number(i.price),
+        }));
+      const inv = await invoicesApi.create({
+        type: form.type,
+        clientName: form.clientName,
+        clientEmail: form.clientEmail || undefined,
+        clientAddress: form.clientAddress || undefined,
+        currency: form.currency,
+        items: cleanedItems,
+        taxType: taxEnabled && tax ? tax.type : undefined,
+        taxRate: taxEnabled && tax ? tax.rate : undefined,
+        taxAmount: taxEnabled ? taxAmt : undefined,
+        deposit: depositEnabled ? form.deposit : undefined,
+        total,
+        dueDate: form.dueDate || undefined,
+        terms: form.terms || undefined,
+        notes: form.notes || undefined,
+      });
+      createInvoice(inv);
+      showToast("Invoice created");
+      navigate("/invoices/" + inv.id);
+    } catch {
+      showToast("Failed to create invoice");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

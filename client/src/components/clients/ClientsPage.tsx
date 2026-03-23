@@ -5,30 +5,40 @@ import { useClients, useClientMutations } from "../../hooks/useClients";
 import { useInvoices } from "../../hooks/useInvoices";
 import type { AppClient } from "../../types";
 
-function AddClientModal({
-  onAdd,
+function ClientModal({
+  initial,
+  onSave,
   onClose,
+  title,
 }: {
-  onAdd: (client: AppClient) => void;
+  initial?: AppClient;
+  onSave: (data: Omit<AppClient, "id">) => void;
   onClose: () => void;
+  title: string;
 }) {
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    address: "",
-    phone: "",
+    name: initial?.name ?? "",
+    email: initial?.email ?? "",
+    address: initial?.address ?? "",
+    phone: initial?.phone ?? "",
   });
+  const [saving, setSaving] = useState(false);
 
-  function submit() {
+  async function submit() {
     if (!form.name || !form.email) return;
-    onAdd({ id: "c" + Date.now(), ...form });
-    onClose();
+    setSaving(true);
+    try {
+      await onSave(form);
+      onClose();
+    } catch {
+      setSaving(false);
+    }
   }
 
   return (
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-ttl">Add Client</div>
+        <div className="modal-ttl">{title}</div>
         <div className="modal-sub">Save a client to your address book</div>
         <div className="fgrid mb4">
           <div className="fg full">
@@ -75,10 +85,10 @@ function AddClientModal({
           <button
             className="btn bp btn-full"
             onClick={submit}
-            disabled={!form.name || !form.email}
+            disabled={!form.name || !form.email || saving}
           >
-            <Icon n="plus" s={13} c="#fff" />
-            Add Client
+            <Icon n={initial ? "check" : "plus"} s={13} c="#fff" />
+            {saving ? "Saving…" : initial ? "Save Changes" : "Add Client"}
           </button>
           <button className="btn bs" onClick={onClose}>
             Cancel
@@ -93,10 +103,14 @@ function ClientCard({
   client,
   invoiceCount,
   totalEarned,
+  onEdit,
+  onDelete,
 }: {
   client: AppClient;
   invoiceCount: number;
   totalEarned: number;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
   return (
     <div
@@ -128,7 +142,7 @@ function ClientCard({
           </div>
         )}
       </div>
-      <div style={{ textAlign: "right" }}>
+      <div style={{ textAlign: "right", marginRight: 8 }}>
         <div
           style={{
             fontFamily: "var(--mo)",
@@ -144,6 +158,22 @@ function ClientCard({
           {invoiceCount} invoice{invoiceCount !== 1 ? "s" : ""}
         </div>
       </div>
+      <div style={{ display: "flex", gap: 4 }}>
+        <button
+          className="btn bs"
+          style={{ padding: "4px 8px" }}
+          onClick={onEdit}
+        >
+          <Icon n="settings" s={13} c="var(--tx2)" />
+        </button>
+        <button
+          className="btn bs"
+          style={{ padding: "4px 8px" }}
+          onClick={onDelete}
+        >
+          <Icon n="close" s={13} c="var(--rd)" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -151,18 +181,45 @@ function ClientCard({
 export default function ClientsPage() {
   const { clients } = useClients();
   const { invoices } = useInvoices();
-  const { addClient, showToast } = useClientMutations();
+  const { addClient, updateClient, deleteClient, showToast } =
+    useClientMutations();
   const [showAdd, setShowAdd] = useState(false);
+  const [editing, setEditing] = useState<AppClient | null>(null);
 
-  function handleAdd(client: AppClient) {
-    addClient(client);
+  async function handleAdd(data: Omit<AppClient, "id">) {
+    await addClient(data);
     showToast("Client added");
+  }
+
+  async function handleEdit(data: Omit<AppClient, "id">) {
+    if (!editing) return;
+    await updateClient(editing.id, data);
+    showToast("Client updated");
+    setEditing(null);
+  }
+
+  async function handleDelete(client: AppClient) {
+    if (!confirm(`Delete ${client.name}?`)) return;
+    await deleteClient(client.id);
+    showToast("Client deleted");
   }
 
   return (
     <div className="pg fade">
       {showAdd && (
-        <AddClientModal onAdd={handleAdd} onClose={() => setShowAdd(false)} />
+        <ClientModal
+          onSave={handleAdd}
+          onClose={() => setShowAdd(false)}
+          title="Add Client"
+        />
+      )}
+      {editing && (
+        <ClientModal
+          initial={editing}
+          onSave={handleEdit}
+          onClose={() => setEditing(null)}
+          title="Edit Client"
+        />
       )}
       <div className="pg-hd">
         <div>
@@ -186,6 +243,8 @@ export default function ClientsPage() {
               client={c}
               invoiceCount={cInvs.length}
               totalEarned={cTotal}
+              onEdit={() => setEditing(c)}
+              onDelete={() => handleDelete(c)}
             />
           );
         })}

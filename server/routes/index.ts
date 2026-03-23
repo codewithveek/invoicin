@@ -12,6 +12,7 @@ import { invoicesPublicRouter } from "./invoicesPublic";
 import { clientsRouter } from "./clients";
 import { templatesRouter } from "./templates";
 import { internalRouter } from "./internal";
+import { userRouter } from "./user";
 
 // Fallback rates (all vs USD) in case FX_API_KEY is absent
 const USD_BASE: Record<string, number> = {
@@ -84,6 +85,7 @@ invoiceRouter.route("/i", invoicesPublicRouter);
 invoiceRouter.route("/clients", clientsRouter);
 invoiceRouter.route("/templates", templatesRouter);
 invoiceRouter.route("/internal", internalRouter);
+invoiceRouter.route("/user", userRouter);
 
 export { invoiceRouter };
 export default invoiceRouter;

@@ -9,6 +9,14 @@ export interface CreateTemplateInput {
   notes?: string;
 }
 
+export interface UpdateTemplateInput {
+  name?: string;
+  items?: unknown[];
+  currency?: string;
+  terms?: string;
+  notes?: string;
+}
+
 export const templateService = {
   async list(userId: string) {
     return templateRepository.findAllByUser(userId);
@@ -26,6 +34,11 @@ export const templateService = {
     };
     await templateRepository.create(tpl);
     return tpl;
+  },
+
+  async update(id: string, userId: string, input: UpdateTemplateInput) {
+    await templateRepository.update(id, userId, input);
+    return templateRepository.findById(id, userId);
   },
 
   async remove(id: string, userId: string) {

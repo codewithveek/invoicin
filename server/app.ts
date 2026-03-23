@@ -4,11 +4,27 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import invoiceRouter from "./routes";
 import { HttpError } from "./lib/errors";
+import { auth } from "./auth";
 
 const app = new Hono();
 
-app.use("*", cors());
+const clientUrl = process.env.CLIENT_URL ?? "http://localhost:5173";
+
+app.use(
+  "*",
+  cors({
+    origin: clientUrl,
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
+
 app.get("/", (c) => c.json({ message: "Welcome to Invoicin API" }));
+
+// Mount better-auth handler — handles /api/auth/*
+app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
+
 app.route("/api", invoiceRouter);
 
 app.onError((err, c) => {
@@ -22,7 +38,7 @@ app.onError((err, c) => {
   return c.json({ error: "Internal server error" }, 500);
 });
 
-const port = Number(process.env.PORT) || 3000;
+const port = Number(process.env.PORT) || 3300;
 
 serve({ fetch: app.fetch, port }, (info) => {
   console.log(`Server running on http://localhost:${info.port}`);

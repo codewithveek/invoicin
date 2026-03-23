@@ -1,19 +1,19 @@
 import Icon from "./Icon";
 import { currencySymbol, fmt, fmtHome, dateStr, calcTotal } from "../../utils";
-import { getRate, TAX_TYPES, USER } from "../../constants";
+import { getRate, TAX_TYPES } from "../../constants";
 import type { AppInvoice } from "../../types";
 
 interface InvoicePreviewCardProps {
   inv: AppInvoice;
   freelancer?: { name?: string; business?: string };
-  /** Freelancer's home currency; defaults to USER.homeCurrency */
+  /** Freelancer's home currency */
   homeCurrency?: string;
 }
 
 export default function InvoicePreviewCard({
   inv,
   freelancer,
-  homeCurrency = USER.homeCurrency,
+  homeCurrency = "USD",
 }: InvoicePreviewCardProps) {
   const S2 = currencySymbol(inv.currency);
   const { taxAmt, total } = calcTotal(inv.items, inv.tax, inv.deposit);

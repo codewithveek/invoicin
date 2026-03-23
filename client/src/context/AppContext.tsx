@@ -1,8 +1,22 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
-import { DEMO_CLIENTS, DEMO_TEMPLATES, DEMO_INVOICES } from "../data";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { authClient } from "../lib/auth-client";
+import { invoicesApi } from "../api/invoices.api";
+import { clientsApi } from "../api/clients.api";
+import { templatesApi } from "../api/templates.api";
 import type { AppInvoice, AppClient, AppTemplate } from "../types";
+import type { UserProfile } from "../api/user.api";
 
 interface AppContextType {
+  user: UserProfile | null;
+  setUser: React.Dispatch<React.SetStateAction<UserProfile | null>>;
   invoices: AppInvoice[];
   setInvoices: React.Dispatch<React.SetStateAction<AppInvoice[]>>;
   clients: AppClient[];
@@ -12,15 +26,109 @@ interface AppContextType {
   toastMsg: string | null;
   showToast: (msg: string) => void;
   clearToast: () => void;
+  refreshInvoices: () => Promise<void>;
+  refreshClients: () => Promise<void>;
+  refreshTemplates: () => Promise<void>;
+  authLoading: boolean;
+  signOut: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
 
+const PUBLIC_PATHS = ["/login", "/onboarding"];
+
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [invoices, setInvoices] = useState(DEMO_INVOICES);
-  const [clients, setClients] = useState(DEMO_CLIENTS);
-  const [templates, setTemplates] = useState(DEMO_TEMPLATES);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [invoices, setInvoices] = useState<AppInvoice[]>([]);
+  const [clients, setClients] = useState<AppClient[]>([]);
+  const [templates, setTemplates] = useState<AppTemplate[]>([]);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  const refreshInvoices = useCallback(async () => {
+    try {
+      const data = await invoicesApi.list();
+      setInvoices(data);
+    } catch {
+      /* user may not be authed yet */
+    }
+  }, []);
+
+  const refreshClients = useCallback(async () => {
+    try {
+      const data = await clientsApi.list();
+      setClients(data);
+    } catch {
+      /* user may not be authed yet */
+    }
+  }, []);
+
+  const refreshTemplates = useCallback(async () => {
+    try {
+      const data = await templatesApi.list();
+      setTemplates(data);
+    } catch {
+      /* user may not be authed yet */
+    }
+  }, []);
+
+  const signOut = useCallback(async () => {
+    await authClient.signOut();
+    setUser(null);
+    setInvoices([]);
+    setClients([]);
+    setTemplates([]);
+    navigate("/login", { replace: true });
+  }, [navigate]);
+
+  // Auth check on mount and navigation
+  useEffect(() => {
+    let cancelled = false;
+    async function check() {
+      try {
+        const { data } = await authClient.getSession();
+        if (cancelled) return;
+        if (!data?.session) {
+          setUser(null);
+          setAuthLoading(false);
+          if (!PUBLIC_PATHS.includes(location.pathname)) {
+            navigate("/login", { replace: true });
+          }
+          return;
+        }
+        const u = data.user as unknown as UserProfile;
+        setUser(u);
+        if (!u.onboarded && location.pathname !== "/onboarding") {
+          navigate("/onboarding", { replace: true });
+          setAuthLoading(false);
+          return;
+        }
+        // If on login/onboarding but already authed+onboarded, go to dashboard
+        if (u.onboarded && PUBLIC_PATHS.includes(location.pathname)) {
+          navigate("/", { replace: true });
+        }
+        // Load data
+        await Promise.all([refreshInvoices(), refreshClients(), refreshTemplates()]);
+      } catch {
+        if (!cancelled) {
+          setUser(null);
+          if (!PUBLIC_PATHS.includes(location.pathname)) {
+            navigate("/login", { replace: true });
+          }
+        }
+      } finally {
+        if (!cancelled) setAuthLoading(false);
+      }
+    }
+    check();
+    return () => {
+      cancelled = true;
+    };
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function showToast(msg: string) {
     setToastMsg(null);
@@ -34,6 +142,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider
       value={{
+        user,
+        setUser,
         invoices,
         setInvoices,
         clients,
@@ -43,6 +153,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         toastMsg,
         showToast,
         clearToast,
+        refreshInvoices,
+        refreshClients,
+        refreshTemplates,
+        authLoading,
+        signOut,
       }}
     >
       {children}

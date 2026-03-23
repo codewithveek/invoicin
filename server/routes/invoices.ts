@@ -84,3 +84,6 @@ invoicesRouter.post(
   zValidator("json", paymentSchema),
   (c) => invoiceController.recordPayment(c, c.req.valid("json"))
 );
+invoicesRouter.get("/:id/pdf", requireAuth, (c) =>
+  invoiceController.downloadPdf(c)
+);

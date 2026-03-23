@@ -19,11 +19,26 @@ const createClientSchema = z.object({
   notes: z.string().optional(),
 });
 
+const updateClientSchema = z.object({
+  name: z.string().min(1).optional(),
+  email: z.string().email().optional(),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  company: z.string().optional(),
+  notes: z.string().optional(),
+});
+
 clientsRouter.get("/", requireAuth, (c) => clientController.list(c));
 clientsRouter.post(
   "/",
   requireAuth,
   zValidator("json", createClientSchema),
   (c) => clientController.create(c, c.req.valid("json"))
+);
+clientsRouter.patch(
+  "/:id",
+  requireAuth,
+  zValidator("json", updateClientSchema),
+  (c) => clientController.update(c, c.req.valid("json"))
 );
 clientsRouter.delete("/:id", requireAuth, (c) => clientController.remove(c));

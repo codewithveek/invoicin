@@ -21,4 +21,25 @@ export const clientRepository = {
       .delete(clients)
       .where(and(eq(clients.id, id), eq(clients.userId, userId)));
   },
+
+  async update(
+    id: string,
+    userId: string,
+    data: Partial<
+      Pick<Client, "name" | "email" | "address" | "phone" | "company" | "notes">
+    >
+  ): Promise<void> {
+    await db
+      .update(clients)
+      .set(data)
+      .where(and(eq(clients.id, id), eq(clients.userId, userId)));
+  },
+
+  async findById(id: string, userId: string): Promise<Client | null> {
+    const [row] = await db
+      .select()
+      .from(clients)
+      .where(and(eq(clients.id, id), eq(clients.userId, userId)));
+    return row ?? null;
+  },
 };

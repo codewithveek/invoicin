@@ -10,6 +10,15 @@ export interface CreateClientInput {
   notes?: string;
 }
 
+export interface UpdateClientInput {
+  name?: string;
+  email?: string;
+  address?: string;
+  phone?: string;
+  company?: string;
+  notes?: string;
+}
+
 export const clientService = {
   async list(userId: string) {
     return clientRepository.findAllByUser(userId);
@@ -28,6 +37,11 @@ export const clientService = {
     };
     await clientRepository.create(client);
     return client;
+  },
+
+  async update(id: string, userId: string, input: UpdateClientInput) {
+    await clientRepository.update(id, userId, input);
+    return clientRepository.findById(id, userId);
   },
 
   async remove(id: string, userId: string) {
