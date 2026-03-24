@@ -13,25 +13,7 @@ export default function Toast({ msg, onClose }: ToastProps) {
   }, [onClose]);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: 24,
-        right: 24,
-        zIndex: 9999,
-        background: "var(--tx)",
-        color: "#fff",
-        padding: "11px 18px",
-        borderRadius: 10,
-        fontSize: 13,
-        fontWeight: 500,
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        boxShadow: "0 8px 24px rgba(0,0,0,.2)",
-        animation: "fi .2s ease",
-      }}
-    >
+    <div className="fixed bottom-6 right-6 z-[9999] bg-tx text-white px-[18px] py-[11px] rounded-[10px] text-[13px] font-medium flex items-center gap-2 shadow-[0_8px_24px_rgba(0,0,0,.2)] animate-[fi_.2s_ease]">
       <Icon n="check" s={15} c="#4ade80" />
       {msg}
     </div>

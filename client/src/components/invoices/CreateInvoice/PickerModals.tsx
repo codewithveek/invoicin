@@ -19,12 +19,10 @@ export function ClientPickerModal({
         <div className="modal-sub">Choose from your address book</div>
         {clients.map((c) => (
           <div key={c.id} className="client-item" onClick={() => onSelect(c)}>
-            <div className="av" style={{ width: 32, height: 32, fontSize: 11 }}>
-              {c.name.charAt(0)}
-            </div>
+            <div className="av w-8 h-8 text-[11px]">{c.name.charAt(0)}</div>
             <div>
-              <div style={{ fontWeight: 600, fontSize: 13 }}>{c.name}</div>
-              <div style={{ fontSize: 12, color: "var(--tx3)" }}>{c.email}</div>
+              <div className="font-semibold text-[13px] text-tx">{c.name}</div>
+              <div className="text-[12px] text-tx3">{c.email}</div>
             </div>
           </div>
         ))}
@@ -51,12 +49,12 @@ export function TemplatePickerModal({
         <div className="modal-sub">Start with a pre-filled line item set</div>
         {templates.map((t) => (
           <div key={t.id} className="client-item" onClick={() => onSelect(t)}>
-            <div className="af-icon b-gray" style={{ width: 32, height: 32 }}>
+            <div className="af-icon b-gray w-8 h-8">
               <Icon n="template" s={14} />
             </div>
             <div>
-              <div style={{ fontWeight: 600, fontSize: 13 }}>{t.name}</div>
-              <div style={{ fontSize: 12, color: "var(--tx3)" }}>
+              <div className="font-semibold text-[13px] text-tx">{t.name}</div>
+              <div className="text-[12px] text-tx3">
                 {t.items.length} line items
               </div>
             </div>

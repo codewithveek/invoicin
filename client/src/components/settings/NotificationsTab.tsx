@@ -23,48 +23,24 @@ function ToggleRow({
 }: ToggleRowProps) {
   return (
     <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        padding: "12px 0",
-        borderBottom: "1px solid var(--bd)",
-        opacity: disabled ? 0.6 : 1,
-      }}
+      className={`flex justify-between items-start py-3 border-b border-bd${
+        disabled ? " opacity-60" : ""
+      }`}
     >
       <div>
-        <div style={{ fontSize: 13, fontWeight: 500, color: "var(--tx)" }}>
-          {label}
-        </div>
-        <div style={{ fontSize: 11, color: "var(--tx3)", marginTop: 2 }}>
-          {sub}
-        </div>
+        <div className="text-[13px] font-medium text-tx">{label}</div>
+        <div className="text-[11px] text-tx3 mt-[2px]">{sub}</div>
       </div>
       <div
-        style={{
-          position: "relative",
-          width: 36,
-          height: 20,
-          background: checked ? "var(--g)" : "var(--bd2)",
-          borderRadius: 10,
-          cursor: disabled ? "not-allowed" : "pointer",
-          transition: "background .15s",
-          flexShrink: 0,
-          marginLeft: 12,
-        }}
+        className={`relative w-9 h-5 rounded-[10px] transition-colors duration-150 shrink-0 ml-3 ${
+          checked ? "bg-brand" : "bg-bd2"
+        } ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
         onClick={() => !disabled && onChange(!checked)}
       >
         <div
-          style={{
-            position: "absolute",
-            top: 2,
-            left: checked ? 16 : 2,
-            width: 16,
-            height: 16,
-            borderRadius: "50%",
-            background: "#fff",
-            transition: "left .15s",
-          }}
+          className={`absolute top-[2px] w-4 h-4 rounded-full bg-white transition-[left] duration-150 ${
+            checked ? "left-4" : "left-[2px]"
+          }`}
         />
       </div>
     </div>
@@ -138,14 +114,10 @@ export default function NotificationsTab() {
   }
 
   return (
-    <div className="card" style={{ maxWidth: 520 }}>
+    <div className="card max-w-[520px]">
       <div className="card-ttl">
         Email Notifications
-        {saving && (
-          <span style={{ fontSize: 11, color: "var(--tx3)", marginLeft: 8 }}>
-            Saving…
-          </span>
-        )}
+        {saving && <span className="text-[11px] text-tx3 ml-2">Saving…</span>}
       </div>
       {ROWS.map((row) => (
         <ToggleRow

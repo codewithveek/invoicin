@@ -25,22 +25,12 @@ export default function ActivityTab({
   const viewCount = inv.events.filter((e) => e.type === "viewed").length;
 
   return (
-    <div
-      className="two-col"
-      style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 18 }}
-    >
+    <div className="two-col grid grid-cols-[1fr_280px] gap-[18px]">
       <div>
         {/* Tracking stats */}
         <div className="card mb4">
           <div className="card-ttl">Tracking</div>
-          <div
-            style={{
-              display: "flex",
-              gap: 12,
-              marginBottom: 16,
-              flexWrap: "wrap",
-            }}
-          >
+          <div className="flex gap-3 mb-4 flex-wrap">
             {(
               [
                 ["Views", viewCount, viewCount > 0 ? "b-purple" : "b-gray"],
@@ -67,24 +57,9 @@ export default function ActivityTab({
             ).map(([l, v, c]) => (
               <div
                 key={l}
-                style={{
-                  background: "var(--sf2)",
-                  borderRadius: 8,
-                  padding: "10px 14px",
-                  flex: 1,
-                  minWidth: 80,
-                }}
+                className="bg-sf2 rounded-lg px-[14px] py-[10px] flex-1 min-w-[80px]"
               >
-                <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: "var(--tx3)",
-                    textTransform: "uppercase",
-                    letterSpacing: ".06em",
-                    marginBottom: 4,
-                  }}
-                >
+                <div className="text-[10px] font-bold text-tx3 uppercase tracking-[.06em] mb-1">
                   {l}
                 </div>
                 <span className={`badge ${c}`}>{v}</span>
@@ -92,26 +67,11 @@ export default function ActivityTab({
             ))}
           </div>
           {viewCount > 0 && (
-            <div
-              style={{
-                background: "var(--pult)",
-                border: "1px solid #c4b5fd",
-                borderRadius: 8,
-                padding: "10px 14px",
-                marginBottom: 16,
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: "var(--pu)",
-                  marginBottom: 2,
-                }}
-              >
+            <div className="bg-purple-light border border-[#c4b5fd] rounded-lg px-[14px] py-[10px] mb-4">
+              <div className="text-[12px] font-semibold text-purple mb-[2px]">
                 Client opened this invoice
               </div>
-              <div style={{ fontSize: 11, color: "var(--pu)", opacity: 0.8 }}>
+              <div className="text-[11px] text-purple opacity-80">
                 Last viewed:{" "}
                 {inv.events.filter((e) => e.type === "viewed").pop()?.ts}
               </div>
@@ -143,10 +103,7 @@ export default function ActivityTab({
                   />
                 </div>
                 <div>
-                  <div
-                    className="tl-lbl"
-                    style={{ textTransform: "capitalize" }}
-                  >
+                  <div className="tl-lbl capitalize">
                     {ev.type.replace("_", " ")}
                   </div>
                   <div className="tl-ts">{ev.ts}</div>
@@ -158,7 +115,7 @@ export default function ActivityTab({
       </div>
 
       {/* Status timeline */}
-      <div className="card" style={{ height: "fit-content" }}>
+      <div className="card h-fit">
         <div className="card-ttl">Invoice Status</div>
         <div className="timeline">
           {[
@@ -184,27 +141,16 @@ export default function ActivityTab({
                 {st.done ? (
                   <Icon n="check" s={10} c="var(--g)" />
                 ) : (
-                  <div
-                    style={{
-                      width: 5,
-                      height: 5,
-                      borderRadius: "50%",
-                      background: "var(--bd2)",
-                    }}
-                  />
+                  <div className="w-[5px] h-[5px] rounded-full bg-bd2" />
                 )}
               </div>
               <div>
                 <div
-                  className="tl-lbl"
-                  style={{
-                    color: st.done
-                      ? "var(--tx)"
-                      : st.active
-                      ? "var(--tx)"
-                      : "var(--tx3)",
-                    fontWeight: st.done || st.active ? 600 : 400,
-                  }}
+                  className={`tl-lbl ${
+                    st.done || st.active
+                      ? "text-tx font-semibold"
+                      : "text-tx3 font-normal"
+                  }`}
                 >
                   {st.label}
                 </div>

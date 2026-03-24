@@ -57,39 +57,16 @@ export default function PreviewStep({
   } as AppInvoice;
 
   return (
-    <div
-      className="two-col"
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 24,
-        alignItems: "start",
-      }}
-    >
+    <div className="two-col flex flex-wrap gap-6 items-start">
       <InvoicePreviewCard
         inv={previewInv}
         freelancer={freelancer}
         homeCurrency={form.currency}
       />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-          width: "100%",
-          maxWidth: 360,
-        }}
-      >
+      <div className="flex flex-col gap-3 w-full max-w-[360px]">
         <div className="card">
           <div className="card-ttl">Looks good?</div>
-          <p
-            style={{
-              fontSize: 13,
-              color: "var(--tx2)",
-              lineHeight: 1.6,
-              marginBottom: 16,
-            }}
-          >
+          <p className="text-[13px] text-tx2 leading-relaxed mb-4">
             Once created, you can send this invoice by email or share the link
             directly.
           </p>
@@ -109,16 +86,7 @@ export default function PreviewStep({
             )}
           </button>
         </div>
-        <div
-          style={{
-            padding: "12px 14px",
-            background: "var(--sf2)",
-            borderRadius: "var(--r)",
-            fontSize: 12,
-            color: "var(--tx2)",
-            lineHeight: 1.6,
-          }}
-        >
+        <div className="px-[14px] py-3 bg-sf2 rounded-[var(--radius)] text-[12px] text-tx2 leading-relaxed">
           <strong>After creating,</strong> the invoice starts as a Draft. You
           can then send it by email or copy the shareable link.
         </div>

@@ -23,48 +23,23 @@ export default function SendModal({
           This will send the invoice to {inv.client.email} with a link to view
           it online.
         </div>
-        <div
-          style={{
-            background: "var(--sf2)",
-            borderRadius: 8,
-            padding: "12px 14px",
-            marginBottom: 16,
-          }}
-        >
+        <div className="bg-sf2 rounded-lg px-[14px] py-3 mb-4">
           {[
             ["To", inv.client.email],
             ["Subject", `Invoice ${inv.id} from DevCraft Studio`],
             ["Amount", `${currencySymbol(inv.currency)}${fmt(inv.total)}`],
           ].map(([l, v]) => (
-            <div
-              key={l}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: 12,
-                marginBottom: 4,
-              }}
-            >
-              <span style={{ color: "var(--tx3)" }}>{l}</span>
+            <div key={l} className="flex justify-between text-[12px] mb-1">
+              <span className="text-tx3">{l}</span>
               <span
-                style={{
-                  fontWeight: 600,
-                  fontFamily: l === "Amount" ? "var(--mo)" : undefined,
-                }}
+                className={`font-semibold${l === "Amount" ? " font-mono" : ""}`}
               >
                 {v}
               </span>
             </div>
           ))}
         </div>
-        <div
-          style={{
-            fontSize: 12,
-            color: "var(--tx3)",
-            marginBottom: 16,
-            lineHeight: 1.6,
-          }}
-        >
+        <div className="text-[12px] text-tx3 mb-4 leading-relaxed">
           The email will include a "View Invoice" button that opens the invoice
           page. When the client opens it, you will be notified.
         </div>

@@ -181,14 +181,7 @@ export default function InvoiceDetail() {
 
       <div className="pg-hd">
         <div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              flexWrap: "wrap",
-            }}
-          >
+          <div className="flex items-center gap-[10px] flex-wrap">
             <div className="pg-ttl">{inv.id}</div>
             <StatusBadge status={effectiveStatus} />
             <TypeBadge type={inv.type} />
@@ -269,14 +262,7 @@ export default function InvoiceDetail() {
       )}
 
       {activeTab === "preview" && (
-        <div
-          style={{
-            display: "flex",
-            gap: 24,
-            flexWrap: "wrap",
-            alignItems: "start",
-          }}
-        >
+        <div className="flex gap-6 flex-wrap items-start">
           <InvoicePreviewCard
             inv={inv}
             freelancer={{
@@ -285,14 +271,7 @@ export default function InvoiceDetail() {
             }}
             homeCurrency={inv.currency}
           />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 10,
-              maxWidth: 260,
-            }}
-          >
+          <div className="flex flex-col gap-[10px] max-w-[260px]">
             <button
               type="button"
               className="btn bp btn-full"

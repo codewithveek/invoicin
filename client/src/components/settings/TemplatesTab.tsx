@@ -166,35 +166,21 @@ export default function TemplatesTab() {
           title="Edit Template"
         />
       )}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: 16,
-        }}
-      >
+      <div className="flex justify-end mb-4">
         <button className="btn bp btn-sm" onClick={() => setShowAdd(true)}>
           <Icon n="plus" s={13} c="#fff" /> New Template
         </button>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div className="flex flex-col gap-[10px]">
         {templates.map((t) => (
-          <div
-            key={t.id}
-            className="card"
-            style={{ display: "flex", alignItems: "center", gap: 14 }}
-          >
-            <div className="af-icon b-gray" style={{ width: 36, height: 36 }}>
+          <div key={t.id} className="card flex items-center gap-[14px]">
+            <div className="af-icon b-gray w-9 h-9">
               <Icon n="template" s={16} />
             </div>
-            <div style={{ flex: 1 }}>
-              <div
-                style={{ fontWeight: 600, fontSize: 14, color: "var(--tx)" }}
-              >
-                {t.name}
-              </div>
-              <div style={{ fontSize: 12, color: "var(--tx3)" }}>
+            <div className="flex-1">
+              <div className="font-semibold text-[14px] text-tx">{t.name}</div>
+              <div className="text-[12px] text-tx3">
                 {t.items.length} line items:{" "}
                 {t.items
                   .map((i) => i.desc)
@@ -202,7 +188,7 @@ export default function TemplatesTab() {
                   .join(", ")}
               </div>
             </div>
-            <div style={{ display: "flex", gap: 6 }}>
+            <div className="flex gap-[6px]">
               <button className="btn bg btn-sm" onClick={() => setEditing(t)}>
                 <Icon n="settings" s={12} /> Edit
               </button>

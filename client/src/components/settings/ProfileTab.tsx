@@ -36,11 +36,8 @@ export default function ProfileTab({
   }
 
   return (
-    <div
-      className="two-col"
-      style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 18 }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div className="two-col grid grid-cols-[1fr_280px] gap-[18px]">
+      <div className="flex flex-col gap-4">
         <div className="card">
           <div className="card-ttl">Personal Details</div>
           <div className="fgrid">
@@ -72,7 +69,7 @@ export default function ProfileTab({
                 rows={2}
                 value={profile.address}
                 onChange={(e) => onChange({ address: e.target.value })}
-                style={{ resize: "none" }}
+                className="resize-none"
                 placeholder="Your full address"
               />
             </div>
@@ -129,7 +126,7 @@ export default function ProfileTab({
               <textarea
                 rows={2}
                 placeholder="e.g. Thank you for your business!"
-                style={{ resize: "none" }}
+                className="resize-none"
               />
             </div>
           </div>
@@ -144,52 +141,22 @@ export default function ProfileTab({
         </div>
       </div>
 
-      {/* Profile preview sidebar */}
-      <div className="card" style={{ height: "fit-content" }}>
+      <div className="card h-fit">
         <div className="card-ttl">Profile Preview</div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            marginBottom: 12,
-          }}
-        >
-          <div className="av" style={{ width: 44, height: 44, fontSize: 14 }}>
-            LE
-          </div>
+        <div className="flex items-center gap-[10px] mb-3">
+          <div className="av w-11 h-11 text-[14px]">LE</div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 14, color: "var(--tx)" }}>
-              {profile.name}
-            </div>
-            <div style={{ fontSize: 12, color: "var(--tx3)" }}>
-              {profile.business}
-            </div>
+            <div className="font-bold text-[14px] text-tx">{profile.name}</div>
+            <div className="text-[12px] text-tx3">{profile.business}</div>
           </div>
         </div>
-        <div style={{ fontSize: 12, color: "var(--tx3)" }}>{profile.email}</div>
+        <div className="text-[12px] text-tx3">{profile.email}</div>
         {profile.address && (
-          <div
-            style={{
-              fontSize: 12,
-              color: "var(--tx3)",
-              marginTop: 4,
-              lineHeight: 1.5,
-            }}
-          >
+          <div className="text-[12px] text-tx3 mt-1 leading-relaxed">
             {profile.address}
           </div>
         )}
-        <div
-          style={{
-            marginTop: 12,
-            padding: "8px 12px",
-            background: "var(--glt)",
-            borderRadius: 8,
-            fontSize: 11,
-            color: "var(--gdk)",
-          }}
-        >
+        <div className="mt-3 px-3 py-2 bg-brand-light rounded-lg text-[11px] text-brand-dark">
           This is how your name appears on invoices
         </div>
       </div>

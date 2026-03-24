@@ -88,7 +88,7 @@ function AppShell() {
         <div className={"sb" + (sbOpen ? " open" : "")}>
           <div className="sb-top">
             <div className="sb-mark">I</div>
-            <div style={{ flex: 1 }}>
+            <div className="flex-1">
               <div className="sb-name">Invoicin</div>
               <div className="sb-ver">
                 v1.0 {"\u00b7"}{" "}
@@ -148,13 +148,7 @@ function AppShell() {
                       : "var(--tx3)"
                   }
                 />
-                <span
-                  style={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                   {activeInvoice.id}
                 </span>
               </button>
@@ -164,7 +158,7 @@ function AppShell() {
             <div className="av">
               {(user?.name ?? "U").charAt(0).toUpperCase()}
             </div>
-            <div style={{ overflow: "hidden", flex: 1 }}>
+            <div className="overflow-hidden flex-1">
               <div className="av-name">{user?.name ?? "User"}</div>
               <div className="av-plan">
                 {user?.businessName ?? user?.email ?? ""}
@@ -172,12 +166,7 @@ function AppShell() {
             </div>
             <button
               onClick={signOut}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 4,
-              }}
+              className="bg-transparent border-0 cursor-pointer p-1"
               title="Sign out"
             >
               <Icon n="close" s={14} c="var(--tx3)" />
@@ -188,20 +177,8 @@ function AppShell() {
         <div className="main">
           <div className="topbar">
             <div className="tb-logo">
-              <div
-                className="sb-mark"
-                style={{ width: 27, height: 27, fontSize: 12 }}
-              >
-                I
-              </div>
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 800,
-                  color: "var(--tx)",
-                  letterSpacing: "-.02em",
-                }}
-              >
+              <div className="sb-mark w-[27px] h-[27px] text-[12px]">I</div>
+              <div className="text-[13px] font-[800] text-tx tracking-[-0.02em]">
                 Invoicin
               </div>
             </div>
@@ -221,16 +198,7 @@ export default function InvoiceApp() {
 
   if (authLoading) {
     return (
-      <div
-        style={{
-          height: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontFamily: "var(--fn)",
-          color: "var(--tx3)",
-        }}
-      >
+      <div className="h-screen flex items-center justify-center font-sans text-tx3">
         Loading…
       </div>
     );

@@ -39,156 +39,66 @@ export default function OverviewTab({
 }: // onToast,
 OverviewTabProps) {
   return (
-    <div
-      className="two-col"
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 18,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 16,
-          flex: 1,
-          minWidth: 280,
-        }}
-      >
+    <div className="two-col flex flex-row flex-wrap gap-[18px]">
+      <div className="flex flex-col gap-4 flex-1 min-w-[280px]">
         {/* Amount card */}
         <div className="card">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-              gap: 10,
-              marginBottom: 18,
-            }}
-          >
+          <div className="flex justify-between flex-wrap gap-[10px] mb-[18px]">
             <div>
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "var(--tx3)",
-                  textTransform: "uppercase",
-                  letterSpacing: ".06em",
-                  marginBottom: 4,
-                }}
-              >
+              <div className="text-[11px] font-bold text-tx3 uppercase tracking-[.06em] mb-1">
                 Amount
               </div>
-              <div
-                style={{
-                  fontFamily: "var(--mo)",
-                  fontSize: 28,
-                  fontWeight: 700,
-                  color: "var(--tx)",
-                  letterSpacing: "-.03em",
-                }}
-              >
+              <div className="font-mono text-[28px] font-bold text-tx tracking-[-0.03em]">
                 {currencySymbol(inv.currency)}
                 {fmt(inv.total)}
               </div>
             </div>
             {inv.homeTotal && inv.homeCurrency && (
-              <div style={{ textAlign: "right" }}>
-                <div
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: "var(--tx3)",
-                    textTransform: "uppercase",
-                    letterSpacing: ".06em",
-                    marginBottom: 4,
-                  }}
-                >
+              <div className="text-right">
+                <div className="text-[11px] font-bold text-tx3 uppercase tracking-[.06em] mb-1">
                   Received ({inv.homeCurrency})
                 </div>
-                <div
-                  style={{
-                    fontFamily: "var(--mo)",
-                    fontSize: 22,
-                    fontWeight: 700,
-                    color: "var(--gdk)",
-                  }}
-                >
+                <div className="font-mono text-[22px] font-bold text-brand-dark">
                   {currencySymbol(inv.homeCurrency)}
                   {fmt(inv.homeTotal, 0)}
                 </div>
               </div>
             )}
           </div>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <div
-              style={{
-                flex: 1,
-                minWidth: 140,
-                background: "var(--sf2)",
-                borderRadius: 8,
-                padding: "10px 13px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: "var(--tx3)",
-                  textTransform: "uppercase",
-                  letterSpacing: ".06em",
-                  marginBottom: 3,
-                }}
-              >
+          <div className="flex gap-[10px] flex-wrap">
+            <div className="flex-1 min-w-[140px] bg-sf2 rounded-lg px-[13px] py-[10px]">
+              <div className="text-[10px] font-bold text-tx3 uppercase tracking-[.06em] mb-[3px]">
                 Client
               </div>
-              <div
-                style={{ fontSize: 13, fontWeight: 600, color: "var(--tx)" }}
-              >
+              <div className="text-[13px] font-semibold text-tx">
                 {inv.client.name}
               </div>
-              <div style={{ fontSize: 11, color: "var(--tx3)" }}>
-                {inv.client.email}
-              </div>
+              <div className="text-[11px] text-tx3">{inv.client.email}</div>
             </div>
             {inv.dueDate && (
               <div
-                style={{
-                  flex: 1,
-                  minWidth: 140,
-                  background: isOverdue(inv) ? "var(--rdlt)" : "var(--sf2)",
-                  borderRadius: 8,
-                  padding: "10px 13px",
-                }}
+                className={`flex-1 min-w-[140px] rounded-lg px-[13px] py-[10px] ${
+                  isOverdue(inv) ? "bg-red-light" : "bg-sf2"
+                }`}
               >
                 <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: isOverdue(inv) ? "var(--rd)" : "var(--tx3)",
-                    textTransform: "uppercase",
-                    letterSpacing: ".06em",
-                    marginBottom: 3,
-                  }}
+                  className={`text-[10px] font-bold uppercase tracking-[.06em] mb-[3px] ${
+                    isOverdue(inv) ? "text-red" : "text-tx3"
+                  }`}
                 >
                   Due Date
                 </div>
                 <div
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: isOverdue(inv) ? "var(--rd)" : "var(--tx)",
-                  }}
+                  className={`text-[13px] font-semibold ${
+                    isOverdue(inv) ? "text-red" : "text-tx"
+                  }`}
                 >
                   {dateStr(inv.dueDate)}
                 </div>
                 <div
-                  style={{
-                    fontSize: 11,
-                    color: isOverdue(inv) ? "var(--rd)" : "var(--tx3)",
-                  }}
+                  className={`text-[11px] ${
+                    isOverdue(inv) ? "text-red" : "text-tx3"
+                  }`}
                 >
                   {inv.terms}
                 </div>
@@ -200,14 +110,14 @@ OverviewTabProps) {
         {/* Line items card */}
         <div className="card">
           <div className="card-ttl">Line Items</div>
-          <div className="inv-items" style={{ margin: 0 }}>
+          <div className="inv-items !m-0">
             {inv.items.map((it, i: number) => (
               <div key={i} className="ii-row">
                 <div>
                   <div>{it.desc}</div>
                   {it.qty > 1 && <div className="ii-sub">x{it.qty}</div>}
                 </div>
-                <span style={{ fontFamily: "var(--mo)", fontWeight: 600 }}>
+                <span className="font-mono font-semibold">
                   {currencySymbol(inv.currency)}
                   {fmt(
                     (parseFloat(String(it.price)) || 0) *
@@ -218,11 +128,11 @@ OverviewTabProps) {
             ))}
             {inv.tax && (
               <div className="ii-row">
-                <span style={{ color: "var(--tx3)" }}>
+                <span className="text-tx3">
                   {TAX_TYPES.find((t) => t.id === inv.tax?.type)?.label} (
                   {inv.tax?.rate}%)
                 </span>
-                <span style={{ fontFamily: "var(--mo)" }}>
+                <span className="font-mono">
                   {currencySymbol(inv.currency)}
                   {fmt(inv.taxAmt)}
                 </span>
@@ -230,10 +140,8 @@ OverviewTabProps) {
             )}
             {inv.deposit > 0 && (
               <div className="ii-row">
-                <span style={{ color: "var(--pu)" }}>
-                  Deposit ({inv.deposit}%)
-                </span>
-                <span style={{ fontFamily: "var(--mo)", color: "var(--pu)" }}>
+                <span className="text-purple">Deposit ({inv.deposit}%)</span>
+                <span className="font-mono text-purple">
                   {currencySymbol(inv.currency)}
                   {fmt(inv.total)}
                 </span>
@@ -241,24 +149,14 @@ OverviewTabProps) {
             )}
             <div className="ii-tot">
               <span>Total</span>
-              <span style={{ fontFamily: "var(--mo)" }}>
+              <span className="font-mono">
                 {currencySymbol(inv.currency)}
                 {fmt(inv.total)}
               </span>
             </div>
           </div>
           {inv.notes && (
-            <div
-              style={{
-                marginTop: 12,
-                padding: "10px 12px",
-                background: "var(--sf2)",
-                borderRadius: 8,
-                fontSize: 12,
-                color: "var(--tx2)",
-                lineHeight: 1.6,
-              }}
-            >
+            <div className="mt-3 px-3 py-[10px] bg-sf2 rounded-lg text-[12px] text-tx2 leading-relaxed">
               {inv.notes}
             </div>
           )}
@@ -266,36 +164,21 @@ OverviewTabProps) {
 
         {/* Reminder banner */}
         {(effectiveStatus === "overdue" || effectiveStatus === "sent") && (
-          <div
-            style={{
-              background: "var(--amlt)",
-              border: "1.5px solid #fcd34d",
-              borderRadius: "var(--r)",
-              padding: "14px 18px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: 10,
-            }}
-          >
+          <div className="bg-amber-light border-[1.5px] border-[#fcd34d] rounded-[var(--radius-md)] px-[18px] py-3 flex justify-between items-center flex-wrap gap-[10px]">
             <div>
-              <div
-                style={{ fontWeight: 600, fontSize: 13, color: "var(--amdk)" }}
-              >
+              <div className="font-semibold text-[13px] text-[#92400e]">
                 {effectiveStatus === "overdue"
                   ? "This invoice is overdue"
                   : "Awaiting payment"}
               </div>
-              <div style={{ fontSize: 12, color: "var(--am)", marginTop: 2 }}>
+              <div className="text-[12px] text-amber mt-[2px]">
                 {effectiveStatus === "overdue"
                   ? "Send a reminder to your client"
                   : "You can send a reminder if needed"}
               </div>
             </div>
             <button
-              className="btn btn-sm"
-              style={{ background: "var(--am)", color: "#fff" }}
+              className="btn btn-sm bg-amber text-white"
               onClick={onSendReminder}
               disabled={reminderBusy}
             >
@@ -314,13 +197,7 @@ OverviewTabProps) {
       </div>
 
       {/* Sidebar */}
-      <div
-        style={
-          {
-            // flexGrow: 1,
-          }
-        }
-      >
+      <div>
         <div className="card mb3">
           <div className="card-ttl">Share</div>
           <div className="lbox mb3">
@@ -333,7 +210,7 @@ OverviewTabProps) {
               )}
             </button>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+          <div className="flex flex-col gap-[7px]">
             <button className="btn bs btn-full btn-sm" onClick={onOpenSend}>
               <Icon n="mail" s={13} /> Send by Email
             </button>
@@ -345,7 +222,7 @@ OverviewTabProps) {
         {inv.status !== "paid" && inv.status !== "cancelled" && (
           <div className="card">
             <div className="card-ttl">Actions</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div className="flex flex-col gap-2">
               {canMarkPaid && (
                 <button
                   className="btn bp btn-full btn-sm"

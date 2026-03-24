@@ -35,58 +35,41 @@ export default function EditInvoiceModal({
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-ttl">Edit Invoice</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div className="flex flex-col gap-[14px]">
           <div>
-            <label
-              style={{
-                fontSize: 12,
-                fontWeight: 600,
-                color: "var(--tx2)",
-                marginBottom: 4,
-                display: "block",
-              }}
-            >
+            <label className="text-[12px] font-semibold text-tx2 mb-1 block">
               Due Date
             </label>
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="input"
-              style={{ width: "100%" }}
+              className="input w-full"
             />
           </div>
           <div>
-            <label
-              style={{
-                fontSize: 12,
-                fontWeight: 600,
-                color: "var(--tx2)",
-                marginBottom: 4,
-                display: "block",
-              }}
-            >
+            <label className="text-[12px] font-semibold text-tx2 mb-1 block">
               Notes
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="input"
+              className="input w-full resize-y"
               rows={4}
-              style={{ width: "100%", resize: "vertical" }}
               placeholder="Payment instructions, terms, etc."
             />
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+        <div className="flex gap-2 mt-4">
           <button className="btn bg btn-full" onClick={onClose}>
             Cancel
           </button>
           <button
-            className="btn bp btn-full"
+            className={`btn bp btn-full${
+              saving ? " opacity-60 pointer-events-none" : ""
+            }`}
             onClick={handleSave}
             disabled={saving}
-            style={saving ? { opacity: 0.6, pointerEvents: "none" } : {}}
           >
             {saving && <Icon n="spin" s={14} c="#fff" />}
             {saving ? "Saving…" : "Save Changes"}

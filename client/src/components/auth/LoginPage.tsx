@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { authClient } from "../../lib/auth-client";
 import Icon from "../shared/Icon";
 
@@ -49,16 +49,20 @@ export default function LoginPage() {
 
   if (sent) {
     return (
-      <div style={styles.container}>
-        <div style={styles.card}>
-          <div style={styles.mark}>I</div>
-          <h1 style={styles.title}>Check your email</h1>
-          <p style={styles.subtitle}>
+      <div className="min-h-screen flex items-center justify-center bg-bg font-sans p-5">
+        <div className="bg-sf rounded-[14px] border border-bd shadow-md px-9 py-10 max-w-[400px] w-full text-center">
+          <div className="w-10 h-10 rounded-[11px] bg-brand inline-flex items-center justify-center text-[16px] font-[800] text-white mb-4">
+            I
+          </div>
+          <h1 className="text-[22px] font-[800] text-tx tracking-[-0.03em] mb-1.5">
+            Check your email
+          </h1>
+          <p className="text-[13px] text-tx2 mb-6 leading-relaxed">
             We sent a sign-in link to <strong>{email}</strong>. Click the link
             in the email to sign in.
           </p>
           <button
-            style={styles.linkBtn}
+            className="bg-transparent border-0 text-brand text-[13px] font-semibold cursor-pointer mt-4 font-sans"
             onClick={() => {
               setSent(false);
               setEmail("");
@@ -72,19 +76,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <div style={styles.mark}>I</div>
-        <h1 style={styles.title}>Sign in to Invoicin</h1>
-        <p style={styles.subtitle}>
+    <div className="min-h-screen flex items-center justify-center bg-bg font-sans p-5">
+      <div className="bg-sf rounded-[14px] border border-bd shadow-md px-9 py-10 max-w-[400px] w-full text-center">
+        <div className="w-10 h-10 rounded-[11px] bg-brand inline-flex items-center justify-center text-[16px] font-[800] text-white mb-4">
+          I
+        </div>
+        <h1 className="text-[22px] font-[800] text-tx tracking-[-0.03em] mb-1.5">
+          Sign in to Invoicin
+        </h1>
+        <p className="text-[13px] text-tx2 mb-6 leading-relaxed">
           Manage invoices, track payments, and grow your freelance business.
         </p>
 
         <button
-          style={{
-            ...styles.googleBtn,
-            ...(anyLoading ? styles.disabled : {}),
-          }}
+          className={`w-full px-4 py-[10px] rounded-[10px] border border-bd bg-sf cursor-pointer text-[14px] font-semibold text-tx flex items-center justify-center gap-[10px] font-sans transition-opacity ${
+            anyLoading
+              ? "opacity-60 cursor-not-allowed pointer-events-none"
+              : ""
+          }`}
           onClick={handleGoogle}
           disabled={anyLoading}
         >
@@ -110,184 +119,50 @@ export default function LoginPage() {
               />
             </svg>
           )}
-          {googleLoading ? "Redirecting…" : "Continue with Google"}
+          {googleLoading ? "Redirectingâ€¦" : "Continue with Google"}
         </button>
 
-        <div style={styles.divider}>
-          <span style={styles.dividerLine} />
-          <span style={styles.dividerText}>or</span>
-          <span style={styles.dividerLine} />
+        <div className="flex items-center gap-3 my-5">
+          <span className="flex-1 h-px bg-bd" />
+          <span className="text-[12px] text-tx3 uppercase tracking-[0.05em]">
+            or
+          </span>
+          <span className="flex-1 h-px bg-bd" />
         </div>
 
         <form onSubmit={handleMagicLink}>
-          <label style={styles.label}>Email address</label>
+          <label className="block text-left text-[12px] font-semibold text-tx2 mb-1.5">
+            Email address
+          </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            style={styles.input}
+            className="mb-3"
             required
           />
-          {error && <p style={styles.error}>{error}</p>}
+          {error && (
+            <p className="text-[12px] text-red mb-2 text-left">{error}</p>
+          )}
           <button
             type="submit"
-            style={{
-              ...styles.submitBtn,
-              ...(anyLoading ? styles.disabled : {}),
-            }}
+            className={`btn bp btn-full btn-lg ${
+              anyLoading
+                ? "opacity-60 cursor-not-allowed pointer-events-none"
+                : ""
+            }`}
             disabled={anyLoading}
           >
             {loading && <Icon n="spin" s={16} c="#fff" />}
-            {loading ? "Sending…" : "Send magic link"}
+            {loading ? "Sendingâ€¦" : "Send magic link"}
           </button>
         </form>
 
-        <p style={styles.footer}>
+        <p className="text-[11px] text-tx3 mt-5">
           By signing in, you agree to our terms and privacy policy.
         </p>
       </div>
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "var(--bg)",
-    fontFamily: "var(--fn)",
-    padding: 20,
-  },
-  card: {
-    background: "var(--sf)",
-    borderRadius: "var(--rl)",
-    border: "1px solid var(--bd)",
-    boxShadow: "var(--shm)",
-    padding: "40px 36px",
-    maxWidth: 400,
-    width: "100%",
-    textAlign: "center" as const,
-  },
-  mark: {
-    width: 40,
-    height: 40,
-    borderRadius: 11,
-    background: "var(--g)",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 16,
-    fontWeight: 800,
-    color: "#fff",
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 800,
-    color: "var(--tx)",
-    letterSpacing: "-0.03em",
-    marginBottom: 6,
-  },
-  subtitle: {
-    fontSize: 13,
-    color: "var(--tx2)",
-    marginBottom: 24,
-    lineHeight: 1.6,
-  },
-  googleBtn: {
-    width: "100%",
-    padding: "10px 16px",
-    borderRadius: "var(--r)",
-    border: "1px solid var(--bd)",
-    background: "var(--sf)",
-    cursor: "pointer",
-    fontSize: 14,
-    fontWeight: 600,
-    color: "var(--tx)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    fontFamily: "var(--fn)",
-  },
-  divider: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-    margin: "20px 0",
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    background: "var(--bd)",
-  },
-  dividerText: {
-    fontSize: 12,
-    color: "var(--tx3)",
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.05em",
-  },
-  label: {
-    display: "block",
-    textAlign: "left" as const,
-    fontSize: 12,
-    fontWeight: 600,
-    color: "var(--tx2)",
-    marginBottom: 6,
-  },
-  input: {
-    width: "100%",
-    padding: "9px 12px",
-    borderRadius: "var(--r)",
-    border: "1px solid var(--bd)",
-    fontSize: 14,
-    fontFamily: "var(--fn)",
-    outline: "none",
-    marginBottom: 12,
-  },
-  error: {
-    fontSize: 12,
-    color: "var(--rd)",
-    marginBottom: 8,
-    textAlign: "left" as const,
-  },
-  submitBtn: {
-    width: "100%",
-    padding: "10px 16px",
-    borderRadius: "var(--r)",
-    border: "none",
-    background: "var(--g)",
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: 600,
-    cursor: "pointer",
-    fontFamily: "var(--fn)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  disabled: {
-    opacity: 0.6,
-    cursor: "not-allowed",
-    pointerEvents: "none" as const,
-  },
-  linkBtn: {
-    background: "none",
-    border: "none",
-    color: "var(--g)",
-    fontSize: 13,
-    fontWeight: 600,
-    cursor: "pointer",
-    marginTop: 16,
-    fontFamily: "var(--fn)",
-  },
-  footer: {
-    fontSize: 11,
-    color: "var(--tx3)",
-    marginTop: 20,
-  },
-};

@@ -83,12 +83,12 @@ export default function InvoicePreviewCard({
           <span className="inv-v">
             {inv.client.name}
             {inv.client.email && (
-              <div style={{ fontSize: 11, color: "var(--tx3)", marginTop: 1 }}>
+              <div className="text-[11px] text-tx3 mt-px">
                 {inv.client.email}
               </div>
             )}
             {inv.client.address && (
-              <div style={{ fontSize: 11, color: "var(--tx3)", marginTop: 1 }}>
+              <div className="text-[11px] text-tx3 mt-px">
                 {inv.client.address}
               </div>
             )}
@@ -100,11 +100,9 @@ export default function InvoicePreviewCard({
             <div key={i} className="ii-row">
               <span>
                 {it.desc}
-                {it.qty > 1 && (
-                  <span style={{ color: "var(--tx3)" }}> x{it.qty}</span>
-                )}
+                {it.qty > 1 && <span className="text-tx3"> x{it.qty}</span>}
               </span>
-              <span style={{ fontFamily: "var(--mo)", fontWeight: 600 }}>
+              <span className="font-mono font-semibold">
                 {S2}
                 {fmt(
                   (parseFloat(String(it.price)) || 0) *
@@ -115,11 +113,11 @@ export default function InvoicePreviewCard({
           ))}
           {inv.tax && (
             <div className="ii-row">
-              <span style={{ color: "var(--tx3)" }}>
+              <span className="text-tx3">
                 {TAX_TYPES.find((t) => t.id === inv.tax?.type)?.label} (
                 {inv.tax?.rate}%)
               </span>
-              <span style={{ fontFamily: "var(--mo)" }}>
+              <span className="font-mono">
                 {S2}
                 {fmt(inv.taxAmt || taxAmt)}
               </span>
@@ -127,10 +125,8 @@ export default function InvoicePreviewCard({
           )}
           {inv.deposit > 0 && (
             <div className="ii-row">
-              <span style={{ color: "var(--pu)" }}>
-                Deposit ({inv.deposit}%)
-              </span>
-              <span style={{ fontFamily: "var(--mo)", color: "var(--pu)" }}>
+              <span className="text-purple">Deposit ({inv.deposit}%)</span>
+              <span className="font-mono text-purple">
                 {S2}
                 {fmt(inv.total || total)}
               </span>
@@ -138,7 +134,7 @@ export default function InvoicePreviewCard({
           )}
           <div className="ii-tot">
             <span>Total</span>
-            <span style={{ fontFamily: "var(--mo)" }}>
+            <span className="font-mono">
               {inv.type === "credit" && "-"}
               {S2}
               {fmt(inv.total || total)}
@@ -147,17 +143,7 @@ export default function InvoicePreviewCard({
         </div>
 
         {inv.notes && (
-          <div
-            style={{
-              padding: "10px 12px",
-              background: "var(--sf2)",
-              borderRadius: 8,
-              fontSize: 12,
-              color: "var(--tx2)",
-              marginBottom: 12,
-              lineHeight: 1.6,
-            }}
-          >
+          <div className="px-3 py-[10px] bg-sf2 rounded-lg text-[12px] text-tx2 mb-3 leading-relaxed">
             {inv.notes}
           </div>
         )}
@@ -165,19 +151,10 @@ export default function InvoicePreviewCard({
 
       <div className="inv-stamp">
         <div className="inv-stamp-dot" />
-        <div style={{ fontSize: 11, fontWeight: 600, color: "var(--gdk)" }}>
+        <div className="text-[11px] font-semibold text-brand-dark">
           Created with Invoicin
         </div>
-        <div
-          style={{
-            fontFamily: "var(--mo)",
-            fontSize: 10,
-            color: "var(--tx3)",
-            marginLeft: "auto",
-          }}
-        >
-          {inv.id}
-        </div>
+        <div className="font-mono text-[10px] text-tx3 ml-auto">{inv.id}</div>
       </div>
     </div>
   );

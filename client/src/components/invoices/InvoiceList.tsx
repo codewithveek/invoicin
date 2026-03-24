@@ -61,9 +61,7 @@ export default function InvoiceList() {
           >
             {l}
             {counts[k] > 0 && (
-              <span style={{ marginLeft: 4, fontSize: 10, opacity: 0.7 }}>
-                ({counts[k]})
-              </span>
+              <span className="ml-1 text-[10px] opacity-70">({counts[k]})</span>
             )}
           </button>
         ))}
@@ -112,17 +110,15 @@ export default function InvoiceList() {
                       />
                     </td>
                     <td
-                      style={{
-                        fontSize: 12,
-                        color: isOverdue(inv) ? "var(--rd)" : "var(--tx3)",
-                      }}
+                      className={`text-[12px] ${
+                        isOverdue(inv) ? "text-red" : "text-tx3"
+                      }`}
                     >
                       {inv.dueDate || "-"}
                     </td>
                     <td>
                       <button
-                        className="btn bg btn-sm"
-                        style={{ padding: "5px 8px" }}
+                        className="btn bg btn-sm px-2 py-[5px]"
                         onClick={(e) => {
                           e.stopPropagation();
                           onView(inv);

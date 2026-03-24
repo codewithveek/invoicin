@@ -34,7 +34,7 @@ export default function StatsGrid({
       </div>
       <div className="stat">
         <div className="stat-lbl">Outstanding</div>
-        <div className="stat-val" style={{ color: "var(--bl)" }}>
+        <div className="stat-val text-blue">
           {sym}
           {fmt(outstanding, 0)}
         </div>
@@ -42,10 +42,7 @@ export default function StatsGrid({
       </div>
       <div className="stat">
         <div className="stat-lbl">Overdue</div>
-        <div
-          className="stat-val"
-          style={{ color: overdueAmt > 0 ? "var(--rd)" : "var(--tx)" }}
-        >
+        <div className={`stat-val ${overdueAmt > 0 ? "text-red" : "text-tx"}`}>
           {sym}
           {fmt(overdueAmt, 0)}
         </div>

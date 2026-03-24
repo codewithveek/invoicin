@@ -25,35 +25,15 @@ export default class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
       return (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "100vh",
-            padding: 32,
-            textAlign: "center",
-          }}
-        >
-          <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
-          <h2 style={{ marginBottom: 8, fontSize: 18 }}>
-            Something went wrong
-          </h2>
-          <p style={{ color: "#888", fontSize: 13, marginBottom: 20 }}>
+        <div className="flex flex-col items-center justify-center min-h-screen p-8 text-center">
+          <div className="text-[32px] mb-3">⚠️</div>
+          <h2 className="text-[18px] mb-2">Something went wrong</h2>
+          <p className="text-[#888] text-[13px] mb-5">
             An unexpected error occurred. Please refresh the page.
           </p>
           <button
             onClick={() => window.location.reload()}
-            style={{
-              padding: "8px 20px",
-              background: "var(--g, #16a34a)",
-              color: "#fff",
-              border: "none",
-              borderRadius: 6,
-              cursor: "pointer",
-              fontSize: 13,
-            }}
+            className="px-5 py-2 bg-brand text-white border-0 rounded-md cursor-pointer text-[13px]"
           >
             Refresh page
           </button>

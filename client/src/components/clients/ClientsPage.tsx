@@ -115,62 +115,35 @@ function ClientCard({
   deleting?: boolean;
 }) {
   return (
-    <div
-      className="card"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 14,
-        flexWrap: "wrap",
-      }}
-    >
-      <div
-        className="av"
-        style={{ width: 40, height: 40, fontSize: 14, flexShrink: 0 }}
-      >
+    <div className="card flex items-center gap-[14px] flex-wrap">
+      <div className="av w-10 h-10 text-[14px] shrink-0">
         {client.name.charAt(0)}
       </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 600, fontSize: 14, color: "var(--tx)" }}>
-          {client.name}
-        </div>
-        <div style={{ fontSize: 12, color: "var(--tx3)" }}>
+      <div className="flex-1">
+        <div className="font-semibold text-[14px] text-tx">{client.name}</div>
+        <div className="text-[12px] text-tx3">
           {client.email}
           {client.phone && " \u00b7 " + client.phone}
         </div>
         {client.address && (
-          <div style={{ fontSize: 11, color: "var(--tx3)", marginTop: 1 }}>
-            {client.address}
-          </div>
+          <div className="text-[11px] text-tx3 mt-px">{client.address}</div>
         )}
       </div>
-      <div style={{ textAlign: "right", marginRight: 8 }}>
-        <div
-          style={{
-            fontFamily: "var(--mo)",
-            fontSize: 14,
-            fontWeight: 700,
-            color: "var(--tx)",
-          }}
-        >
+      <div className="text-right mr-2">
+        <div className="font-mono text-[14px] font-bold text-tx">
           {"$"}
           {fmt(totalEarned, 0)}
         </div>
-        <div style={{ fontSize: 11, color: "var(--tx3)" }}>
+        <div className="text-[11px] text-tx3">
           {invoiceCount} invoice{invoiceCount !== 1 ? "s" : ""}
         </div>
       </div>
-      <div style={{ display: "flex", gap: 4 }}>
-        <button
-          className="btn bs"
-          style={{ padding: "4px 8px" }}
-          onClick={onEdit}
-        >
+      <div className="flex gap-1">
+        <button className="btn bs px-2 py-1" onClick={onEdit}>
           <Icon n="settings" s={13} c="var(--tx2)" />
         </button>
         <button
-          className="btn bs"
-          style={{ padding: "4px 8px" }}
+          className="btn bs px-2 py-1"
           onClick={onDelete}
           disabled={deleting}
         >
@@ -244,7 +217,7 @@ export default function ClientsPage() {
           Add Client
         </button>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div className="flex flex-col gap-[10px]">
         {clients.map((c) => {
           const cInvs = invoices.filter((i) => i.client.email === c.email);
           const cTotal = cInvs

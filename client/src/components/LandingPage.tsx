@@ -177,17 +177,9 @@ function InvoiceMockCard() {
   return (
     <div className="rounded-2xl border border-bd shadow-(--shadow-lg) overflow-hidden bg-sf">
       {/* Green gradient header — mirrors .inv-hd */}
-      <div
-        className="px-6 py-5 relative overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #14532d 0%, #16a34a 100%)",
-        }}
-      >
+      <div className="px-6 py-5 relative overflow-hidden bg-[linear-gradient(135deg,#14532d_0%,#16a34a_100%)]">
         {/* Decorative circle overlay */}
-        <div
-          className="absolute -top-8 -right-8 w-32 h-32 rounded-full pointer-events-none"
-          style={{ background: "rgba(255,255,255,0.06)" }}
-        />
+        <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full pointer-events-none bg-white/[0.06]" />
         <div className="flex items-start justify-between mb-4 relative z-10">
           <div>
             <p className="text-[11px] text-white/60 font-medium uppercase tracking-[0.07em] mb-0.5">
@@ -650,21 +642,10 @@ function CTASection({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <section className="bg-bg py-20 px-6">
       <div className="max-w-2xl mx-auto text-center">
-        <div
-          className="rounded-[20px] border border-bd overflow-hidden relative"
-          style={{
-            background: "linear-gradient(135deg, #14532d 0%, #16a34a 100%)",
-          }}
-        >
+        <div className="rounded-[20px] border border-bd overflow-hidden relative bg-[linear-gradient(135deg,#14532d_0%,#16a34a_100%)]">
           {/* Decorative blobs */}
-          <div
-            className="absolute -top-10 -right-10 w-40 h-40 rounded-full pointer-events-none"
-            style={{ background: "rgba(255,255,255,0.05)" }}
-          />
-          <div
-            className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full pointer-events-none"
-            style={{ background: "rgba(255,255,255,0.04)" }}
-          />
+          <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full pointer-events-none bg-white/5" />
+          <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full pointer-events-none bg-white/[0.04]" />
 
           <div className="relative z-10 px-8 py-12">
             <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-brand-mid mb-3">
@@ -752,14 +733,7 @@ export default function LandingPage() {
   const goLogin = () => navigate("/login");
 
   return (
-    <div
-      style={{
-        fontFamily: "var(--font-sans)",
-        background: "var(--color-bg)",
-        minHeight: "100vh",
-        overflowY: "auto",
-      }}
-    >
+    <div className="font-sans bg-bg min-h-screen overflow-y-auto">
       <Navbar onLogin={goLogin} onGetStarted={goLogin} />
       <Hero onGetStarted={goLogin} />
       <StatsStrip />

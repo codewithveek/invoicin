@@ -28,17 +28,10 @@ export default function ActivityFeed({ invoices }: ActivityFeedProps) {
     .slice(0, 6);
 
   return (
-    <div
-      className="card"
-      style={{
-        flexGrow: 1,
-      }}
-    >
+    <div className="card grow">
       <div className="card-ttl">Recent Activity</div>
       {recentActivity.length === 0 ? (
-        <div style={{ fontSize: 13, color: "var(--tx3)" }}>
-          No activity yet.
-        </div>
+        <div className="text-[13px] text-tx3">No activity yet.</div>
       ) : (
         recentActivity.map((ev, i: number) => {
           const [ico, cls] = activityIcon(ev.type);

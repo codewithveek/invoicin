@@ -15,12 +15,7 @@ export default function RecentInvoicesTable({
   onView,
 }: RecentInvoicesTableProps) {
   return (
-    <div
-      className="tcard"
-      style={{
-        flexGrow: "1",
-      }}
-    >
+    <div className="tcard grow">
       <div className="tcard-hd">
         <div className="tcard-ttl">Recent Invoices</div>
         <button className="btn bg btn-sm" onClick={onNew}>
@@ -45,9 +40,7 @@ export default function RecentInvoicesTable({
               <tr key={inv.id} onClick={() => onView(inv)}>
                 <td>
                   <div className="t-id">{inv.id}</div>
-                  <div
-                    style={{ fontSize: 11, color: "var(--tx3)", marginTop: 1 }}
-                  >
+                  <div className="text-[11px] text-tx3 mt-px">
                     <TypeBadge type={inv.type} />
                   </div>
                 </td>
@@ -73,17 +66,15 @@ export default function RecentInvoicesTable({
                   />
                 </td>
                 <td
-                  style={{
-                    fontSize: 12,
-                    color: isOverdue(inv) ? "var(--rd)" : "var(--tx3)",
-                  }}
+                  className={`text-[12px] ${
+                    isOverdue(inv) ? "text-red" : "text-tx3"
+                  }`}
                 >
                   {inv.dueDate || "-"}
                 </td>
                 <td>
                   <button
-                    className="btn bg btn-sm"
-                    style={{ padding: "5px 8px" }}
+                    className="btn bg btn-sm px-2 py-[5px]"
                     onClick={(e) => {
                       e.stopPropagation();
                       onView(inv);

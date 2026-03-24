@@ -72,20 +72,12 @@ export default function FormStep({
   const rate = useRate(form.currency, homeCurrency);
 
   return (
-    <div
-      className="two-col"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 300px",
-        gap: 18,
-        alignItems: "start",
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div className="two-col grid grid-cols-[1fr_300px] gap-[18px] items-start">
+      <div className="flex flex-col gap-4">
         {/* Invoice type */}
         <div className="card">
           <div className="card-ttl">Invoice Type</div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <div className="flex gap-2 flex-wrap">
             {INVOICE_TYPES.map((t) => (
               <button
                 key={t.id}
@@ -97,14 +89,9 @@ export default function FormStep({
             ))}
           </div>
           {form.type === "deposit" && (
-            <div
-              className="mt3"
-              style={{ display: "flex", alignItems: "center", gap: 12 }}
-            >
-              <span style={{ fontSize: 13, color: "var(--tx2)" }}>
-                Deposit percentage
-              </span>
-              <div className="ipw" style={{ width: 100 }}>
+            <div className="mt3 flex items-center gap-3">
+              <span className="text-[13px] text-tx2">Deposit percentage</span>
+              <div className="ipw w-[100px]">
                 <input
                   type="number"
                   min="1"
@@ -113,34 +100,16 @@ export default function FormStep({
                   onChange={(e) =>
                     onFormChange({ deposit: parseFloat(e.target.value) || 50 })
                   }
-                  style={{ paddingRight: 28 }}
+                  className="pr-7"
                 />
-                <span
-                  style={{
-                    position: "absolute",
-                    right: 11,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: 13,
-                    color: "var(--tx3)",
-                  }}
-                >
+                <span className="absolute right-[11px] top-1/2 -translate-y-1/2 text-[13px] text-tx3">
                   %
                 </span>
               </div>
             </div>
           )}
           {form.type === "credit" && (
-            <div
-              className="mt2"
-              style={{
-                fontSize: 12,
-                color: "var(--am)",
-                background: "var(--amlt)",
-                padding: "8px 12px",
-                borderRadius: 8,
-              }}
-            >
+            <div className="mt2 text-[12px] text-amber bg-amber-light px-3 py-2 rounded-lg">
               Credit notes reduce a previously issued invoice. The total will
               appear as a negative amount.
             </div>
@@ -149,17 +118,8 @@ export default function FormStep({
 
         {/* Bill To */}
         <div className="card">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 14,
-            }}
-          >
-            <div className="card-ttl" style={{ margin: 0 }}>
-              Bill To
-            </div>
+          <div className="flex justify-between items-center mb-[14px]">
+            <div className="card-ttl !m-0">Bill To</div>
             <button className="btn bg btn-sm" onClick={onOpenClientPicker}>
               <Icon n="users" s={12} /> Address Book
             </button>
@@ -221,14 +181,7 @@ export default function FormStep({
             </div>
             <div className="fg full">
               <label>Payment terms</label>
-              <div
-                style={{
-                  display: "flex",
-                  gap: 6,
-                  flexWrap: "wrap",
-                  marginBottom: 6,
-                }}
-              >
+              <div className="flex gap-[6px] flex-wrap mb-[6px]">
                 {PAYMENT_TERMS_PRESETS.slice(0, 3).map((t) => (
                   <button
                     key={t}
@@ -248,15 +201,8 @@ export default function FormStep({
           </div>
 
           {/* Line items */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 10,
-            }}
-          >
-            <label style={{ margin: 0 }}>Line Items</label>
+          <div className="flex justify-between items-center mb-[10px]">
+            <label className="!m-0">Line Items</label>
             <button className="btn bg btn-sm" onClick={onOpenTemplatePicker}>
               <Icon n="template" s={12} /> Templates
             </button>
@@ -285,7 +231,7 @@ export default function FormStep({
                     min="1"
                     value={it.qty}
                     onChange={(e) => onItemChange(idx, "qty", e.target.value)}
-                    style={{ textAlign: "center" }}
+                    className="text-center"
                   />
                   <div className="ipw">
                     <span className="ipp">{S2}</span>
@@ -298,20 +244,12 @@ export default function FormStep({
                       }
                     />
                   </div>
-                  <span
-                    className="am-col mono"
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "var(--tx)",
-                    }}
-                  >
+                  <span className="am-col mono text-[13px] font-semibold text-tx">
                     {S2}
                     {fmt(amt)}
                   </span>
                   <button
-                    className="btn bg"
-                    style={{ padding: "5px" }}
+                    className="btn bg px-[5px] py-[5px]"
                     onClick={() => onItemRemove(idx)}
                     disabled={items.length === 1}
                   >
@@ -336,41 +274,24 @@ export default function FormStep({
 
           {/* Tax */}
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              marginBottom: taxEnabled ? 12 : 0,
-            }}
+            className={`flex items-center gap-[10px] ${
+              taxEnabled ? "mb-3" : ""
+            }`}
           >
-            <label
-              style={{
-                margin: 0,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 7,
-                textTransform: "none",
-                fontSize: 13,
-                fontWeight: 500,
-                color: "var(--tx2)",
-              }}
-            >
+            <label className="!m-0 cursor-pointer flex items-center gap-[7px] normal-case text-[13px] font-medium text-tx2">
               <input
                 type="checkbox"
                 checked={taxEnabled}
                 onChange={(e) => onTaxToggle(e.target.checked)}
-                style={{ width: 15, height: 15, accentColor: "var(--g)" }}
+                className="w-[15px] h-[15px] accent-brand"
               />
               Add Tax
             </label>
             {taxEnabled && (
-              <div
-                style={{ display: "flex", gap: 8, flex: 1, flexWrap: "wrap" }}
-              >
+              <div className="flex gap-2 flex-1 flex-wrap">
                 <select
                   value={tax?.type || "vat"}
-                  style={{ flex: 1, minWidth: 140 }}
+                  className="flex-1 min-w-[140px]"
                   onChange={(e) => {
                     const tt = TAX_TYPES.find((t) => t.id === e.target.value)!;
                     onTaxChange({ type: tt.id, rate: tt.default });
@@ -382,7 +303,7 @@ export default function FormStep({
                     </option>
                   ))}
                 </select>
-                <div className="ipw" style={{ width: 90 }}>
+                <div className="ipw w-[90px]">
                   <input
                     type="number"
                     value={tax?.rate || 7.5}
@@ -392,18 +313,9 @@ export default function FormStep({
                         rate: parseFloat(e.target.value) || 0,
                       })
                     }
-                    style={{ paddingRight: 24 }}
+                    className="pr-6"
                   />
-                  <span
-                    style={{
-                      position: "absolute",
-                      right: 10,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      fontSize: 12,
-                      color: "var(--tx3)",
-                    }}
-                  >
+                  <span className="absolute right-[10px] top-1/2 -translate-y-1/2 text-[12px] text-tx3">
                     %
                   </span>
                 </div>
@@ -414,7 +326,7 @@ export default function FormStep({
           {/* Totals */}
           <div className="totals-box">
             <div className="tot-row">
-              <span style={{ color: "var(--tx2)" }}>Subtotal</span>
+              <span className="text-tx2">Subtotal</span>
               <span className="mono">
                 {S2}
                 {fmt(sub)}
@@ -422,7 +334,7 @@ export default function FormStep({
             </div>
             {taxEnabled && tax && (
               <div className="tot-row">
-                <span style={{ color: "var(--tx2)" }}>
+                <span className="text-tx2">
                   {TAX_TYPES.find((t) => t.id === tax.type)?.label} ({tax.rate}
                   %)
                 </span>
@@ -435,17 +347,15 @@ export default function FormStep({
             {form.type === "deposit" && (
               <>
                 <div className="tot-row">
-                  <span style={{ color: "var(--tx2)" }}>Gross total</span>
+                  <span className="text-tx2">Gross total</span>
                   <span className="mono">
                     {S2}
                     {fmt(gross)}
                   </span>
                 </div>
                 <div className="tot-row">
-                  <span style={{ color: "var(--pu)" }}>
-                    Deposit ({form.deposit}%)
-                  </span>
-                  <span className="mono" style={{ color: "var(--pu)" }}>
+                  <span className="text-purple">Deposit ({form.deposit}%)</span>
+                  <span className="mono text-purple">
                     {S2}
                     {fmt(dep)}
                   </span>
@@ -476,69 +386,33 @@ export default function FormStep({
               placeholder="Payment instructions, project reference, thank-you note..."
               value={form.notes}
               onChange={(e) => onFormChange({ notes: e.target.value })}
-              style={{ resize: "none" }}
+              className="resize-none"
             />
           </div>
         </div>
       </div>
 
       {/* Sidebar summary */}
-      <div
-        style={{
-          position: "sticky",
-          top: 24,
-          display: "flex",
-          flexDirection: "column",
-          gap: 14,
-        }}
-      >
+      <div className="sticky top-6 flex flex-col gap-[14px]">
         <div className="card">
           <div className="card-ttl">Summary</div>
-          <div
-            style={{
-              fontFamily: "var(--mo)",
-              fontSize: 24,
-              fontWeight: 700,
-              color: "var(--tx)",
-              letterSpacing: "-.03em",
-              marginBottom: 3,
-            }}
-          >
+          <div className="font-mono text-[24px] font-bold text-tx tracking-[-0.03em] mb-[3px]">
             {S2}
             {fmt(total)}
           </div>
-          <div style={{ fontSize: 11, color: "var(--tx3)", marginBottom: 12 }}>
+          <div className="text-[11px] text-tx3 mb-3">
             {CURRENCY_NAMES[form.currency]}
           </div>
           {total > 0 && form.currency !== homeCurrency && (
-            <div
-              style={{
-                padding: "9px 12px",
-                background: "var(--sf2)",
-                borderRadius: 8,
-                fontSize: 12,
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: 3,
-                }}
-              >
-                <span style={{ color: "var(--tx3)" }}>Est. {homeCurrency}</span>
-                <span
-                  style={{
-                    fontFamily: "var(--mo)",
-                    fontWeight: 700,
-                    color: "var(--gdk)",
-                  }}
-                >
+            <div className="px-3 py-[9px] bg-sf2 rounded-lg text-[12px]">
+              <div className="flex justify-between mb-[3px]">
+                <span className="text-tx3">Est. {homeCurrency}</span>
+                <span className="font-mono font-bold text-brand-dark">
                   {currencySymbol(homeCurrency)}
                   {fmtHome(total * rate)}
                 </span>
               </div>
-              <div style={{ fontSize: 10, color: "var(--tx3)" }}>
+              <div className="text-[10px] text-tx3">
                 at approx. {currencySymbol(homeCurrency)}
                 {fmt(rate, 0)}/{form.currency}
               </div>

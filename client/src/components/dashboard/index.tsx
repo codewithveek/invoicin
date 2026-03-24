@@ -49,16 +49,7 @@ export default function Dashboard() {
         currency={user?.defaultCurrency ?? "USD"}
       />
 
-      <div
-        className="two-col"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          gap: 18,
-          alignItems: "start",
-        }}
-      >
+      <div className="two-col flex flex-row flex-wrap gap-[18px] items-start">
         <RecentInvoicesTable
           invoices={invoices}
           onNew={onNew}

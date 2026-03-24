@@ -6,32 +6,15 @@ interface BillingTabProps {
 
 export default function BillingTab({ onToast }: BillingTabProps) {
   return (
-    <div className="card" style={{ maxWidth: 460 }}>
+    <div className="card max-w-[460px]">
       <div className="card-ttl">Current Plan</div>
-      <div
-        style={{
-          background: "linear-gradient(135deg,var(--glt),#f0fdf4)",
-          border: "1.5px solid var(--gmid)",
-          borderRadius: "var(--r)",
-          padding: "16px 18px",
-          marginBottom: 16,
-        }}
-      >
-        <div style={{ fontWeight: 700, fontSize: 16, color: "var(--gdk)" }}>
-          Free Plan
-        </div>
-        <div style={{ fontSize: 12, color: "var(--tx3)", marginTop: 3 }}>
+      <div className="bg-gradient-to-br from-brand-light to-[#f0fdf4] border-[1.5px] border-brand-mid rounded-[var(--radius-md)] px-[18px] py-4 mb-4">
+        <div className="font-bold text-[16px] text-brand-dark">Free Plan</div>
+        <div className="text-[12px] text-tx3 mt-[3px]">
           10 invoices/month · Basic features
         </div>
       </div>
-      <div
-        style={{
-          fontSize: 13,
-          color: "var(--tx2)",
-          marginBottom: 16,
-          lineHeight: 1.6,
-        }}
-      >
+      <div className="text-[13px] text-tx2 mb-4 leading-relaxed">
         Upgrade to Pro for unlimited invoices, recurring invoices, automatic
         reminders, and team access.
       </div>
