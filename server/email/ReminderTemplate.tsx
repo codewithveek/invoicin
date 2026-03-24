@@ -4,8 +4,14 @@ import {
   Head,
   Body,
   Container,
-  Text,
   Preview,
+  Section,
+  Row,
+  Column,
+  Heading,
+  Text,
+  Button,
+  Font,
 } from "@react-email/components";
 import { styles } from "./styles";
 import {
@@ -26,13 +32,71 @@ export function ReminderEmailTemplate({
   appUrl: string;
   daysOverdue: number;
 }) {
-  const S = currencySymbol(invoice.currency);
+  const symbol = currencySymbol(invoice.currency);
   const invoiceUrl = `${appUrl}/i/${invoice.linkId}`;
   const isFirstReminder = daysOverdue <= 1;
 
+  const headerBg = isFirstReminder ? "#14532d" : "#7c2d12";
+  const ctaBg = isFirstReminder ? "#16a34a" : "#dc2626";
+  const dotBg = isFirstReminder ? "#16a34a" : "#dc2626";
+
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        <Font
+          fontFamily="DM Sans"
+          fallbackFontFamily="Helvetica"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K6z9mXg.woff2",
+            format: "woff2",
+          }}
+          fontWeight={400}
+          fontStyle="normal"
+        />
+        <Font
+          fontFamily="DM Sans"
+          fallbackFontFamily="Helvetica"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K6z9mXg.woff2",
+            format: "woff2",
+          }}
+          fontWeight={500}
+          fontStyle="normal"
+        />
+        {/* DM Sans 700 — latin */}
+        <Font
+          fontFamily="DM Sans"
+          fallbackFontFamily="Helvetica"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K6z9mXg.woff2",
+            format: "woff2",
+          }}
+          fontWeight={700}
+          fontStyle="normal"
+        />
+        {/* DM Mono 400 — latin — verified from Google Fonts CSS API */}
+        <Font
+          fontFamily="DM Mono"
+          fallbackFontFamily="monospace"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthqQBA.woff2",
+            format: "woff2",
+          }}
+          fontWeight={400}
+          fontStyle="normal"
+        />
+        {/* DM Mono 500 — latin */}
+        <Font
+          fontFamily="DM Mono"
+          fallbackFontFamily="monospace"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthSQBLyM.woff2",
+            format: "woff2",
+          }}
+          fontWeight={500}
+          fontStyle="normal"
+        />
+      </Head>
       <Preview>
         {isFirstReminder
           ? `Friendly reminder: Invoice ${invoice.id} was due today`
@@ -40,81 +104,105 @@ export function ReminderEmailTemplate({
       </Preview>
       <Body style={styles.body}>
         <Container style={styles.container}>
-          <div style={styles.card}>
-            <div
-              style={{
-                ...styles.header,
-                background: isFirstReminder
-                  ? "linear-gradient(155deg, #14532d 0%, #16a34a 100%)"
-                  : "linear-gradient(155deg, #7c2d12 0%, #dc2626 100%)",
-              }}
-            >
-              <div style={styles.headerBadge}>
-                {isFirstReminder
-                  ? "PAYMENT REMINDER"
-                  : `${daysOverdue} DAYS OVERDUE`}
-              </div>
-              <div style={styles.headerName}>
+          <Section style={styles.card}>
+            {/* ── Header ── */}
+            <Section style={{ ...styles.header, backgroundColor: headerBg }}>
+              <Row style={{ marginBottom: 12 }}>
+                <Column>
+                  <Text style={styles.headerBadge}>
+                    {isFirstReminder
+                      ? "PAYMENT REMINDER"
+                      : `${daysOverdue} DAYS OVERDUE`}
+                  </Text>
+                </Column>
+                <Column style={{ width: "60%" }} />
+              </Row>
+
+              <Heading as="h2" style={styles.headerName}>
                 {isFirstReminder
                   ? "Just a friendly reminder"
                   : "Payment is overdue"}
-              </div>
-              <div style={styles.headerSub}>
+              </Heading>
+              <Text style={styles.headerSub}>
                 Invoice {invoice.id} from{" "}
                 {freelancer.businessName || freelancer.name}
-              </div>
-              <div style={styles.amtLabel}>Amount due</div>
-              <div style={styles.amtBig}>
-                {S}
+              </Text>
+              <Text style={styles.amtLabel}>Amount due</Text>
+              <Heading as="h1" style={styles.amtBig}>
+                {symbol}
                 {fmt(invoice.total)}
-              </div>
-            </div>
+              </Heading>
+            </Section>
 
-            <div style={styles.body_pad}>
-              <Text style={{ fontSize: 14, color: "#4a6350", lineHeight: 1.7 }}>
+            {/* ── Body ── */}
+            <Section style={styles.body_pad}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: "#4a6350",
+                  lineHeight: "1.7",
+                  marginTop: 0,
+                }}
+              >
                 Hi {invoice.clientName},{" "}
                 {isFirstReminder
                   ? `This is a friendly reminder that invoice ${
                       invoice.id
-                    } for ${S}${fmt(invoice.total)} is due today.`
-                  : `Invoice ${invoice.id} for ${S}${fmt(
+                    } for ${symbol}${fmt(invoice.total)} is due today.`
+                  : `Invoice ${invoice.id} for ${symbol}${fmt(
                       invoice.total
                     )} is now ${daysOverdue} days past its due date.`}{" "}
                 If you have already made the payment, please disregard this
                 message.
               </Text>
-              <div style={{ textAlign: "center", padding: "8px 0" }}>
-                <a
+
+              <Section
+                style={{ textAlign: "center", paddingTop: 8, paddingBottom: 8 }}
+              >
+                <Button
                   href={invoiceUrl}
-                  style={{
-                    ...styles.cta,
-                    backgroundColor: isFirstReminder ? "#16a34a" : "#dc2626",
-                  }}
+                  style={{ ...styles.cta, backgroundColor: ctaBg }}
                 >
                   View &amp; Pay Invoice
-                </a>
-              </div>
-            </div>
+                </Button>
+              </Section>
+            </Section>
 
-            <div style={styles.stamp}>
-              <div
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  backgroundColor: "#16a34a",
-                  flexShrink: 0,
-                }}
-              />
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#14532d" }}>
-                Sent via Invoicin
-              </div>
-            </div>
-          </div>
+            {/* ── Stamp ── */}
+            <Section style={styles.stamp}>
+              <Row>
+                <Column style={{ width: 18 }}>
+                  <div
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      backgroundColor: dotBg,
+                    }}
+                  />
+                </Column>
+                <Column>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "#14532d",
+                      margin: 0,
+                    }}
+                  >
+                    Sent via Invoicin
+                  </Text>
+                </Column>
+              </Row>
+            </Section>
+          </Section>
 
-          <div style={styles.footer}>
-            <p>Questions? Reply directly to {freelancer.email}</p>
-          </div>
+          {/* ── Footer ── */}
+          <Section style={styles.footer}>
+            <Text style={{ margin: "4px 0", fontSize: 11, color: "#8aab90" }}>
+              Questions? Reply directly to {freelancer.email}
+            </Text>
+          </Section>
         </Container>
       </Body>
     </Html>

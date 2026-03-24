@@ -4,19 +4,27 @@ export const styles = {
     fontFamily: "'DM Sans', -apple-system, sans-serif",
     margin: 0,
   },
-  container: { maxWidth: 560, margin: "0 auto", padding: "32px 16px" },
+  container: {
+    maxWidth: 560,
+    margin: "0 auto",
+    padding: "32px 16px",
+  },
   card: {
     backgroundColor: "#ffffff",
     borderRadius: 14,
-    overflow: "hidden" as const,
+    // overflow: hidden removed — Outlook ignores it and it causes rendering bugs
     border: "1px solid #dde8de",
   },
   header: {
-    background: "linear-gradient(155deg, #14532d 0%, #16a34a 100%)",
+    // linear-gradient removed — not supported in Outlook
+    // backgroundColor is the Outlook fallback; the gradient is gone entirely
+    // If you want gradient, it must be done via a background image (VML hack)
+    backgroundColor: "#14532d",
     padding: "28px 28px 24px",
   },
   headerBadge: {
-    display: "inline-block",
+    // display: inline-block removed — unreliable in Outlook
+    // React Email's <Text> renders as a block; use it as a pill with fixed width or let it be block-level
     background: "rgba(255,255,255,0.18)",
     border: "1px solid rgba(255,255,255,0.22)",
     borderRadius: 20,
@@ -26,6 +34,7 @@ export const styles = {
     color: "#fff",
     letterSpacing: "0.05em",
     marginBottom: 12,
+    // margin auto won't center in Outlook — wrap in a Section with align if centering is needed
   },
   headerName: {
     fontSize: 20,
@@ -34,7 +43,11 @@ export const styles = {
     margin: "0 0 4px",
     letterSpacing: "-0.02em",
   },
-  headerSub: { fontSize: 12, color: "rgba(255,255,255,0.72)", margin: 0 },
+  headerSub: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.72)",
+    margin: 0,
+  },
   amtLabel: {
     fontSize: 10,
     color: "rgba(255,255,255,0.6)",
@@ -57,37 +70,52 @@ export const styles = {
     fontFamily: "monospace",
     margin: "4px 0 0",
   },
-  body_pad: { padding: "22px 28px" },
+  body_pad: {
+    // Padding split into longhands — Outlook respects these more reliably
+    paddingTop: 22,
+    paddingBottom: 22,
+    paddingLeft: 28,
+    paddingRight: 28,
+  },
   row: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "7px 0",
+    // flex/justifyContent removed — layout now handled by Row/Column
+    paddingTop: 7,
+    paddingBottom: 7,
     borderBottom: "1px solid #dde8de",
   },
-  label: { fontSize: 12, color: "#8aab90", fontWeight: 500 },
+  label: {
+    fontSize: 12,
+    color: "#8aab90",
+    fontWeight: 500,
+    margin: 0,
+  },
   value: {
     fontSize: 12,
     color: "#111d13",
     fontWeight: 600,
     textAlign: "right" as const,
+    margin: 0,
   },
   itemsBox: {
     backgroundColor: "#f0f4f1",
     borderRadius: 8,
-    padding: "12px",
-    margin: "12px 0",
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 12,
+    paddingRight: 12,
+    marginTop: 12,
+    marginBottom: 12,
   },
   itemRow: {
-    display: "flex",
-    justifyContent: "space-between",
+    // flex/justifyContent removed — layout now handled by Row/Column
     fontSize: 12,
-    padding: "4px 0",
+    paddingTop: 4,
+    paddingBottom: 4,
     color: "#4a6350",
-    borderBottom: "1px dashed #dde8de",
+    // borderBottom removed — now handled by <Hr> between rows in the template
   },
   totalRow: {
-    display: "flex",
-    justifyContent: "space-between",
+    // flex/justifyContent removed — layout now handled by Row/Column
     fontSize: 13,
     fontWeight: 700,
     color: "#111d13",
@@ -99,11 +127,12 @@ export const styles = {
     backgroundColor: "#16a34a",
     color: "#fff",
     borderRadius: 9,
+    // padding as shorthand is fine for Button — react.email handles the table wrapper
     padding: "13px 28px",
     fontSize: 14,
     fontWeight: 700,
     textDecoration: "none",
-    display: "inline-block",
+    // display: inline-block removed — Button handles its own rendering
     marginTop: 20,
   },
   footer: {
@@ -113,11 +142,32 @@ export const styles = {
     color: "#8aab90",
   },
   stamp: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    padding: "12px 20px",
+    // display: flex / alignItems / gap removed — now a Row/Column in the template
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 20,
+    paddingRight: 20,
     backgroundColor: "#f0f4f1",
     borderTop: "1.5px solid #bbf7d0",
+  },
+
+  notesBox: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 12,
+    paddingRight: 12,
+    backgroundColor: "#f0f4f1",
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  notesText: {
+    fontSize: 12,
+    color: "#4a6350",
+    lineHeight: "1.6",
+    margin: 0,
+  },
+  // Fixed-width label column — prevents right-side values from misaligning
+  labelCol: {
+    width: 80,
   },
 };

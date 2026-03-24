@@ -4,8 +4,16 @@ import {
   Head,
   Body,
   Container,
-  Text,
   Preview,
+  Section,
+  Row,
+  Column,
+  Heading,
+  Text,
+  Button,
+  Link,
+  Hr,
+  Font,
 } from "@react-email/components";
 import { styles } from "./styles";
 import {
@@ -39,7 +47,61 @@ export function InvoiceEmailTemplate({
 
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+       <Font
+          fontFamily="DM Sans"
+          fallbackFontFamily="Helvetica"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K6z9mXg.woff2",
+            format: "woff2",
+          }}
+          fontWeight={400}
+          fontStyle="normal"
+        />
+        {/* DM Sans 500 — latin — same file as 400 in DM Sans v17 variable axis */}
+        <Font
+          fontFamily="DM Sans"
+          fallbackFontFamily="Helvetica"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K6z9mXg.woff2",
+            format: "woff2",
+          }}
+          fontWeight={500}
+          fontStyle="normal"
+        />
+        {/* DM Sans 700 — latin */}
+        <Font
+          fontFamily="DM Sans"
+          fallbackFontFamily="Helvetica"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K6z9mXg.woff2",
+            format: "woff2",
+          }}
+          fontWeight={700}
+          fontStyle="normal"
+        />
+        <Font
+          fontFamily="DM Mono"
+          fallbackFontFamily="monospace"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthqQBA.woff2",
+            format: "woff2",
+          }}
+          fontWeight={400}
+          fontStyle="normal"
+        />
+        {/* DM Mono 500 — latin */}
+        <Font
+          fontFamily="DM Mono"
+          fallbackFontFamily="monospace"
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthSQBLyM.woff2",
+            format: "woff2",
+          }}
+          fontWeight={500}
+          fontStyle="normal"
+        />
+      </Head>
       <Preview>
         {previewText ||
           `${typeLabel} ${invoice.id} from ${
@@ -48,192 +110,284 @@ export function InvoiceEmailTemplate({
       </Preview>
       <Body style={styles.body}>
         <Container style={styles.container}>
-          <div style={styles.card}>
-            {/* Header */}
-            <div style={styles.header}>
-              <div style={styles.headerBadge}>{typeLabel.toUpperCase()}</div>
-              <div style={styles.headerName}>
+          <Section style={styles.card}>
+            {/* ── Header ── */}
+            <Section style={styles.header}>
+              {/* Badge: wrapped in a Row to allow inline-like width control */}
+              <Row style={{ marginBottom: 12 }}>
+                <Column>
+                  <Text style={styles.headerBadge}>
+                    {typeLabel.toUpperCase()}
+                  </Text>
+                </Column>
+                {/* Empty column pushes badge left without stretching it */}
+                <Column style={{ width: "70%" }} />
+              </Row>
+
+              <Heading as="h2" style={styles.headerName}>
                 {freelancer.businessName || freelancer.name}
-              </div>
-              <div style={styles.headerSub}>
+              </Heading>
+              <Text style={styles.headerSub}>
                 Invoice for {invoice.clientName}
-              </div>
-              <div style={styles.amtLabel}>Amount due</div>
-              <div style={styles.amtBig}>
+              </Text>
+              <Text style={styles.amtLabel}>Amount due</Text>
+              <Heading as="h1" style={styles.amtBig}>
                 {symbol}
                 {fmt(invoice.total)}
-              </div>
+              </Heading>
               {invoice.dueDate && (
-                <div style={styles.amtSub}>
+                <Text style={styles.amtSub}>
                   Due by{" "}
                   {new Date(invoice.dueDate).toLocaleDateString("en", {
                     day: "2-digit",
                     month: "long",
                     year: "numeric",
                   })}
-                </div>
+                </Text>
               )}
-            </div>
+            </Section>
 
-            {/* Body */}
-            <div style={styles.body_pad}>
-              <div style={styles.row}>
-                <span style={styles.label}>Invoice #</span>
-                <span style={{ ...styles.value, fontFamily: "monospace" }}>
-                  {invoice.id}
-                </span>
-              </div>
-              <div style={styles.row}>
-                <span style={styles.label}>Date</span>
-                <span style={styles.value}>
-                  {new Date(invoice.issueDate).toLocaleDateString("en", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </span>
-              </div>
+            {/* ── Meta rows ── */}
+            <Section style={styles.body_pad}>
+              <Row style={styles.row}>
+                <Column style={styles.labelCol}>
+                  <Text style={styles.label}>Invoice #</Text>
+                </Column>
+                <Column>
+                  <Text
+                    style={{
+                      ...styles.value,
+                      fontFamily: "'DM Mono', 'Courier New', monospace",
+                    }}
+                  >
+                    {invoice.id}
+                  </Text>
+                </Column>
+              </Row>
+
+              <Row style={styles.row}>
+                <Column style={styles.labelCol}>
+                  <Text style={styles.label}>Date</Text>
+                </Column>
+                <Column>
+                  <Text style={styles.value}>
+                    {new Date(invoice.issueDate).toLocaleDateString("en", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </Text>
+                </Column>
+              </Row>
+
               {invoice.terms && (
-                <div style={styles.row}>
-                  <span style={styles.label}>Terms</span>
-                  <span style={styles.value}>{invoice.terms}</span>
-                </div>
+                <Row style={styles.row}>
+                  <Column style={styles.labelCol}>
+                    <Text style={styles.label}>Terms</Text>
+                  </Column>
+                  <Column>
+                    <Text style={styles.value}>{invoice.terms}</Text>
+                  </Column>
+                </Row>
               )}
-              <div style={styles.row}>
-                <span style={styles.label}>From</span>
-                <span style={styles.value}>
-                  {freelancer.businessName || freelancer.name}
-                  <br />
-                  <span style={{ fontSize: 11, color: "#8aab90" }}>
-                    {freelancer.email}
-                  </span>
-                </span>
-              </div>
 
-              {/* Line items */}
-              <div style={styles.itemsBox}>
-                {invoice.items.map((item, i) => (
-                  <div
-                    key={i}
+              <Row style={{ ...styles.row, borderBottom: "none" }}>
+                <Column style={styles.labelCol}>
+                  <Text style={styles.label}>From</Text>
+                </Column>
+                <Column>
+                  <Text style={{ ...styles.value, marginBottom: 0 }}>
+                    {freelancer.businessName || freelancer.name}
+                  </Text>
+                  <Text
                     style={{
-                      ...styles.itemRow,
-                      borderBottom:
-                        i < invoice.items.length - 1
-                          ? "1px dashed #dde8de"
-                          : "none",
-                    }}
-                  >
-                    <span>
-                      {item.desc}
-                      {item.qty > 1 ? ` x${item.qty}` : ""}
-                    </span>
-                    <span style={{ fontFamily: "monospace", fontWeight: 600 }}>
-                      {symbol}
-                      {fmt(item.price * item.qty)}
-                    </span>
-                  </div>
-                ))}
-                {invoice.taxAmount != null && invoice.taxAmount > 0 && (
-                  <div
-                    style={{
-                      ...styles.itemRow,
-                      borderBottom: "none",
+                      ...styles.value,
+                      fontSize: 11,
                       color: "#8aab90",
+                      fontWeight: 400,
+                      marginTop: 2,
                     }}
                   >
-                    <span>
-                      {invoice.taxType?.toUpperCase()} ({invoice.taxRate}%)
-                    </span>
-                    <span style={{ fontFamily: "monospace" }}>
-                      {symbol}
-                      {fmt(invoice.taxAmount)}
-                    </span>
-                  </div>
+                    {freelancer.email}
+                  </Text>
+                </Column>
+              </Row>
+
+              {/* ── Line items ── */}
+              <Section style={styles.itemsBox}>
+                {invoice.items.map((item, i) => (
+                  <React.Fragment key={i}>
+                    <Row style={styles.itemRow}>
+                      <Column>
+                        <Text
+                          style={{ margin: 0, fontSize: 12, color: "#4a6350" }}
+                        >
+                          {item.desc}
+                          {item.qty > 1 ? ` x${item.qty}` : ""}
+                        </Text>
+                      </Column>
+                      <Column style={{ width: 90 }}>
+                        <Text
+                          style={{
+                            margin: 0,
+                            fontSize: 12,
+                            fontFamily: "'DM Mono', 'Courier New', monospace",
+                            fontWeight: 600,
+                            textAlign: "right",
+                            color: "#111d13",
+                          }}
+                        >
+                          {symbol}
+                          {fmt(item.price * item.qty)}
+                        </Text>
+                      </Column>
+                    </Row>
+                    {i < invoice.items.length - 1 && (
+                      <Hr
+                        style={{
+                          borderColor: "#dde8de",
+                          borderStyle: "dashed",
+                          margin: "0",
+                        }}
+                      />
+                    )}
+                  </React.Fragment>
+                ))}
+
+                {invoice.taxAmount != null && invoice.taxAmount > 0 && (
+                  <Row style={styles.itemRow}>
+                    <Column>
+                      <Text
+                        style={{ margin: 0, fontSize: 12, color: "#8aab90" }}
+                      >
+                        {invoice.taxType?.toUpperCase()} ({invoice.taxRate}%)
+                      </Text>
+                    </Column>
+                    <Column style={{ width: 90 }}>
+                      <Text
+                        style={{
+                          margin: 0,
+                          fontSize: 12,
+                          fontFamily: "'DM Mono', 'Courier New', monospace",
+                          color: "#8aab90",
+                          textAlign: "right",
+                        }}
+                      >
+                        {symbol}
+                        {fmt(invoice.taxAmount)}
+                      </Text>
+                    </Column>
+                  </Row>
                 )}
-                <div style={styles.totalRow}>
-                  <span>
-                    {invoice.type === "deposit"
-                      ? `Deposit (${invoice.deposit}%)`
-                      : "Total"}
-                  </span>
-                  <span style={{ fontFamily: "monospace" }}>
-                    {symbol}
-                    {fmt(invoice.total)}
-                  </span>
-                </div>
-              </div>
+
+                <Row style={styles.totalRow}>
+                  <Column>
+                    <Text
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: "#111d13",
+                      }}
+                    >
+                      {invoice.type === "deposit"
+                        ? `Deposit (${invoice.deposit}%)`
+                        : "Total"}
+                    </Text>
+                  </Column>
+                  <Column style={{ width: 90 }}>
+                    <Text
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        fontFamily: "'DM Mono', 'Courier New', monospace",
+                        fontWeight: 700,
+                        textAlign: "right",
+                        color: "#111d13",
+                      }}
+                    >
+                      {symbol}
+                      {fmt(invoice.total)}
+                    </Text>
+                  </Column>
+                </Row>
+              </Section>
 
               {invoice.notes && (
-                <div
-                  style={{
-                    padding: "10px 12px",
-                    backgroundColor: "#f0f4f1",
-                    borderRadius: 8,
-                    fontSize: 12,
-                    color: "#4a6350",
-                    lineHeight: 1.6,
-                    marginBottom: 12,
-                  }}
-                >
-                  {invoice.notes}
-                </div>
+                <Section style={styles.notesBox}>
+                  <Text style={styles.notesText}>{invoice.notes}</Text>
+                </Section>
               )}
 
-              {/* CTA */}
-              <div style={{ textAlign: "center", paddingBottom: 8 }}>
-                <a href={invoiceUrl} style={styles.cta}>
+              {/* ── CTA ── */}
+              <Section style={{ textAlign: "center", paddingBottom: 8 }}>
+                <Button href={invoiceUrl} style={styles.cta}>
                   View Invoice
-                </a>
-              </div>
-              <div
-                style={{
-                  textAlign: "center",
-                  fontSize: 11,
-                  color: "#8aab90",
-                  marginTop: 10,
-                }}
-              >
-                Or copy this link:{" "}
-                <a href={invoiceUrl} style={{ color: "#16a34a" }}>
-                  {invoiceUrl}
-                </a>
-              </div>
-            </div>
+                </Button>
+              </Section>
 
-            {/* Stamp */}
-            <div style={styles.stamp}>
-              <div
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  backgroundColor: "#16a34a",
-                  flexShrink: 0,
-                }}
-              />
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#14532d" }}>
-                Created with Invoicin
-              </div>
-              <div
-                style={{
-                  fontSize: 10,
-                  color: "#8aab90",
-                  fontFamily: "monospace",
-                  marginLeft: "auto",
-                }}
-              >
-                {invoice.id}
-              </div>
-            </div>
-          </div>
+              <Section style={{ textAlign: "center" }}>
+                <Text style={{ fontSize: 11, color: "#8aab90", margin: 0 }}>
+                  Or copy this link:{" "}
+                  <Link href={invoiceUrl} style={{ color: "#16a34a" }}>
+                    {invoiceUrl}
+                  </Link>
+                </Text>
+              </Section>
+            </Section>
 
-          <div style={styles.footer}>
-            <p>
+            {/* ── Stamp ── */}
+            <Section style={styles.stamp}>
+              <Row>
+                <Column style={{ width: 18 }}>
+                  <div
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      backgroundColor: "#16a34a",
+                    }}
+                  />
+                </Column>
+                <Column>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "#14532d",
+                      margin: 0,
+                    }}
+                  >
+                    Created with Invoicin
+                  </Text>
+                </Column>
+                <Column style={{ width: 120 }}>
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      color: "#8aab90",
+                      fontFamily: "'DM Mono', 'Courier New', monospace",
+                      textAlign: "right",
+                      margin: 0,
+                    }}
+                  >
+                    {invoice.id}
+                  </Text>
+                </Column>
+              </Row>
+            </Section>
+          </Section>
+
+          {/* ── Footer ── */}
+          <Section style={styles.footer}>
+            <Text style={{ margin: "4px 0", fontSize: 11, color: "#8aab90" }}>
               You received this because {freelancer.name} sent you an invoice
               via Invoicin.
-            </p>
-            <p>Questions? Reply directly to {freelancer.email}</p>
-          </div>
+            </Text>
+            <Text style={{ margin: "4px 0", fontSize: 11, color: "#8aab90" }}>
+              Questions? Reply directly to {freelancer.email}
+            </Text>
+          </Section>
         </Container>
       </Body>
     </Html>

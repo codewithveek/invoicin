@@ -15,7 +15,12 @@ export default function RecentInvoicesTable({
   onView,
 }: RecentInvoicesTableProps) {
   return (
-    <div className="tcard">
+    <div
+      className="tcard"
+      style={{
+        flexGrow: "1",
+      }}
+    >
       <div className="tcard-hd">
         <div className="tcard-ttl">Recent Invoices</div>
         <button className="btn bg btn-sm" onClick={onNew}>
