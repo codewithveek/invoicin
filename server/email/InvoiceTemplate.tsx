@@ -80,7 +80,7 @@ export function InvoiceEmailTemplate({
           fontWeight={700}
           fontStyle="normal"
         />
-        <Font
+        {/* <Font
           fontFamily="DM Mono"
           fallbackFontFamily="monospace"
           webFont={{
@@ -89,9 +89,9 @@ export function InvoiceEmailTemplate({
           }}
           fontWeight={400}
           fontStyle="normal"
-        />
+        /> */}
         {/* DM Mono 500 — latin */}
-        <Font
+        {/* <Font
           fontFamily="DM Mono"
           fallbackFontFamily="monospace"
           webFont={{
@@ -100,7 +100,7 @@ export function InvoiceEmailTemplate({
           }}
           fontWeight={500}
           fontStyle="normal"
-        />
+        /> */}
       </Head>
       <Preview>
         {previewText ||
@@ -157,7 +157,6 @@ export function InvoiceEmailTemplate({
                   <Text
                     style={{
                       ...styles.value,
-                      fontFamily: "'DM Mono', 'Courier New', monospace",
                     }}
                   >
                     {invoice.id}
@@ -231,8 +230,7 @@ export function InvoiceEmailTemplate({
                           style={{
                             margin: 0,
                             fontSize: 12,
-                            fontFamily: "'DM Mono', 'Courier New', monospace",
-                            fontWeight: 600,
+                           fontWeight: 600,
                             textAlign: "right",
                             color: "#111d13",
                           }}
@@ -268,7 +266,6 @@ export function InvoiceEmailTemplate({
                         style={{
                           margin: 0,
                           fontSize: 12,
-                          fontFamily: "'DM Mono', 'Courier New', monospace",
                           color: "#8aab90",
                           textAlign: "right",
                         }}
@@ -300,8 +297,7 @@ export function InvoiceEmailTemplate({
                       style={{
                         margin: 0,
                         fontSize: 13,
-                        fontFamily: "'DM Mono', 'Courier New', monospace",
-                        fontWeight: 700,
+                         fontWeight: 700,
                         textAlign: "right",
                         color: "#111d13",
                       }}
@@ -366,8 +362,7 @@ export function InvoiceEmailTemplate({
                     style={{
                       fontSize: 10,
                       color: "#8aab90",
-                      fontFamily: "'DM Mono', 'Courier New', monospace",
-                      textAlign: "right",
+                     textAlign: "right",
                       margin: 0,
                     }}
                   >

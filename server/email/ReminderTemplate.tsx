@@ -74,28 +74,6 @@ export function ReminderEmailTemplate({
           fontWeight={700}
           fontStyle="normal"
         />
-        {/* DM Mono 400 — latin — verified from Google Fonts CSS API */}
-        <Font
-          fontFamily="DM Mono"
-          fallbackFontFamily="monospace"
-          webFont={{
-            url: "https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthqQBA.woff2",
-            format: "woff2",
-          }}
-          fontWeight={400}
-          fontStyle="normal"
-        />
-        {/* DM Mono 500 — latin */}
-        <Font
-          fontFamily="DM Mono"
-          fallbackFontFamily="monospace"
-          webFont={{
-            url: "https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthSQBLyM.woff2",
-            format: "woff2",
-          }}
-          fontWeight={500}
-          fontStyle="normal"
-        />
       </Head>
       <Preview>
         {isFirstReminder
