@@ -126,6 +126,6 @@ export const invoiceController = {
       "Content-Disposition",
       `attachment; filename="invoice-${inv.id}.pdf"`
     );
-    return c.body(buffer);
+    return c.body(new Uint8Array(buffer));
   },
 };
