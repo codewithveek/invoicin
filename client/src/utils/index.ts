@@ -24,22 +24,15 @@ export const fmt = (n: number | string, d = 2) =>
   });
 
 /** Format a number in the freelancer's home currency locale. */
-export const fmtHome = (n: number | string) =>
-  parseFloat(String(n || 0)).toLocaleString("en-NG", {
+export const fmtHome = (n: number | string, currency = "NGN") =>
+  parseFloat(String(n || 0)).toLocaleString("en", {
+    style: "currency",
+    currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 
 export const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
-
-export const uid = () =>
-  "INV-" +
-  new Date().getFullYear() +
-  "-" +
-  String(Math.floor(Math.random() * 9000 + 1000));
-
-export const linkId = () => Math.random().toString(36).substring(2, 10);
-
 export const ts = () =>
   new Date().toLocaleString("en-NG", {
     day: "2-digit",

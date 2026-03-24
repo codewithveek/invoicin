@@ -114,6 +114,7 @@ export default function InvoiceDetail() {
 
   function copyLink() {
     setCopied(true);
+    navigator.clipboard.writeText("https://" + shareUrl);
     setTimeout(() => setCopied(false), 2000);
     toast("Link copied to clipboard");
   }
@@ -272,16 +273,22 @@ export default function InvoiceDetail() {
               maxWidth: 260,
             }}
           >
-            <button className="btn bp btn-full" onClick={handleDownloadPdf}>
+            <button
+              type="button"
+              className="btn bp btn-full"
+              onClick={handleDownloadPdf}
+            >
               <Icon n="download" s={14} c="#fff" /> Download PDF
             </button>
             <button
+              type="button"
               className="btn bs btn-full"
               onClick={() => setSendModal(true)}
             >
               <Icon n="mail" s={14} /> Send by Email
             </button>
             <button
+              type="button"
               className="btn bs btn-full"
               onClick={() => setShareModal(true)}
             >

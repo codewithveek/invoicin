@@ -15,33 +15,36 @@ export const invoicePublicService = {
       await invoiceRepository.update(inv.id, { status: "viewed" });
     }
 
-    // Strip internal fields before returning to the client
+    // Return only fields safe for public view — strip all internal/financial data
     const {
       userId: _userId,
       homeRate: _homeRate,
       homeTotal: _homeTotal,
       homeCurrency: _homeCurrency,
+      clientId: _clientId,
+      remindersSent: _remindersSent,
+      lastReminderAt: _lastReminderAt,
+      amountPaid: _amountPaid,
       ...publicInv
     } = inv;
-    return publicInv;
+    // Also omit events — they contain internal IP/UA audit trails
+    return { ...publicInv, events: [] };
   },
 
-  async confirmPayment(
-    linkId: string,
-    ip: string | undefined,
-    note: string | undefined
-  ) {
+  async confirmPayment(linkId: string, ip: string, note: string | undefined) {
     const inv = await invoiceRepository.findByLinkId(linkId);
     if (!inv) throw new NotFoundError();
+    // Only record confirmation for invoices in a confirmable state
+    if (!["sent", "viewed", "overdue"].includes(inv.status ?? "")) return;
     await eventRepository.create(
       inv.id,
       "client_confirmed_payment",
-      { ip, note },
+      { ip, note: note?.slice(0, 500) },
       "client"
     );
   },
 
-  async trackDownload(linkId: string, ip: string | undefined) {
+  async trackDownload(linkId: string, ip: string) {
     const inv = await invoiceRepository.findByLinkId(linkId);
     if (!inv) throw new NotFoundError();
     await eventRepository.create(inv.id, "downloaded", { ip }, "client");

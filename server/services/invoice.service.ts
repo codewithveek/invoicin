@@ -1,5 +1,8 @@
+import { randomBytes } from "crypto";
 import { ulid } from "ulid";
+import { eq } from "drizzle-orm";
 import { APP_URL } from "../config";
+import { db } from "../db";
 import { sendInvoiceEmail, sendReminderEmail } from "../email";
 import { toEmailData } from "../lib/invoice.utils";
 import { BadRequestError, NotFoundError } from "../lib/errors";
@@ -10,6 +13,7 @@ import {
   type InvoiceStatus,
 } from "../repositories/invoice.repository";
 import { userRepository } from "../repositories/user.repository";
+import { invoices, invoiceEvents, partialPayments } from "../schema";
 
 export type { InvoiceStatus };
 
@@ -25,7 +29,7 @@ export interface CreateInvoiceInput {
   taxRate?: number;
   taxAmount?: number;
   deposit?: number;
-  total: number;
+  // NOTE: total is no longer accepted from the client — computed server-side
   dueDate?: Date;
   terms?: string;
   notes?: string;
@@ -49,23 +53,53 @@ export interface RecordPaymentInput {
   paidDate: string;
 }
 
+export interface DisputeInvoiceInput {
+  reason?: string;
+}
+
+export interface ListOptions {
+  limit?: number;
+  offset?: number;
+}
+
 export const invoiceService = {
-  async list(userId: string, status?: InvoiceStatus) {
-    return invoiceRepository.findAllByUser(userId, status);
+  async list(userId: string, status?: InvoiceStatus, options?: ListOptions) {
+    return invoiceRepository.findAllByUser(
+      userId,
+      status,
+      options?.limit,
+      options?.offset
+    );
   },
 
   async get(id: string, userId: string) {
     const inv = await invoiceRepository.findByIdAndUser(id, userId);
     if (!inv) throw new NotFoundError();
-    const events = await invoiceRepository.findEvents(id);
-    return { ...inv, events };
+    const [events, payments] = await Promise.all([
+      invoiceRepository.findEvents(id),
+      invoiceRepository.findPartialPayments(id),
+    ]);
+    return { ...inv, events, payments };
   },
 
   async create(userId: string, input: CreateInvoiceInput) {
-    const subtotal = input.items.reduce((s, i) => s + i.price * i.qty, 0);
+    // Compute totals server-side — never trust client-supplied total
+    const subtotal = +input.items
+      .reduce((s, i) => s + i.price * i.qty, 0)
+      .toFixed(2);
+    const taxAmt =
+      input.taxRate != null
+        ? +((subtotal * input.taxRate) / 100).toFixed(2)
+        : +(input.taxAmount ?? 0).toFixed(2);
+    const gross = +(subtotal + taxAmt).toFixed(2);
+    const depositRate = input.deposit ?? 0;
+    const computedTotal =
+      depositRate > 0 ? +((gross * depositRate) / 100).toFixed(2) : gross;
+
     const inv = {
       id: generateInvoiceId(),
-      linkId: ulid().toLowerCase().slice(0, 16),
+      // Use 16 random bytes (128-bit entropy) for the public share token
+      linkId: randomBytes(16).toString("hex"),
       userId,
       clientId: input.clientId ?? null,
       type: input.type,
@@ -77,9 +111,9 @@ export const invoiceService = {
       subtotal: String(subtotal),
       taxType: input.taxType ?? null,
       taxRate: input.taxRate != null ? String(input.taxRate) : null,
-      taxAmount: input.taxAmount != null ? String(input.taxAmount) : "0",
-      deposit: input.deposit != null ? String(input.deposit) : "0",
-      total: String(input.total),
+      taxAmount: String(taxAmt),
+      deposit: String(depositRate),
+      total: String(computedTotal),
       homeRate: null,
       homeTotal: null,
       homeCurrency: null,
@@ -89,8 +123,19 @@ export const invoiceService = {
       notes: input.notes ?? null,
       issueDate: new Date(new Date().toISOString().split("T")[0]),
     };
-    await invoiceRepository.create(inv);
-    await eventRepository.create(inv.id, "created");
+    // Atomically insert invoice + creation event
+    await db.transaction(async (tx) => {
+      await tx.insert(invoices).values(inv);
+      await tx
+        .insert(invoiceEvents)
+        .values({
+          id: ulid(),
+          invoiceId: inv.id,
+          type: "created",
+          meta: null,
+          actor: "user",
+        });
+    });
     return inv;
   },
 
@@ -128,8 +173,25 @@ export const invoiceService = {
     const freelancer = await userRepository.findById(userId);
     if (!freelancer) throw new NotFoundError("User not found");
 
+    // Atomically update status + log event; send email only after DB succeeds
+    await db.transaction(async (tx) => {
+      await tx
+        .update(invoices)
+        .set({ status: "sent", updatedAt: new Date() })
+        .where(eq(invoices.id, id));
+      await tx
+        .insert(invoiceEvents)
+        .values({
+          id: ulid(),
+          invoiceId: id,
+          type: "sent",
+          meta: { to: inv.clientEmail },
+          actor: "user",
+        });
+    });
+
     await sendInvoiceEmail({
-      invoice: toEmailData(inv),
+      invoice: toEmailData({ ...inv, status: "sent" }),
       freelancer: {
         name: freelancer.name,
         businessName: freelancer.businessName ?? undefined,
@@ -137,9 +199,6 @@ export const invoiceService = {
       },
       appUrl: APP_URL,
     });
-
-    await invoiceRepository.update(id, { status: "sent" });
-    await eventRepository.create(id, "sent", { to: inv.clientEmail });
   },
 
   async remind(id: string, userId: string) {
@@ -156,6 +215,25 @@ export const invoiceService = {
       Math.floor((Date.now() - dueDate.getTime()) / 86_400_000)
     );
 
+    // Update DB atomically first, then send the reminder email
+    await db.transaction(async (tx) => {
+      await tx
+        .update(invoices)
+        .set({
+          remindersSent: (inv.remindersSent ?? 0) + 1,
+          lastReminderAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(invoices.id, id));
+      await tx.insert(invoiceEvents).values({
+        id: ulid(),
+        invoiceId: id,
+        type: "reminder_sent",
+        meta: { daysOverdue, to: inv.clientEmail },
+        actor: "system",
+      });
+    });
+
     await sendReminderEmail({
       invoice: toEmailData(inv),
       freelancer: {
@@ -166,48 +244,65 @@ export const invoiceService = {
       appUrl: APP_URL,
       daysOverdue,
     });
-
-    await invoiceRepository.update(id, {
-      remindersSent: (inv.remindersSent ?? 0) + 1,
-      lastReminderAt: new Date(),
-    });
-    await eventRepository.create(
-      id,
-      "reminder_sent",
-      { daysOverdue, to: inv.clientEmail },
-      "system"
-    );
   },
 
   async recordPayment(id: string, userId: string, input: RecordPaymentInput) {
     const inv = await invoiceRepository.findByIdAndUser(id, userId);
     if (!inv) throw new NotFoundError();
 
-    await invoiceRepository.insertPartialPayment({
-      id: ulid(),
-      invoiceId: id,
-      amount: String(input.amount),
-      currency: input.currency,
-      note: input.note ?? null,
-      paidDate: new Date(input.paidDate),
-    });
-
-    const newPaid = parseFloat(String(inv.amountPaid ?? 0)) + input.amount;
+    const newPaid = +(
+      parseFloat(String(inv.amountPaid ?? 0)) + input.amount
+    ).toFixed(2);
     const total = parseFloat(String(inv.total));
     const newStatus = newPaid >= total ? "paid" : "partial";
 
-    await invoiceRepository.update(id, {
-      amountPaid: String(newPaid),
-      status: newStatus,
-      paidDate: newPaid >= total ? new Date(input.paidDate) : null,
+    // Atomically record the payment, update invoice balance, and log event
+    await db.transaction(async (tx) => {
+      await tx.insert(partialPayments).values({
+        id: ulid(),
+        invoiceId: id,
+        amount: String(input.amount),
+        currency: input.currency,
+        note: input.note ?? null,
+        paidDate: new Date(input.paidDate),
+      });
+      await tx
+        .update(invoices)
+        .set({
+          amountPaid: String(newPaid),
+          status: newStatus,
+          paidDate: newPaid >= total ? new Date(input.paidDate) : null,
+          updatedAt: new Date(),
+        })
+        .where(eq(invoices.id, id));
+      await tx.insert(invoiceEvents).values({
+        id: ulid(),
+        invoiceId: id,
+        type: newPaid >= total ? "paid" : "partial_payment",
+        meta: { amount: input.amount, note: input.note },
+        actor: "user",
+      });
     });
 
-    await eventRepository.create(
-      id,
-      newPaid >= total ? "paid" : "partial_payment",
-      { amount: input.amount, note: input.note }
-    );
-
     return { status: newStatus };
+  },
+
+  async dispute(id: string, userId: string, input: DisputeInvoiceInput) {
+    const inv = await invoiceRepository.findByIdAndUser(id, userId);
+    if (!inv) throw new NotFoundError();
+
+    await db.transaction(async (tx) => {
+      await tx
+        .update(invoices)
+        .set({ status: "disputed", updatedAt: new Date() })
+        .where(eq(invoices.id, id));
+      await tx.insert(invoiceEvents).values({
+        id: ulid(),
+        invoiceId: id,
+        type: "disputed",
+        meta: input.reason ? { reason: input.reason } : null,
+        actor: "user",
+      });
+    });
   },
 };

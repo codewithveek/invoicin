@@ -9,7 +9,11 @@ import {
 import { InvoiceEmailTemplate } from "./InvoiceTemplate";
 import { ReminderEmailTemplate } from "./ReminderTemplate";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend(): Resend {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) throw new Error("RESEND_API_KEY is not configured");
+  return new Resend(key);
+}
 const FROM = "invoices@invoicin.pro";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -31,6 +35,7 @@ export async function sendInvoiceEmail({
   const typeLabel = TYPE_LABELS[invoice.type] ?? "Invoice";
   const S = currencySymbol(invoice.currency);
 
+  const resend = getResend();
   const { data, error } = await resend.emails.send({
     from: `${
       freelancer.businessName || freelancer.name
@@ -70,6 +75,7 @@ export async function sendReminderEmail({
           invoice.total
         )} is ${daysOverdue} days past due`;
 
+  const resend = getResend();
   const { data, error } = await resend.emails.send({
     from: `${
       freelancer.businessName || freelancer.name
@@ -102,6 +108,7 @@ export async function sendPaymentConfirmationEmail({
 }) {
   const S = currencySymbol(invoice.currency);
 
+  const resend = getResend();
   const { data, error } = await resend.emails.send({
     from: `${
       freelancer.businessName || freelancer.name

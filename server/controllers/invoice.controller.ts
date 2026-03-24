@@ -6,16 +6,20 @@ import {
   type InvoiceStatus,
   type RecordPaymentInput,
   type UpdateInvoiceInput,
+  type DisputeInvoiceInput,
 } from "../services/invoice.service";
 import { generateInvoicePDF } from "../pdf";
 import { userRepository } from "../repositories/user.repository";
+import { invoiceRepository } from "../repositories/invoice.repository";
 import { formatInvoice } from "../lib/invoice.utils";
 
 export const invoiceController = {
   async list(c: Context<AppEnv>) {
     const userId = c.get("userId");
     const status = c.req.query("status") as InvoiceStatus | undefined;
-    const rows = await invoiceService.list(userId, status);
+    const limit = Math.min(Number(c.req.query("limit") ?? 100), 200);
+    const offset = Number(c.req.query("offset") ?? 0);
+    const rows = await invoiceService.list(userId, status, { limit, offset });
     return c.json(rows.map((r) => formatInvoice(r as Record<string, unknown>)));
   },
 
@@ -61,6 +65,25 @@ export const invoiceController = {
       input
     );
     return c.json({ success: true, ...result });
+  },
+
+  async listPayments(c: Context<AppEnv>) {
+    const id = c.req.param("id") as string;
+    const userId = c.get("userId");
+    // Verify ownership
+    const inv = await invoiceRepository.findByIdAndUser(id, userId);
+    if (!inv) return c.json({ error: "Not found" }, 404);
+    const payments = await invoiceRepository.findPartialPayments(id);
+    return c.json(payments);
+  },
+
+  async dispute(c: Context<AppEnv>, input: DisputeInvoiceInput) {
+    await invoiceService.dispute(
+      c.req.param("id") as string,
+      c.get("userId"),
+      input
+    );
+    return c.json({ success: true });
   },
 
   async downloadPdf(c: Context<AppEnv>) {

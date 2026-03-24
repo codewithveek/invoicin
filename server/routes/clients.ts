@@ -11,24 +11,31 @@ import { clientController } from "../controllers/client.controller";
 export const clientsRouter = new Hono<AppEnv>();
 
 const createClientSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  address: z.string().optional(),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  notes: z.string().optional(),
+  name: z.string().min(1).max(255),
+  email: z.string().email().max(255),
+  address: z.string().max(1000).optional(),
+  phone: z.string().max(50).optional(),
+  company: z.string().max(255).optional(),
+  notes: z.string().max(2000).optional(),
 });
 
 const updateClientSchema = z.object({
-  name: z.string().min(1).optional(),
-  email: z.string().email().optional(),
-  address: z.string().optional(),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  notes: z.string().optional(),
+  name: z.string().min(1).max(255).optional(),
+  email: z.string().email().max(255).optional(),
+  address: z.string().max(1000).optional(),
+  phone: z.string().max(50).optional(),
+  company: z.string().max(255).optional(),
+  notes: z.string().max(2000).optional(),
 });
 
-clientsRouter.get("/", requireAuth, (c) => clientController.list(c));
+const listQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+
+clientsRouter.get("/", requireAuth, zValidator("query", listQuerySchema), (c) =>
+  clientController.list(c)
+);
 clientsRouter.post(
   "/",
   requireAuth,

@@ -14,6 +14,10 @@ export const internalService = {
     const today = new Date(new Date().toISOString().split("T")[0]);
     const candidates = await invoiceRepository.findOverdueCandidates(today);
 
+    // Batch-fetch all unique users up front to avoid N+1 DB round-trips
+    const uniqueUserIds = [...new Set(candidates.map((inv) => inv.userId))];
+    const userMap = await userRepository.findByIds(uniqueUserIds);
+
     let updated = 0;
     let reminded = 0;
 
@@ -46,7 +50,7 @@ export const internalService = {
         daysSinceReminder >= 1;
 
       if (shouldRemind) {
-        const freelancer = await userRepository.findById(inv.userId);
+        const freelancer = userMap.get(inv.userId);
         if (freelancer) {
           try {
             await sendReminderEmail({

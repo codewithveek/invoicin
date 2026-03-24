@@ -46,6 +46,7 @@ export default function Dashboard() {
         overdueAmt={overdue.reduce((s, i) => s + i.total, 0)}
         overdueCount={overdue.length}
         draftCount={draft.length}
+        currency={user?.defaultCurrency ?? "USD"}
       />
 
       <div

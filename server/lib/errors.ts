@@ -1,8 +1,5 @@
 export class HttpError extends Error {
-  constructor(
-    public readonly statusCode: number,
-    message: string
-  ) {
+  constructor(public readonly statusCode: number, message: string) {
     super(message);
     this.name = this.constructor.name;
   }
@@ -23,5 +20,11 @@ export class BadRequestError extends HttpError {
 export class ForbiddenError extends HttpError {
   constructor(message = "Forbidden") {
     super(403, message);
+  }
+}
+
+export class UnauthorizedError extends HttpError {
+  constructor(message = "Unauthorized") {
+    super(401, message);
   }
 }

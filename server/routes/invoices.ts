@@ -10,32 +10,37 @@ import { invoiceController } from "../controllers/invoice.controller";
 
 export const invoicesRouter = new Hono<AppEnv>();
 
+/** ISO 4217 currency regex used across schemas */
+const currencyCode = z.string().regex(/^[A-Z]{3}$/, "Invalid currency code");
+
 const createSchema = z.object({
   type: z
     .enum(["standard", "proforma", "deposit", "credit"])
     .default("standard"),
-  clientId: z.string().optional(),
-  clientName: z.string().min(1),
-  clientEmail: z.string().email().optional(),
-  clientAddress: z.string().optional(),
-  currency: z.string().default("USD"),
+  clientId: z.string().max(36).optional(),
+  clientName: z.string().min(1).max(255),
+  clientEmail: z.string().email().max(255).optional(),
+  clientAddress: z.string().max(500).optional(),
+  currency: currencyCode.default("USD"),
   items: z
     .array(
       z.object({
-        desc: z.string(),
-        qty: z.number().min(1),
-        price: z.number().min(0),
+        desc: z.string().min(1).max(500),
+        qty: z.number().min(1).max(10_000),
+        price: z.number().min(0).max(10_000_000),
       })
     )
-    .min(1),
+    .min(1)
+    .max(100),
   taxType: z.enum(["vat", "wht", "custom"]).optional(),
-  taxRate: z.number().optional(),
-  taxAmount: z.number().optional(),
+  taxRate: z.number().min(0).max(100).optional(),
+  taxAmount: z.number().min(0).optional(),
   deposit: z.number().min(0).max(100).optional(),
-  total: z.number().min(0),
+  // total is computed server-side; this field is accepted but ignored
+  total: z.number().min(0).optional(),
   dueDate: z.coerce.date().optional(),
-  terms: z.string().optional(),
-  notes: z.string().optional(),
+  terms: z.string().max(500).optional(),
+  notes: z.string().max(5000).optional(),
 });
 
 const updateSchema = z.object({
@@ -52,18 +57,46 @@ const updateSchema = z.object({
     ])
     .optional(),
   paidDate: z.coerce.date().optional(),
-  notes: z.string().optional(),
+  notes: z.string().max(500).optional(),
   dueDate: z.coerce.date().optional(),
+  homeRate: z.number().positive().optional(),
+  homeCurrency: currencyCode.optional(),
+});
+
+const disputeSchema = z.object({
+  reason: z.string().max(1000).optional(),
 });
 
 const paymentSchema = z.object({
-  amount: z.number().positive(),
-  currency: z.string(),
-  note: z.string().optional(),
+  amount: z.number().positive().max(10_000_000),
+  currency: currencyCode,
+  note: z.string().max(500).optional(),
   paidDate: z.string(),
 });
 
-invoicesRouter.get("/", requireAuth, (c) => invoiceController.list(c));
+const listQuerySchema = z.object({
+  status: z
+    .enum([
+      "draft",
+      "sent",
+      "viewed",
+      "overdue",
+      "paid",
+      "cancelled",
+      "disputed",
+      "partial",
+    ])
+    .optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(100),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+
+invoicesRouter.get(
+  "/",
+  requireAuth,
+  zValidator("query", listQuerySchema),
+  (c) => invoiceController.list(c)
+);
 invoicesRouter.post("/", requireAuth, zValidator("json", createSchema), (c) =>
   invoiceController.create(c, c.req.valid("json"))
 );
@@ -84,6 +117,15 @@ invoicesRouter.post(
   zValidator("json", paymentSchema),
   (c) => invoiceController.recordPayment(c, c.req.valid("json"))
 );
+invoicesRouter.get("/:id/payments", requireAuth, (c) =>
+  invoiceController.listPayments(c)
+);
 invoicesRouter.get("/:id/pdf", requireAuth, (c) =>
   invoiceController.downloadPdf(c)
+);
+invoicesRouter.post(
+  "/:id/dispute",
+  requireAuth,
+  zValidator("json", disputeSchema),
+  (c) => invoiceController.dispute(c, c.req.valid("json"))
 );

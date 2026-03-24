@@ -8,6 +8,7 @@ import { statusBadge, typeBadge } from "../utils/badges";
 import { useApp } from "../context/AppContext";
 import type { AppInvoice } from "../types";
 
+const APP_URL = import.meta.env.VITE_APP_URL || "http://localhost:5173";
 export default function InvoiceDetail() {
   const { id } = useParams<{ id: string }>();
   const { invoices, setInvoices, showToast: toast } = useApp();
@@ -30,7 +31,7 @@ export default function InvoiceDetail() {
   };
 
   const effectiveStatus = isOverdue(inv) ? "overdue" : inv.status;
-  const shareUrl = `app.invoiceapp.co/i/${inv.linkId}`;
+  const shareUrl = `${APP_URL}/i/${inv.linkId}`;
   const canSend = ["draft", "sent", "viewed", "overdue"].includes(
     effectiveStatus
   );
@@ -90,6 +91,7 @@ export default function InvoiceDetail() {
 
   function copyLink() {
     setCopied(true);
+    navigator.clipboard.writeText("https://" + shareUrl);
     setTimeout(() => setCopied(false), 2000);
     toast("Link copied to clipboard");
   }
@@ -873,18 +875,21 @@ export default function InvoiceDetail() {
           >
             <button
               className="btn bp btn-full"
+              type="button"
               onClick={() => toast("Downloading PDF...")}
             >
               <Icon n="download" s={14} c="#fff" /> Download PDF
             </button>
             <button
               className="btn bs btn-full"
+              type="button"
               onClick={() => setSendModal(true)}
             >
               <Icon n="mail" s={14} /> Send by Email
             </button>
             <button
               className="btn bs btn-full"
+              type="button"
               onClick={() => setShareModal(true)}
             >
               <Icon n="link" s={14} /> Copy Shareable Link

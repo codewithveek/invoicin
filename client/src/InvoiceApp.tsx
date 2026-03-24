@@ -85,7 +85,14 @@ function AppShell() {
             <div className="sb-mark">I</div>
             <div style={{ flex: 1 }}>
               <div className="sb-name">Invoicin</div>
-              <div className="sb-ver">v1.0 {"\u00b7"} Free plan</div>
+              <div className="sb-ver">
+                v1.0 {"\u00b7"}{" "}
+                {user?.plan === "pro"
+                  ? "Pro"
+                  : user?.plan === "business"
+                  ? "Business"
+                  : "Free plan"}
+              </div>
             </div>
             <button className="sb-close" onClick={() => setSbOpen(false)}>
               <Icon n="close" s={17} />

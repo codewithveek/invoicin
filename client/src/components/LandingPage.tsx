@@ -453,7 +453,7 @@ const planFeatures = {
   ],
 };
 
-function Pricing() {
+function Pricing({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <section id="pricing" className="bg-bg py-20 px-6">
       <div className="max-w-6xl mx-auto">
@@ -472,6 +472,7 @@ function Pricing() {
             features={planFeatures.free}
             cta="Get started free"
             highlight={false}
+            onCta={onGetStarted}
           />
           {/* Pro plan */}
           <PricingCard
@@ -482,6 +483,7 @@ function Pricing() {
             features={planFeatures.pro}
             cta="Start Pro trial"
             highlight={true}
+            onCta={onGetStarted}
           />
         </div>
       </div>
@@ -497,6 +499,7 @@ function PricingCard({
   features,
   cta,
   highlight,
+  onCta,
 }: {
   name: string;
   price: string;
@@ -505,6 +508,7 @@ function PricingCard({
   features: string[];
   cta: string;
   highlight: boolean;
+  onCta: () => void;
 }) {
   return (
     <div
@@ -558,6 +562,7 @@ function PricingCard({
         ))}
       </ul>
       <button
+        onClick={onCta}
         className={`w-full py-2.5 rounded-sm text-[13px] font-semibold transition-all duration-120 cursor-pointer ${
           highlight
             ? "bg-brand text-white hover:bg-[#15803d]"
@@ -760,7 +765,7 @@ export default function LandingPage() {
       <StatsStrip />
       <Features />
       <HowItWorks />
-      <Pricing />
+      <Pricing onGetStarted={goLogin} />
       <Testimonials />
       <CTASection onGetStarted={goLogin} />
       <Footer />

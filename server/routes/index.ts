@@ -7,12 +7,31 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Hono } from "hono";
+import { type AppEnv, requireAuth } from "../middleware/auth";
 import { invoicesRouter } from "./invoices";
 import { invoicesPublicRouter } from "./invoicesPublic";
 import { clientsRouter } from "./clients";
 import { templatesRouter } from "./templates";
 import { internalRouter } from "./internal";
 import { userRouter } from "./user";
+import { notificationsRouter } from "./notifications";
+
+/** ISO 4217 currency codes supported by the app */
+const ALLOWED_CURRENCIES = new Set([
+  "USD",
+  "GBP",
+  "EUR",
+  "CAD",
+  "AUD",
+  "NGN",
+  "GHS",
+  "KES",
+  "ZAR",
+  "EGP",
+  "UGX",
+  "TZS",
+  "XOF",
+]);
 
 // Fallback rates (all vs USD) in case FX_API_KEY is absent
 const USD_BASE: Record<string, number> = {
@@ -21,7 +40,7 @@ const USD_BASE: Record<string, number> = {
   EUR: 0.92,
   CAD: 1.36,
   AUD: 1.55,
-  NGN: 1618.5,
+  NGN: 1418.5,
   GHS: 15.7,
   KES: 129.5,
   ZAR: 18.4,
@@ -45,9 +64,15 @@ const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const invoiceRouter = new Hono();
 
 // GET /api/rates?from=USD&to=NGN — returns the current exchange rate (cached 24 h)
-invoiceRouter.get("/rates", async (c) => {
+// Requires authentication to prevent anonymous quota drain
+invoiceRouter.get("/rates", requireAuth, async (c) => {
   const from = (c.req.query("from") || "USD").toUpperCase();
   const to = (c.req.query("to") || "NGN").toUpperCase();
+
+  // Validate currency codes against an allow-list (prevents SSRF / path injection)
+  if (!ALLOWED_CURRENCIES.has(from) || !ALLOWED_CURRENCIES.has(to)) {
+    return c.json({ error: "Unsupported currency code" }, 400);
+  }
 
   const cacheKey = `${from}:${to}`;
   const cached = rateCache.get(cacheKey);
@@ -59,7 +84,8 @@ invoiceRouter.get("/rates", async (c) => {
   if (apiKey) {
     try {
       const res = await fetch(
-        `https://v6.exchangerate-api.com/v6/${apiKey}/pair/${from}/${to}`
+        `https://v6.exchangerate-api.com/v6/${apiKey}/pair/${from}/${to}`,
+        { signal: AbortSignal.timeout(5000) }
       );
       const data = (await res.json()) as {
         result?: string;
@@ -86,6 +112,7 @@ invoiceRouter.route("/clients", clientsRouter);
 invoiceRouter.route("/templates", templatesRouter);
 invoiceRouter.route("/internal", internalRouter);
 invoiceRouter.route("/user", userRouter);
+invoiceRouter.route("/notifications", notificationsRouter);
 
 export { invoiceRouter };
 export default invoiceRouter;

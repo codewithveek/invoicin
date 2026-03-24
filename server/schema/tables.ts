@@ -201,6 +201,7 @@ export const invoices = mysqlTable(
   },
   (t) => [
     index("invoices_user_idx").on(t.userId),
+    index("invoices_user_status_idx").on(t.userId, t.status),
     index("invoices_status_idx").on(t.status),
     uniqueIndex("invoices_link_idx").on(t.linkId),
     index("invoices_client_idx").on(t.clientId),

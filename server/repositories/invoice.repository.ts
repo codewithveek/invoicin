@@ -9,7 +9,9 @@ export type InvoiceUpdateData = Partial<typeof invoices.$inferInsert>;
 export const invoiceRepository = {
   async findAllByUser(
     userId: string,
-    status?: InvoiceStatus
+    status?: InvoiceStatus,
+    limit = 50,
+    offset = 0
   ): Promise<Invoice[]> {
     const conditions = status
       ? and(eq(invoices.userId, userId), eq(invoices.status, status))
@@ -18,7 +20,9 @@ export const invoiceRepository = {
       .select()
       .from(invoices)
       .where(conditions)
-      .orderBy(desc(invoices.createdAt));
+      .orderBy(desc(invoices.createdAt))
+      .limit(limit)
+      .offset(offset);
   },
 
   async findByIdAndUser(id: string, userId: string): Promise<Invoice | null> {
@@ -72,5 +76,13 @@ export const invoiceRepository = {
     data: typeof partialPayments.$inferInsert
   ): Promise<void> {
     await db.insert(partialPayments).values(data);
+  },
+
+  async findPartialPayments(invoiceId: string) {
+    return db
+      .select()
+      .from(partialPayments)
+      .where(eq(partialPayments.invoiceId, invoiceId))
+      .orderBy(desc(partialPayments.createdAt));
   },
 };

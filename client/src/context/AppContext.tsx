@@ -11,6 +11,7 @@ import { authClient } from "../lib/auth-client";
 import { invoicesApi } from "../api/invoices.api";
 import { clientsApi } from "../api/clients.api";
 import { templatesApi } from "../api/templates.api";
+import { ApiError } from "../api/client";
 import type { AppInvoice, AppClient, AppTemplate } from "../types";
 import type { UserProfile } from "../api/user.api";
 
@@ -26,6 +27,8 @@ interface AppContextType {
   toastMsg: string | null;
   showToast: (msg: string) => void;
   clearToast: () => void;
+  dataError: string | null;
+  clearDataError: () => void;
   refreshInvoices: () => Promise<void>;
   refreshClients: () => Promise<void>;
   refreshTemplates: () => Promise<void>;
@@ -46,13 +49,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [templates, setTemplates] = useState<AppTemplate[]>([]);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
 
   const refreshInvoices = useCallback(async () => {
     try {
       const data = await invoicesApi.list();
       setInvoices(data);
-    } catch {
-      /* user may not be authed yet */
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) return;
+      setDataError("Failed to load invoices. Please refresh.");
     }
   }, []);
 
@@ -60,8 +65,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const data = await clientsApi.list();
       setClients(data);
-    } catch {
-      /* user may not be authed yet */
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) return;
+      setDataError("Failed to load clients. Please refresh.");
     }
   }, []);
 
@@ -69,8 +75,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const data = await templatesApi.list();
       setTemplates(data);
-    } catch {
-      /* user may not be authed yet */
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) return;
+      setDataError("Failed to load templates. Please refresh.");
     }
   }, []);
 
@@ -143,6 +150,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setToastMsg(null);
   }
 
+  function clearDataError() {
+    setDataError(null);
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -157,6 +168,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         toastMsg,
         showToast,
         clearToast,
+        dataError,
+        clearDataError,
         refreshInvoices,
         refreshClients,
         refreshTemplates,

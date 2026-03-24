@@ -9,6 +9,7 @@ import {
   invoiceTemplates,
   invoiceEvents,
   partialPayments,
+  notificationPrefs,
 } from "./tables";
 
 export type User = typeof users.$inferSelect;
@@ -25,6 +26,9 @@ export type NewInvoiceEvent = typeof invoiceEvents.$inferInsert;
 
 export type InvoiceTemplate = typeof invoiceTemplates.$inferSelect;
 export type PartialPayment = typeof partialPayments.$inferSelect;
+
+export type NotificationPrefs = typeof notificationPrefs.$inferSelect;
+export type NewNotificationPrefs = typeof notificationPrefs.$inferInsert;
 
 // Strongly-typed JSON field shapes
 export interface InvoiceItem {

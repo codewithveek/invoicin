@@ -34,16 +34,22 @@ export const auth = betterAuth({
             from: "Invoicin <auth@invoicin.pro>",
             to: email,
             subject: "Sign in to Invoicin",
-            html: `
-              <div style="font-family:sans-serif;max-width:460px;margin:0 auto;padding:32px">
+            html: (() => {
+              // Escape url for safe embedding in HTML attribute context
+              const safeUrl = url
+                .replace(/&/g, "&amp;")
+                .replace(/"/g, "&quot;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+              return `<div style="font-family:sans-serif;max-width:460px;margin:0 auto;padding:32px">
                 <h2 style="color:#14532d;margin-bottom:8px">Sign in to Invoicin</h2>
                 <p style="color:#555;line-height:1.6">Click the button below to sign in. This link expires in 10 minutes.</p>
-                <a href="${url}" style="display:inline-block;background:#16a34a;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">
+                <a href="${safeUrl}" style="display:inline-block;background:#16a34a;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">
                   Sign In
                 </a>
                 <p style="color:#999;font-size:12px;margin-top:24px">If you didn't request this, you can safely ignore this email.</p>
-              </div>
-            `,
+              </div>`;
+            })(),
           });
         } else {
           console.log(`[Magic Link] ${email}: ${url}`);

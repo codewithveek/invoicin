@@ -17,7 +17,7 @@ export default function LoginPage() {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/onboarding",
+        callbackURL: "/",
       });
     } catch {
       setError("Failed to start Google sign-in");
@@ -33,7 +33,7 @@ export default function LoginPage() {
     try {
       const { error: err } = await authClient.signIn.magicLink({
         email: email.trim(),
-        callbackURL: "/onboarding",
+        callbackURL: "/",
       });
       if (err) {
         setError(err.message ?? "Failed to send magic link");

@@ -1,4 +1,4 @@
-import { fmt } from "../../utils";
+import { fmt, currencySymbol } from "../../utils";
 
 interface StatsGridProps {
   totalEarned: number;
@@ -8,6 +8,7 @@ interface StatsGridProps {
   overdueAmt: number;
   overdueCount: number;
   draftCount: number;
+  currency?: string;
 }
 
 export default function StatsGrid({
@@ -18,13 +19,15 @@ export default function StatsGrid({
   overdueAmt,
   overdueCount,
   draftCount,
+  currency = "USD",
 }: StatsGridProps) {
+  const sym = currencySymbol(currency);
   return (
     <div className="stats mb6">
       <div className="stat">
         <div className="stat-lbl">Total Earned</div>
         <div className="stat-val">
-          {"$"}
+          {sym}
           {fmt(totalEarned, 0)}
         </div>
         <div className="stat-meta">{paidCount} paid invoices</div>
@@ -32,7 +35,7 @@ export default function StatsGrid({
       <div className="stat">
         <div className="stat-lbl">Outstanding</div>
         <div className="stat-val" style={{ color: "var(--bl)" }}>
-          {"$"}
+          {sym}
           {fmt(outstanding, 0)}
         </div>
         <div className="stat-meta">{pendingCount} awaiting payment</div>
@@ -43,7 +46,7 @@ export default function StatsGrid({
           className="stat-val"
           style={{ color: overdueAmt > 0 ? "var(--rd)" : "var(--tx)" }}
         >
-          {"$"}
+          {sym}
           {fmt(overdueAmt, 0)}
         </div>
         <div className="stat-meta">{overdueCount} invoices past due</div>

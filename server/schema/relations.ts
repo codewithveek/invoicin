@@ -10,12 +10,17 @@ import {
   invoiceTemplates,
   invoiceEvents,
   partialPayments,
+  notificationPrefs,
 } from "./tables";
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   invoices: many(invoices),
   clients: many(clients),
   templates: many(invoiceTemplates),
+  notificationPrefs: one(notificationPrefs, {
+    fields: [users.id],
+    references: [notificationPrefs.userId],
+  }),
 }));
 
 export const invoicesRelations = relations(invoices, ({ one, many }) => ({

@@ -3,9 +3,14 @@
 // DB access belongs in repositories/; business logic belongs in services/.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Generates a human-readable invoice ID, e.g. INV-2026-4321 */
+import { randomBytes } from "crypto";
+
+/**
+ * Generates a human-readable invoice ID, e.g. INV-2026-3F9A1B2E
+ * Uses 4 cryptographically random bytes (32-bit entropy, ~4 billion values/year).
+ */
 export function generateInvoiceId(): string {
   const year = new Date().getFullYear();
-  const num = String(Math.floor(Math.random() * 9000 + 1000));
-  return `INV-${year}-${num}`;
+  const hex = randomBytes(4).toString("hex").toUpperCase();
+  return `INV-${year}-${hex}`;
 }
