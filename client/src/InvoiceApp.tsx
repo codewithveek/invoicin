@@ -19,6 +19,7 @@ import ClientsPage from "./components/clients/ClientsPage";
 import SettingsPage from "./components/settings";
 import LoginPage from "./components/auth/LoginPage";
 import OnboardingPage from "./components/auth/OnboardingPage";
+import LandingPage from "./components/LandingPage";
 
 function AppShell() {
   const navigate = useNavigate();
@@ -224,6 +225,7 @@ export default function InvoiceApp() {
 
   return (
     <Routes>
+      <Route path="/landing" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/onboarding" element={<OnboardingPage />} />
       <Route path="/i/:linkId" element={<ClientInvoiceView />} />
