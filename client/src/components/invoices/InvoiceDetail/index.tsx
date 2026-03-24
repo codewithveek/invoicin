@@ -7,6 +7,7 @@ import SendModal from "./SendModal";
 import ShareModal from "./ShareModal";
 import MarkPaidModal from "./MarkPaidModal";
 import OverviewTab from "./OverviewTab";
+import EditInvoiceModal from "./EditInvoiceModal";
 import ActivityTab from "./ActivityTab";
 import { isOverdue, dateStr } from "../../../utils";
 import { useInvoice, useInvoiceMutations } from "../../../hooks/useInvoices";
@@ -32,6 +33,7 @@ export default function InvoiceDetail() {
   const [sendModal, setSendModal] = useState(false);
   const [shareModal, setShareModal] = useState(false);
   const [markPaidModal, setMarkPaidModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
@@ -142,6 +144,18 @@ export default function InvoiceDetail() {
           onClose={() => setMarkPaidModal(false)}
         />
       )}
+      {editModal && (
+        <EditInvoiceModal
+          inv={inv}
+          onSave={async (data) => {
+            await updateInvoice(inv.id, data);
+            update({ ...inv, ...data });
+            setEditModal(false);
+            toast("Invoice updated");
+          }}
+          onClose={() => setEditModal(false)}
+        />
+      )}
 
       <button
         className="btn bg btn-sm mb4"
@@ -224,6 +238,7 @@ export default function InvoiceDetail() {
           onOpenShare={() => setShareModal(true)}
           onOpenMarkPaid={() => setMarkPaidModal(true)}
           onCancel={cancel}
+          onEdit={() => setEditModal(true)}
           onToast={toast}
         />
       )}

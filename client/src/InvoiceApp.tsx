@@ -145,26 +145,6 @@ function AppShell() {
                 </span>
               </button>
             )}
-            {activeInvoice?.linkId && (
-              <button
-                className={
-                  "ni" +
-                  (path === `/invoices/${activeInvoice.id}/client` ? " on" : "")
-                }
-                onClick={() => go(`/invoices/${activeInvoice.id}/client`)}
-              >
-                <Icon
-                  n="eye"
-                  s={15}
-                  c={
-                    path === `/invoices/${activeInvoice.id}/client`
-                      ? "var(--gdk)"
-                      : "var(--tx3)"
-                  }
-                />
-                Client View
-              </button>
-            )}
           </nav>
           <div className="sb-user">
             <div className="av">
@@ -246,13 +226,13 @@ export default function InvoiceApp() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/onboarding" element={<OnboardingPage />} />
+      <Route path="/i/:linkId" element={<ClientInvoiceView />} />
       <Route element={<AppShell />}>
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="invoices" element={<InvoiceList />} />
         <Route path="invoices/new" element={<CreateInvoice />} />
         <Route path="invoices/:id" element={<InvoiceDetail />} />
-        <Route path="invoices/:id/client" element={<ClientInvoiceView />} />
         <Route path="clients" element={<ClientsPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>

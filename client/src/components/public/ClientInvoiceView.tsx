@@ -1,17 +1,91 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Icon from "../shared/Icon";
 import InvoicePreviewCard from "../shared/InvoicePreviewCard";
-import { useInvoices } from "../../hooks/useInvoices";
+import type { AppInvoice } from "../../types";
 
 export default function ClientInvoiceView() {
-  const { id } = useParams<{ id: string }>();
-  const { invoices } = useInvoices();
-  const navigate = useNavigate();
-  const invoice = invoices.find((i) => i.id === id);
-  const [paid, setPaid] = useState(false);
+  const { linkId } = useParams<{ linkId: string }>();
+  const [invoice, setInvoice] = useState<AppInvoice | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [confirming, setConfirming] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
-  if (!invoice) return <div className="pg fade">Invoice not found.</div>;
+  useEffect(() => {
+    if (!linkId) return;
+    fetch(`/api/i/${encodeURIComponent(linkId)}`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Invoice not found");
+        return res.json() as Promise<AppInvoice>;
+      })
+      .then(setInvoice)
+      .catch(() => setError("Invoice not found or no longer available."))
+      .finally(() => setLoading(false));
+  }, [linkId]);
+
+  async function confirmPayment() {
+    if (!linkId) return;
+    setConfirming(true);
+    try {
+      const res = await fetch(`/api/i/${encodeURIComponent(linkId)}/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) throw new Error();
+      setConfirmed(true);
+    } catch {
+      // silently ignore — confirmation is best-effort
+    } finally {
+      setConfirming(false);
+    }
+  }
+
+  async function downloadPdf() {
+    if (!linkId) return;
+    try {
+      await fetch(`/api/i/${encodeURIComponent(linkId)}/download`, {
+        method: "POST",
+      });
+    } catch {
+      // tracking is best-effort
+    }
+  }
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--bg)",
+        }}
+      >
+        <Icon n="spin" s={24} c="var(--tx3)" />
+      </div>
+    );
+  }
+
+  if (error || !invoice) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--bg)",
+          color: "var(--tx3)",
+          fontSize: 14,
+        }}
+      >
+        {error || "Invoice not found."}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -52,13 +126,9 @@ export default function ClientInvoiceView() {
           </span>
           <span>· Secure invoice</span>
         </div>
-        <button className="btn bg btn-sm" onClick={() => navigate(-1)}>
-          <Icon n="chevL" s={12} />
-          Back to Dashboard
-        </button>
       </div>
 
-      {paid ? (
+      {confirmed ? (
         <div
           style={{
             maxWidth: 460,
@@ -104,21 +174,20 @@ export default function ClientInvoiceView() {
               marginBottom: 20,
             }}
           >
-            You have confirmed payment for invoice {invoice.id}. The freelancer
-            has been notified.
+            You have confirmed payment for invoice {invoice.id}. The sender has
+            been notified.
           </div>
-          <button className="btn bp btn-full" onClick={() => setPaid(false)}>
+          <button
+            className="btn bp btn-full"
+            onClick={() => setConfirmed(false)}
+          >
             <Icon n="chevL" s={13} c="#fff" />
             Back to Invoice
           </button>
         </div>
       ) : (
         <div style={{ maxWidth: 460, width: "100%" }}>
-          <InvoicePreviewCard
-            inv={invoice}
-            freelancer={{ name: "Lucky Eze", business: "DevCraft Studio" }}
-            homeCurrency={invoice.currency}
-          />
+          <InvoicePreviewCard inv={invoice} homeCurrency={invoice.currency} />
           <div
             style={{
               marginTop: 16,
@@ -129,11 +198,18 @@ export default function ClientInvoiceView() {
           >
             <button
               className="btn bp btn-full btn-lg"
-              onClick={() => setPaid(true)}
+              onClick={confirmPayment}
+              disabled={confirming}
+              style={confirming ? { opacity: 0.6 } : undefined}
             >
-              <Icon n="check" s={14} c="#fff" />I have made this payment
+              {confirming ? (
+                <Icon n="spin" s={14} c="#fff" />
+              ) : (
+                <Icon n="check" s={14} c="#fff" />
+              )}
+              I have made this payment
             </button>
-            <button className="btn bs btn-full" onClick={() => {}}>
+            <button className="btn bs btn-full" onClick={downloadPdf}>
               <Icon n="download" s={13} />
               Download PDF
             </button>
@@ -141,7 +217,7 @@ export default function ClientInvoiceView() {
               style={{ textAlign: "center", fontSize: 11, color: "var(--tx3)" }}
             >
               Have questions? Contact{" "}
-              {invoice.client?.email || "the freelancer"} directly.
+              {invoice.client?.email || "the sender"} directly.
             </div>
           </div>
         </div>

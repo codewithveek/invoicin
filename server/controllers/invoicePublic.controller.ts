@@ -1,5 +1,6 @@
 import type { Context } from "hono";
 import { invoicePublicService } from "../services/invoicePublic.service";
+import { formatInvoice } from "../lib/invoice.utils";
 
 export const invoicePublicController = {
   async view(c: Context) {
@@ -10,7 +11,7 @@ export const invoicePublicController = {
       ip,
       ua
     );
-    return c.json(inv);
+    return c.json(formatInvoice(inv as unknown as Record<string, unknown>));
   },
 
   async confirmPayment(c: Context) {

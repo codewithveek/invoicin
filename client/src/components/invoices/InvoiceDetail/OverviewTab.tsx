@@ -16,6 +16,7 @@ interface OverviewTabProps {
   onOpenShare: () => void;
   onOpenMarkPaid: () => void;
   onCancel: () => void;
+  onEdit: () => void;
   onToast: (msg: string) => void;
 }
 
@@ -32,6 +33,7 @@ export default function OverviewTab({
   onOpenShare,
   onOpenMarkPaid,
   onCancel,
+  onEdit,
   onToast,
 }: OverviewTabProps) {
   return (
@@ -352,7 +354,7 @@ export default function OverviewTab({
               )}
               <button
                 className="btn bs btn-full btn-sm"
-                onClick={() => onToast("Editing...")}
+                onClick={onEdit}
               >
                 <Icon n="edit" s={13} /> Edit Invoice
               </button>

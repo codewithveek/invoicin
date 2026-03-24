@@ -9,52 +9,7 @@ import {
 } from "../services/invoice.service";
 import { generateInvoicePDF } from "../pdf";
 import { userRepository } from "../repositories/user.repository";
-
-/* Transform a raw DB invoice row into the shape the client expects */
-function formatInvoice(row: Record<string, unknown>) {
-  const {
-    clientName,
-    clientEmail,
-    clientAddress,
-    clientId,
-    userId,
-    issueDate,
-    paidDate,
-    taxType,
-    taxRate,
-    taxAmount,
-    subtotal,
-    homeRate,
-    amountPaid,
-    remindersSent,
-    lastReminderAt,
-    createdAt,
-    updatedAt,
-    ...rest
-  } = row;
-  return {
-    ...rest,
-    client: {
-      name: clientName ?? "",
-      email: clientEmail ?? "",
-      address: clientAddress ?? "",
-    },
-    tax:
-      taxType && taxRate != null
-        ? { type: taxType, rate: Number(taxRate) }
-        : null,
-    taxAmt: taxAmount != null ? Number(taxAmount) : 0,
-    deposit: rest.deposit != null ? Number(rest.deposit) : 0,
-    total: rest.total != null ? Number(rest.total) : 0,
-    homeTotal: rest.homeTotal != null ? Number(rest.homeTotal) : null,
-    created: createdAt ?? issueDate ?? "",
-    paid: paidDate ?? null,
-    dueDate: rest.dueDate ?? "",
-    notes: rest.notes ?? "",
-    terms: rest.terms ?? "",
-    events: (rest.events as unknown[]) ?? [],
-  };
-}
+import { formatInvoice } from "../lib/invoice.utils";
 
 export const invoiceController = {
   async list(c: Context<AppEnv>) {
