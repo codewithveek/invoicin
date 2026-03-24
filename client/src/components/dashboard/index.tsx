@@ -13,8 +13,8 @@ export default function Dashboard() {
   const { user } = useApp();
   const navigate = useNavigate();
 
-  const onNew = () => navigate("/invoices/new");
-  const onView = (inv: AppInvoice) => navigate("/invoices/" + inv.id);
+  const onNew = () => navigate("/app/invoices/new");
+  const onView = (inv: AppInvoice) => navigate("/app/invoices/" + inv.id);
 
   const paid = invoices.filter((i) => i.status === "paid");
   const pending = invoices.filter((i) => ["sent", "viewed"].includes(i.status));

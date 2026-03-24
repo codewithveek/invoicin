@@ -13,14 +13,18 @@ import {
   Rect,
   Circle,
   G,
+  Font,
 } from "@react-pdf/renderer";
 import { COLORS, styles } from "./styles";
 import type { PDFInvoice, PDFFreelancer } from "./types";
 
 // Register custom fonts here if needed, e.g.:
-// Font.register({ family: "DM Sans", src: "https://..." });
+Font.register({
+  family: "DM Sans",
+  src: "https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&display=swap",
+});
 
-const csym = (c: string): string =>
+const getCurrencySymbol = (c: string): string =>
   ({
     USD: "$",
     GBP: "\u00a3",
@@ -37,7 +41,7 @@ const fmt = (n: number): string =>
   });
 
 const MOCK_RATES: Record<string, number> = {
-  USD: 1618.5,
+  USD: 1418.5,
   GBP: 2039.2,
   EUR: 1746.8,
   CAD: 1191.4,
@@ -59,11 +63,11 @@ export function InvoicePDF({
   invoice: PDFInvoice;
   freelancer: PDFFreelancer;
 }) {
-  const S = csym(invoice.currency);
+  const S = getCurrencySymbol(invoice.currency);
   const typeLabel = TYPE_LABELS[invoice.type] ?? "INVOICE";
   const ngnEstimate =
     invoice.currency !== "NGN"
-      ? invoice.total * (MOCK_RATES[invoice.currency] ?? 1618.5)
+      ? invoice.total * (MOCK_RATES[invoice.currency] ?? 1418.5)
       : null;
   const isOverdue = invoice.status === "overdue";
 

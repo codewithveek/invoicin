@@ -4,12 +4,14 @@ import type { AppInvoice } from "../../../types";
 
 interface MarkPaidModalProps {
   inv: AppInvoice;
+  busy?: boolean;
   onConfirm: () => void;
   onClose: () => void;
 }
 
 export default function MarkPaidModal({
   inv,
+  busy,
   onConfirm,
   onClose,
 }: MarkPaidModalProps) {
@@ -23,8 +25,17 @@ export default function MarkPaidModal({
           {fmt(inv.total)} for this invoice.
         </div>
         <div className="row">
-          <button className="btn bp btn-full" onClick={onConfirm}>
-            <Icon n="check" s={13} c="#fff" /> Confirm Payment Received
+          <button
+            className="btn bp btn-full"
+            onClick={onConfirm}
+            disabled={busy}
+          >
+            {busy ? (
+              <Icon n="spin" s={13} c="#fff" />
+            ) : (
+              <Icon n="check" s={13} c="#fff" />
+            )}
+            {busy ? " Confirming…" : " Confirm Payment Received"}
           </button>
           <button className="btn bs" onClick={onClose}>
             Cancel

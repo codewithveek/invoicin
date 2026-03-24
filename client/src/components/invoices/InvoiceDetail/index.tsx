@@ -38,6 +38,9 @@ export default function InvoiceDetail() {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [reminderBusy, setReminderBusy] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [cancelBusy, setCancelBusy] = useState(false);
+  const [markPaidBusy, setMarkPaidBusy] = useState(false);
 
   if (!invoice) return <div className="pg fade">Invoice not found.</div>;
 
@@ -47,7 +50,8 @@ export default function InvoiceDetail() {
   };
 
   const effectiveStatus = isOverdue(inv) ? "overdue" : inv.status;
-  const shareUrl = `invoicin.pro/i/${inv.linkId}`;
+  const appOrigin = import.meta.env.VITE_APP_URL || window.location.origin;
+  const shareUrl = `${appOrigin}/i/${inv.linkId}`;
   const canSend = ["draft", "sent", "viewed", "overdue"].includes(
     effectiveStatus
   );
@@ -80,6 +84,7 @@ export default function InvoiceDetail() {
   }
 
   async function markPaid() {
+    setMarkPaidBusy(true);
     try {
       await recordPayment(inv.id, {
         amount: inv.total,
@@ -90,31 +95,39 @@ export default function InvoiceDetail() {
       toast("Invoice marked as paid");
     } catch {
       toast("Failed to mark as paid");
+    } finally {
+      setMarkPaidBusy(false);
     }
   }
 
   async function cancel() {
+    setCancelBusy(true);
     try {
       await updateInvoice(inv.id, { status: "cancelled" });
       update({ ...inv, status: "cancelled" });
       toast("Invoice cancelled");
     } catch {
       toast("Failed to cancel invoice");
+    } finally {
+      setCancelBusy(false);
     }
   }
 
   async function handleDownloadPdf() {
+    setPdfBusy(true);
     try {
       await downloadPdf(inv.id);
       toast("PDF downloaded");
     } catch {
       toast("Failed to download PDF");
+    } finally {
+      setPdfBusy(false);
     }
   }
 
   function copyLink() {
     setCopied(true);
-    navigator.clipboard.writeText("https://" + shareUrl);
+    navigator.clipboard.writeText(shareUrl);
     setTimeout(() => setCopied(false), 2000);
     toast("Link copied to clipboard");
   }
@@ -143,6 +156,7 @@ export default function InvoiceDetail() {
           inv={inv}
           onConfirm={markPaid}
           onClose={() => setMarkPaidModal(false)}
+          busy={markPaidBusy}
         />
       )}
       {editModal && (
@@ -160,7 +174,7 @@ export default function InvoiceDetail() {
 
       <button
         className="btn bg btn-sm mb4"
-        onClick={() => navigate("/invoices")}
+        onClick={() => navigate("/app/invoices")}
       >
         <Icon n="chevL" s={13} /> Back
       </button>
@@ -203,8 +217,13 @@ export default function InvoiceDetail() {
           <button className="btn bs btn-sm" onClick={() => setShareModal(true)}>
             <Icon n="link" s={13} /> Share Link
           </button>
-          <button className="btn bg btn-sm" onClick={handleDownloadPdf}>
-            <Icon n="download" s={13} /> PDF
+          <button
+            className="btn bg btn-sm"
+            onClick={handleDownloadPdf}
+            disabled={pdfBusy}
+          >
+            {pdfBusy ? <Icon n="spin" s={13} /> : <Icon n="download" s={13} />}{" "}
+            PDF
           </button>
         </div>
       </div>
@@ -239,6 +258,7 @@ export default function InvoiceDetail() {
           onOpenShare={() => setShareModal(true)}
           onOpenMarkPaid={() => setMarkPaidModal(true)}
           onCancel={cancel}
+          cancelBusy={cancelBusy}
           onEdit={() => setEditModal(true)}
           onToast={toast}
         />
@@ -277,8 +297,14 @@ export default function InvoiceDetail() {
               type="button"
               className="btn bp btn-full"
               onClick={handleDownloadPdf}
+              disabled={pdfBusy}
             >
-              <Icon n="download" s={14} c="#fff" /> Download PDF
+              {pdfBusy ? (
+                <Icon n="spin" s={14} c="#fff" />
+              ) : (
+                <Icon n="download" s={14} c="#fff" />
+              )}
+              {pdfBusy ? " Downloading…" : " Download PDF"}
             </button>
             <button
               type="button"

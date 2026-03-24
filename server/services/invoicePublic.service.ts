@@ -2,6 +2,7 @@ import { toEmailData } from "../lib/invoice.utils";
 import { NotFoundError } from "../lib/errors";
 import { eventRepository } from "../repositories/event.repository";
 import { invoiceRepository } from "../repositories/invoice.repository";
+import { userRepository } from "../repositories/user.repository";
 
 export const invoicePublicService = {
   async getByLinkId(linkId: string, ip: string, ua: string) {
@@ -27,8 +28,13 @@ export const invoicePublicService = {
       amountPaid: _amountPaid,
       ...publicInv
     } = inv;
+
+    // Include freelancer display name so client can see who sent the invoice
+    const user = await userRepository.findById(inv.userId);
+    const freelancerName = user?.businessName || user?.name || "";
+
     // Also omit events — they contain internal IP/UA audit trails
-    return { ...publicInv, events: [] };
+    return { ...publicInv, events: [], freelancerName };
   },
 
   async confirmPayment(linkId: string, ip: string, note: string | undefined) {

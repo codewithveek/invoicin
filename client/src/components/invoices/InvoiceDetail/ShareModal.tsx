@@ -24,7 +24,7 @@ export default function ShareModal({
           will be notified.
         </div>
         <div className="lbox mb4">
-          <span className="lurl">https://{shareUrl}</span>
+          <span className="lurl">{shareUrl}</span>
           <button className="btn bg btn-sm" onClick={onCopy}>
             {copied ? (
               <>

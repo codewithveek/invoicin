@@ -32,14 +32,9 @@ export default function EditInvoiceModal({
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-hd">
-          <div className="modal-ttl">Edit Invoice</div>
-          <button className="btn-icon" onClick={onClose}>
-            <Icon n="close" s={16} />
-          </button>
-        </div>
+    <div className="modal-bg" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-ttl">Edit Invoice</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div>
             <label

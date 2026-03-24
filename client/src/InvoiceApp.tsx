@@ -31,7 +31,7 @@ function AppShell() {
   const path = location.pathname;
 
   // Detect the current invoice ID from the URL for contextual sidebar items
-  const invoiceIdMatch = path.match(/^\/invoices\/([^/]+)/);
+  const invoiceIdMatch = path.match(/^\/app\/invoices\/([^/]+)/);
   const currentInvoiceId = invoiceIdMatch?.[1];
   const activeInvoice =
     currentInvoiceId && currentInvoiceId !== "new"
@@ -39,21 +39,26 @@ function AppShell() {
       : null;
 
   const NAV = [
-    { path: "/", lbl: "Dashboard", icon: "grid", badge: null as number | null },
     {
-      path: "/invoices",
+      path: "/app",
+      lbl: "Dashboard",
+      icon: "grid",
+      badge: null as number | null,
+    },
+    {
+      path: "/app/invoices",
       lbl: "Invoices",
       icon: "file",
       badge: overdue || (null as number | null),
     },
     {
-      path: "/clients",
+      path: "/app/clients",
       lbl: "Clients",
       icon: "users",
       badge: null as number | null,
     },
     {
-      path: "/settings",
+      path: "/app/settings",
       lbl: "Settings",
       icon: "settings",
       badge: null as number | null,
@@ -61,9 +66,9 @@ function AppShell() {
   ];
 
   function isNavActive(navPath: string) {
-    if (navPath === "/") return path === "/" || path === "/dashboard";
-    if (navPath === "/invoices")
-      return path.startsWith("/invoices") && path !== "/invoices/new";
+    if (navPath === "/app") return path === "/app" || path === "/app/dashboard";
+    if (navPath === "/app/invoices")
+      return path.startsWith("/app/invoices") && path !== "/app/invoices/new";
     return path.startsWith(navPath);
   }
 
@@ -116,28 +121,29 @@ function AppShell() {
             ))}
             <div className="sb-div" />
             <button
-              className={"ni" + (path === "/invoices/new" ? " on" : "")}
-              onClick={() => go("/invoices/new")}
+              className={"ni" + (path === "/app/invoices/new" ? " on" : "")}
+              onClick={() => go("/app/invoices/new")}
             >
               <Icon
                 n="plus"
                 s={15}
-                c={path === "/invoices/new" ? "var(--gdk)" : "var(--tx3)"}
+                c={path === "/app/invoices/new" ? "var(--gdk)" : "var(--tx3)"}
               />
               New Invoice
             </button>
             {activeInvoice && (
               <button
                 className={
-                  "ni" + (path === `/invoices/${activeInvoice.id}` ? " on" : "")
+                  "ni" +
+                  (path === `/app/invoices/${activeInvoice.id}` ? " on" : "")
                 }
-                onClick={() => go(`/invoices/${activeInvoice.id}`)}
+                onClick={() => go(`/app/invoices/${activeInvoice.id}`)}
               >
                 <Icon
                   n="file"
                   s={15}
                   c={
-                    path === `/invoices/${activeInvoice.id}`
+                    path === `/app/invoices/${activeInvoice.id}`
                       ? "var(--gdk)"
                       : "var(--tx3)"
                   }
@@ -232,11 +238,11 @@ export default function InvoiceApp() {
 
   return (
     <Routes>
-      <Route path="/landing" element={<LandingPage />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/onboarding" element={<OnboardingPage />} />
       <Route path="/i/:linkId" element={<ClientInvoiceView />} />
-      <Route element={<AppShell />}>
+      <Route path="/app" element={<AppShell />}>
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="invoices" element={<InvoiceList />} />

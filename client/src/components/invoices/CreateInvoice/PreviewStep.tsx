@@ -20,6 +20,7 @@ interface PreviewStepProps {
   taxAmt: number;
   total: number;
   busy: boolean;
+  freelancer?: { name?: string; business?: string };
   onGenerate: () => void;
   onBack?: () => void;
 }
@@ -32,6 +33,7 @@ export default function PreviewStep({
   taxAmt,
   total,
   busy,
+  freelancer,
   onGenerate,
 }: PreviewStepProps) {
   const previewInv = {
@@ -66,7 +68,7 @@ export default function PreviewStep({
     >
       <InvoicePreviewCard
         inv={previewInv}
-        freelancer={{ name: "Lucky Eze", business: "DevCraft Studio" }}
+        freelancer={freelancer}
         homeCurrency={form.currency}
       />
       <div

@@ -31,7 +31,7 @@ export const auth = betterAuth({
           const { Resend } = await import("resend");
           const resend = new Resend(process.env.RESEND_API_KEY);
           await resend.emails.send({
-            from: "Invoicin <auth@invoicin.pro>",
+            from: process.env.AUTH_FROM_EMAIL ?? "Invoicin <auth@invoicin.pro>",
             to: email,
             subject: "Sign in to Invoicin",
             html: (() => {

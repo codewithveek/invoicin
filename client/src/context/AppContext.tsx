@@ -38,7 +38,7 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
-const PUBLIC_PATHS = ["/login", "/onboarding"];
+const PUBLIC_PATHS = ["/", "/login", "/onboarding"];
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
@@ -112,9 +112,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
           setAuthLoading(false);
           return;
         }
-        // If on login/onboarding but already authed+onboarded, go to dashboard
+        // If on a public page but already authed+onboarded, go to app
         if (u.onboarded && PUBLIC_PATHS.includes(location.pathname)) {
-          navigate("/", { replace: true });
+          navigate("/app", { replace: true });
         }
         // Load data
         await Promise.all([

@@ -9,6 +9,7 @@ interface OverviewTabProps {
   shareUrl: string;
   copied: boolean;
   reminderBusy: boolean;
+  cancelBusy: boolean;
   canMarkPaid: boolean;
   onCopyLink: () => void;
   onSendReminder: () => void;
@@ -26,6 +27,7 @@ export default function OverviewTab({
   shareUrl,
   copied,
   reminderBusy,
+  cancelBusy,
   canMarkPaid,
   onCopyLink,
   onSendReminder,
@@ -34,8 +36,8 @@ export default function OverviewTab({
   onOpenMarkPaid,
   onCancel,
   onEdit,
-  onToast,
-}: OverviewTabProps) {
+}: // onToast,
+OverviewTabProps) {
   return (
     <div
       className="two-col"
@@ -355,8 +357,17 @@ export default function OverviewTab({
               <button className="btn bs btn-full btn-sm" onClick={onEdit}>
                 <Icon n="edit" s={13} /> Edit Invoice
               </button>
-              <button className="btn bd btn-full btn-sm" onClick={onCancel}>
-                <Icon n="close" s={13} /> Cancel Invoice
+              <button
+                className="btn bd btn-full btn-sm"
+                onClick={onCancel}
+                disabled={cancelBusy}
+              >
+                {cancelBusy ? (
+                  <Icon n="spin" s={13} />
+                ) : (
+                  <Icon n="close" s={13} />
+                )}
+                {cancelBusy ? " Cancelling…" : " Cancel Invoice"}
               </button>
             </div>
           </div>

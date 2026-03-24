@@ -125,6 +125,7 @@ export default function TemplatesTab() {
     useTemplateMutations();
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<AppTemplate | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function handleAdd(data: Omit<AppTemplate, "id">) {
     await addTemplate(data);
@@ -139,8 +140,13 @@ export default function TemplatesTab() {
   }
 
   async function handleDelete(id: string) {
-    await deleteTemplate(id);
-    showToast("Template deleted");
+    setDeletingId(id);
+    try {
+      await deleteTemplate(id);
+      showToast("Template deleted");
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   return (
@@ -203,8 +209,14 @@ export default function TemplatesTab() {
               <button
                 className="btn bd btn-sm"
                 onClick={() => handleDelete(t.id)}
+                disabled={deletingId === t.id}
               >
-                <Icon n="trash" s={12} /> Delete
+                {deletingId === t.id ? (
+                  <Icon n="spin" s={12} />
+                ) : (
+                  <Icon n="trash" s={12} />
+                )}
+                {deletingId === t.id ? " Deleting…" : " Delete"}
               </button>
             </div>
           </div>

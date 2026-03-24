@@ -6,7 +6,7 @@ import { useApp } from "../context/AppContext";
 import type { AppInvoice, InvoiceEvent } from "../types";
 
 export default function Dashboard() {
-  const { invoices } = useApp();
+  const { invoices, user } = useApp();
   const navigate = useNavigate();
   const onNew = () => navigate("/invoices/new");
   const onView = (inv: AppInvoice) => navigate("/invoices/" + inv.id);
@@ -47,7 +47,9 @@ export default function Dashboard() {
       <div className="pg-hd">
         <div>
           <div className="pg-ttl">Dashboard</div>
-          <div className="pg-sub">Welcome back, Lucky</div>
+          <div className="pg-sub">
+            Welcome back, {user?.name?.split(" ")[0] ?? "there"}
+          </div>
         </div>
         <button className="btn bp" onClick={onNew}>
           <Icon n="plus" s={14} c="#fff" />

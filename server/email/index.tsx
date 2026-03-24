@@ -14,7 +14,7 @@ function getResend(): Resend {
   if (!key) throw new Error("RESEND_API_KEY is not configured");
   return new Resend(key);
 }
-const FROM = "invoices@invoicin.pro";
+const FROM = process.env.EMAIL_FROM ?? "invoices@invoicin.pro";
 
 const TYPE_LABELS: Record<string, string> = {
   standard: "Invoice",

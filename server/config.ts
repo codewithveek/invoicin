@@ -1,2 +1,2 @@
 // App-level configuration
-export const APP_URL = process.env.APP_URL ?? "https://invoicin.pro";
+export const APP_URL = process.env.APP_URL ?? "http://localhost:3300";

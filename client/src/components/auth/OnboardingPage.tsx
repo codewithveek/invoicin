@@ -22,7 +22,7 @@ export default function OnboardingPage() {
       // If already onboarded, go to dashboard
       const user = data.user as Record<string, unknown>;
       if (user.onboarded) {
-        navigate("/", { replace: true });
+        navigate("/app", { replace: true });
         return;
       }
       // Prepopulate from Google auth
@@ -44,7 +44,7 @@ export default function OnboardingPage() {
         name: name.trim(),
         homeCurrency: homeCurrency || undefined,
       });
-      navigate("/", { replace: true });
+      navigate("/app", { replace: true });
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

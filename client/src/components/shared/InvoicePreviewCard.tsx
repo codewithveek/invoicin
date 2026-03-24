@@ -33,7 +33,7 @@ export default function InvoicePreviewCard({
           {typeLabels[inv.type] || "INVOICE"}
         </div>
         <div className="inv-hd-from">
-          {freelancer?.business || freelancer?.name || "Your Business"}
+          {freelancer?.business || freelancer?.name || ""}
         </div>
         <div className="inv-hd-biz">Invoice for {inv.client.name}</div>
         <div className="inv-hd-div" />

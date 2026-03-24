@@ -91,7 +91,7 @@ export default function InvoiceDetail() {
 
   function copyLink() {
     setCopied(true);
-    navigator.clipboard.writeText("https://" + shareUrl);
+    navigator.clipboard.writeText(shareUrl);
     setTimeout(() => setCopied(false), 2000);
     toast("Link copied to clipboard");
   }
@@ -186,7 +186,7 @@ export default function InvoiceDetail() {
               will be notified.
             </div>
             <div className="lbox mb4">
-              <span className="lurl">https://{shareUrl}</span>
+              <span className="lurl">{shareUrl}</span>
               <button className="btn bg btn-sm" onClick={copyLink}>
                 {copied ? (
                   <>
@@ -593,7 +593,7 @@ export default function InvoiceDetail() {
             <div className="card mb3">
               <div className="card-ttl">Share</div>
               <div className="lbox mb3">
-                <span className="lurl">https://{shareUrl}</span>
+                <span className="lurl">{shareUrl}</span>
                 <button className="btn bg btn-sm" onClick={copyLink}>
                   {copied ? (
                     <Icon n="check" s={12} c="var(--g)" />

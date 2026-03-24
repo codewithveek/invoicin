@@ -9,8 +9,8 @@ import type { AppInvoice } from "../../types";
 export default function InvoiceList() {
   const { invoices } = useInvoices();
   const navigate = useNavigate();
-  const onNew = () => navigate("/invoices/new");
-  const onView = (inv: AppInvoice) => navigate("/invoices/" + inv.id);
+  const onNew = () => navigate("/app/invoices/new");
+  const onView = (inv: AppInvoice) => navigate("/app/invoices/" + inv.id);
   const [filter, setFilter] = useState("all");
 
   const filters: [string, string][] = [

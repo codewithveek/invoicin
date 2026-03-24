@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Icon from "../shared/Icon";
 import { CURRENCIES, CURRENCY_NAMES } from "../../constants";
 
@@ -15,7 +16,7 @@ interface ProfileState {
 interface ProfileTabProps {
   profile: ProfileState;
   onChange: (patch: Partial<ProfileState>) => void;
-  onSave: () => void;
+  onSave: () => Promise<void>;
 }
 
 export default function ProfileTab({
@@ -23,6 +24,17 @@ export default function ProfileTab({
   onChange,
   onSave,
 }: ProfileTabProps) {
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    setSaving(true);
+    try {
+      await onSave();
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div
       className="two-col"
@@ -65,8 +77,13 @@ export default function ProfileTab({
               />
             </div>
           </div>
-          <button className="btn bp mt3" onClick={onSave}>
-            <Icon n="check" s={13} c="#fff" /> Save Profile
+          <button className="btn bp mt3" onClick={save} disabled={saving}>
+            {saving ? (
+              <Icon n="spin" s={13} c="#fff" />
+            ) : (
+              <Icon n="check" s={13} c="#fff" />
+            )}
+            {saving ? " Saving…" : " Save Profile"}
           </button>
         </div>
 
@@ -116,8 +133,13 @@ export default function ProfileTab({
               />
             </div>
           </div>
-          <button className="btn bp mt3" onClick={onSave}>
-            <Icon n="check" s={13} c="#fff" /> Save Defaults
+          <button className="btn bp mt3" onClick={save} disabled={saving}>
+            {saving ? (
+              <Icon n="spin" s={13} c="#fff" />
+            ) : (
+              <Icon n="check" s={13} c="#fff" />
+            )}
+            {saving ? " Saving…" : " Save Defaults"}
           </button>
         </div>
       </div>

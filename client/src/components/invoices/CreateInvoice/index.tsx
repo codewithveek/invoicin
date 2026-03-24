@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useApp } from "../../../context/AppContext";
 import Icon from "../../shared/Icon";
 import FormStep from "./FormStep";
 import PreviewStep from "./PreviewStep";
@@ -17,6 +18,7 @@ import type {
 } from "../../../types";
 
 export default function CreateInvoice() {
+  const { user } = useApp();
   const { clients } = useClients();
   const { templates } = useTemplates();
   const { createInvoice, showToast } = useInvoiceMutations();
@@ -93,7 +95,7 @@ export default function CreateInvoice() {
       });
       createInvoice(inv);
       showToast("Invoice created");
-      navigate("/invoices/" + inv.id);
+      navigate("/app/invoices/" + inv.id);
     } catch {
       showToast("Failed to create invoice");
     } finally {
@@ -178,6 +180,7 @@ export default function CreateInvoice() {
           taxAmt={taxAmt}
           total={total}
           busy={busy}
+          freelancer={{ name: user?.name ?? "", business: user?.businessName ?? "" }}
           onGenerate={generate}
           onBack={() => setStep(1)}
         />

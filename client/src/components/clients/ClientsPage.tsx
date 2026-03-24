@@ -105,12 +105,14 @@ function ClientCard({
   totalEarned,
   onEdit,
   onDelete,
+  deleting,
 }: {
   client: AppClient;
   invoiceCount: number;
   totalEarned: number;
   onEdit: () => void;
   onDelete: () => void;
+  deleting?: boolean;
 }) {
   return (
     <div
@@ -170,8 +172,13 @@ function ClientCard({
           className="btn bs"
           style={{ padding: "4px 8px" }}
           onClick={onDelete}
+          disabled={deleting}
         >
-          <Icon n="close" s={13} c="var(--rd)" />
+          {deleting ? (
+            <Icon n="spin" s={13} c="var(--rd)" />
+          ) : (
+            <Icon n="close" s={13} c="var(--rd)" />
+          )}
         </button>
       </div>
     </div>
@@ -185,6 +192,7 @@ export default function ClientsPage() {
     useClientMutations();
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<AppClient | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function handleAdd(data: Omit<AppClient, "id">) {
     await addClient(data);
@@ -200,8 +208,13 @@ export default function ClientsPage() {
 
   async function handleDelete(client: AppClient) {
     if (!confirm(`Delete ${client.name}?`)) return;
-    await deleteClient(client.id);
-    showToast("Client deleted");
+    setDeletingId(client.id);
+    try {
+      await deleteClient(client.id);
+      showToast("Client deleted");
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   return (
@@ -245,6 +258,7 @@ export default function ClientsPage() {
               totalEarned={cTotal}
               onEdit={() => setEditing(c)}
               onDelete={() => handleDelete(c)}
+              deleting={deletingId === c.id}
             />
           );
         })}

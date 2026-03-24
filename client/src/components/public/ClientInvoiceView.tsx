@@ -4,9 +4,11 @@ import Icon from "../shared/Icon";
 import InvoicePreviewCard from "../shared/InvoicePreviewCard";
 import type { AppInvoice } from "../../types";
 
+type PublicInvoice = AppInvoice & { freelancerName?: string };
+
 export default function ClientInvoiceView() {
   const { linkId } = useParams<{ linkId: string }>();
-  const [invoice, setInvoice] = useState<AppInvoice | null>(null);
+  const [invoice, setInvoice] = useState<PublicInvoice | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
@@ -187,7 +189,11 @@ export default function ClientInvoiceView() {
         </div>
       ) : (
         <div style={{ maxWidth: 460, width: "100%" }}>
-          <InvoicePreviewCard inv={invoice} homeCurrency={invoice.currency} />
+          <InvoicePreviewCard
+            inv={invoice}
+            freelancer={{ name: invoice.freelancerName || "" }}
+            homeCurrency={invoice.currency}
+          />
           <div
             style={{
               marginTop: 16,
