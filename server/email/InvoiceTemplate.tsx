@@ -33,7 +33,7 @@ export function InvoiceEmailTemplate({
   appUrl: string;
   previewText?: string;
 }) {
-  const S = currencySymbol(invoice.currency);
+  const symbol = currencySymbol(invoice.currency);
   const typeLabel = TYPE_LABELS[invoice.type] ?? "Invoice";
   const invoiceUrl = `${appUrl}/i/${invoice.linkId}`;
 
@@ -42,7 +42,9 @@ export function InvoiceEmailTemplate({
       <Head />
       <Preview>
         {previewText ||
-          `${typeLabel} ${invoice.id} from ${freelancer.businessName || freelancer.name} — ${S}${fmt(invoice.total)} due`}
+          `${typeLabel} ${invoice.id} from ${
+            freelancer.businessName || freelancer.name
+          } — ${symbol}${fmt(invoice.total)} due`}
       </Preview>
       <Body style={styles.body}>
         <Container style={styles.container}>
@@ -58,7 +60,7 @@ export function InvoiceEmailTemplate({
               </div>
               <div style={styles.amtLabel}>Amount due</div>
               <div style={styles.amtBig}>
-                {S}
+                {symbol}
                 {fmt(invoice.total)}
               </div>
               {invoice.dueDate && (
@@ -126,7 +128,7 @@ export function InvoiceEmailTemplate({
                       {item.qty > 1 ? ` x${item.qty}` : ""}
                     </span>
                     <span style={{ fontFamily: "monospace", fontWeight: 600 }}>
-                      {S}
+                      {symbol}
                       {fmt(item.price * item.qty)}
                     </span>
                   </div>
@@ -143,7 +145,7 @@ export function InvoiceEmailTemplate({
                       {invoice.taxType?.toUpperCase()} ({invoice.taxRate}%)
                     </span>
                     <span style={{ fontFamily: "monospace" }}>
-                      {S}
+                      {symbol}
                       {fmt(invoice.taxAmount)}
                     </span>
                   </div>
@@ -155,7 +157,7 @@ export function InvoiceEmailTemplate({
                       : "Total"}
                   </span>
                   <span style={{ fontFamily: "monospace" }}>
-                    {S}
+                    {symbol}
                     {fmt(invoice.total)}
                   </span>
                 </div>

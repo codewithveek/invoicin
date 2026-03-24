@@ -52,6 +52,7 @@ function formatInvoice(row: Record<string, unknown>) {
     dueDate: rest.dueDate ?? "",
     notes: rest.notes ?? "",
     terms: rest.terms ?? "",
+    events: (rest.events as unknown[]) ?? [],
   };
 }
 
