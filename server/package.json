@@ -36,5 +36,8 @@
     "drizzle-kit": "^0.31.10",
     "tsx": "^4.20.3",
     "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.14.0"
   }
 }
