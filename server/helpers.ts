@@ -14,3 +14,7 @@ export function generateInvoiceId(): string {
   const hex = randomBytes(4).toString("hex").toUpperCase();
   return `INV-${year}-${hex}`;
 }
+export function generateLinkId(): string {
+  const hex = randomBytes(16).toString("hex");
+  return `${hex}`;
+}

@@ -6,7 +6,7 @@ import { db } from "../db";
 import { sendInvoiceEmail, sendReminderEmail } from "../email";
 import { toEmailData } from "../lib/invoice.utils";
 import { BadRequestError, NotFoundError } from "../lib/errors";
-import { generateInvoiceId } from "../helpers";
+import { generateInvoiceId, generateLinkId } from "../helpers";
 import { eventRepository } from "../repositories/event.repository";
 import {
   invoiceRepository,
@@ -99,7 +99,7 @@ export const invoiceService = {
     const inv = {
       id: generateInvoiceId(),
       // Use 16 random bytes (128-bit entropy) for the public share token
-      linkId: randomBytes(16).toString("hex"),
+      linkId: generateLinkId(),
       userId,
       clientId: input.clientId ?? null,
       type: input.type,
@@ -126,15 +126,13 @@ export const invoiceService = {
     // Atomically insert invoice + creation event
     await db.transaction(async (tx) => {
       await tx.insert(invoices).values(inv);
-      await tx
-        .insert(invoiceEvents)
-        .values({
-          id: ulid(),
-          invoiceId: inv.id,
-          type: "created",
-          meta: null,
-          actor: "user",
-        });
+      await tx.insert(invoiceEvents).values({
+        id: ulid(),
+        invoiceId: inv.id,
+        type: "created",
+        meta: null,
+        actor: "user",
+      });
     });
     return inv;
   },
@@ -179,15 +177,13 @@ export const invoiceService = {
         .update(invoices)
         .set({ status: "sent", updatedAt: new Date() })
         .where(eq(invoices.id, id));
-      await tx
-        .insert(invoiceEvents)
-        .values({
-          id: ulid(),
-          invoiceId: id,
-          type: "sent",
-          meta: { to: inv.clientEmail },
-          actor: "user",
-        });
+      await tx.insert(invoiceEvents).values({
+        id: ulid(),
+        invoiceId: id,
+        type: "sent",
+        meta: { to: inv.clientEmail },
+        actor: "user",
+      });
     });
 
     await sendInvoiceEmail({

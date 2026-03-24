@@ -74,3 +74,18 @@ export function calcTotal(
   const dep = deposit ? (gross * deposit) / 100 : 0;
   return { sub, taxAmt, gross, dep, total: deposit ? dep : gross };
 }
+function randomBytesHex(size: number): string {
+  return Array.from(crypto.getRandomValues(new Uint8Array(size)))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+export function generateInvoiceId(): string {
+  const year = new Date().getFullYear();
+  const hex = randomBytesHex(4).toUpperCase();
+  return `INV-${year}-${hex}`;
+}
+
+export function generateLinkId(): string {
+  return randomBytesHex(16);
+}

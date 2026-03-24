@@ -7,10 +7,10 @@ import {
   fmt,
   fmtHome,
   wait,
-  uid,
-  linkId,
   ts,
   calcTotal,
+  generateInvoiceId,
+  generateLinkId,
 } from "../utils";
 import {
   CURRENCIES,
@@ -85,9 +85,9 @@ export default function CreateInvoice() {
   async function generate() {
     setBusy(true);
     await wait(800);
-    const inv = {
-      id: uid(),
-      linkId: linkId(),
+   const inv = {
+      id:generateInvoiceId(),
+      linkId: generateLinkId(),
       client: {
         name: form.clientName,
         email: form.clientEmail,
