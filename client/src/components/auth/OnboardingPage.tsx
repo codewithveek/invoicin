@@ -67,7 +67,7 @@ export default function OnboardingPage() {
     <div style={styles.container}>
       <div style={styles.card}>
         <div style={styles.mark}>I</div>
-        <h1 style={styles.title}>Welcome to InvoiceApp</h1>
+        <h1 style={styles.title}>Welcome to Invoicin</h1>
         <p style={styles.subtitle}>
           Let's get your account set up. This only takes a moment.
         </p>

@@ -74,8 +74,12 @@ export function ReminderEmailTemplate({
               <Text style={{ fontSize: 14, color: "#4a6350", lineHeight: 1.7 }}>
                 Hi {invoice.clientName},{" "}
                 {isFirstReminder
-                  ? `This is a friendly reminder that invoice ${invoice.id} for ${S}${fmt(invoice.total)} is due today.`
-                  : `Invoice ${invoice.id} for ${S}${fmt(invoice.total)} is now ${daysOverdue} days past its due date.`}{" "}
+                  ? `This is a friendly reminder that invoice ${
+                      invoice.id
+                    } for ${S}${fmt(invoice.total)} is due today.`
+                  : `Invoice ${invoice.id} for ${S}${fmt(
+                      invoice.total
+                    )} is now ${daysOverdue} days past its due date.`}{" "}
                 If you have already made the payment, please disregard this
                 message.
               </Text>
@@ -103,7 +107,7 @@ export function ReminderEmailTemplate({
                 }}
               />
               <div style={{ fontSize: 11, fontWeight: 700, color: "#14532d" }}>
-                Sent via InvoiceApp
+                Sent via Invoicin
               </div>
             </div>
           </div>

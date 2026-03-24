@@ -75,7 +75,7 @@ export default function LoginPage() {
     <div style={styles.container}>
       <div style={styles.card}>
         <div style={styles.mark}>I</div>
-        <h1 style={styles.title}>Sign in to InvoiceApp</h1>
+        <h1 style={styles.title}>Sign in to Invoicin</h1>
         <p style={styles.subtitle}>
           Manage invoices, track payments, and grow your freelance business.
         </p>

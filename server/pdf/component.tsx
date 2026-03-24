@@ -252,7 +252,7 @@ export function InvoicePDF({
         {/* ── Stamp ──────────────────────────────────────────────────────── */}
         <View style={styles.stamp}>
           <View style={styles.stampDot} />
-          <Text style={styles.stampTxt}>Created with InvoiceApp</Text>
+          <Text style={styles.stampTxt}>Created with Invoicin</Text>
           <Text style={styles.stampId}>{invoice.id}</Text>
         </View>
       </Page>

@@ -166,7 +166,7 @@ export default function InvoicePreviewCard({
       <div className="inv-stamp">
         <div className="inv-stamp-dot" />
         <div style={{ fontSize: 11, fontWeight: 600, color: "var(--gdk)" }}>
-          Created with InvoiceApp
+          Created with Invoicin
         </div>
         <div
           style={{

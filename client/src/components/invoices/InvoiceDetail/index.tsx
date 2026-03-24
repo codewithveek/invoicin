@@ -45,7 +45,7 @@ export default function InvoiceDetail() {
   };
 
   const effectiveStatus = isOverdue(inv) ? "overdue" : inv.status;
-  const shareUrl = `app.invoiceapp.co/i/${inv.linkId}`;
+  const shareUrl = `invoicin.pro/i/${inv.linkId}`;
   const canSend = ["draft", "sent", "viewed", "overdue"].includes(
     effectiveStatus
   );

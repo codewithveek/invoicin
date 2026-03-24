@@ -212,7 +212,7 @@ export function InvoiceEmailTemplate({
                 }}
               />
               <div style={{ fontSize: 11, fontWeight: 700, color: "#14532d" }}>
-                Created with InvoiceApp
+                Created with Invoicin
               </div>
               <div
                 style={{
@@ -230,7 +230,7 @@ export function InvoiceEmailTemplate({
           <div style={styles.footer}>
             <p>
               You received this because {freelancer.name} sent you an invoice
-              via InvoiceApp.
+              via Invoicin.
             </p>
             <p>Questions? Reply directly to {freelancer.email}</p>
           </div>

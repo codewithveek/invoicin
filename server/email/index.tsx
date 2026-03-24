@@ -105,7 +105,7 @@ export async function sendPaymentConfirmationEmail({
   const { data, error } = await resend.emails.send({
     from: `${
       freelancer.businessName || freelancer.name
-    } via InvoiceApp <${FROM}>`,
+    } via Invoicin <${FROM}>`,
     replyTo: freelancer.email,
     to: invoice.clientEmail,
     subject: `Payment confirmed — Invoice ${invoice.id}`,

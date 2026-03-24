@@ -48,7 +48,7 @@ export default function ClientInvoiceView() {
         >
           <Icon n="zap" s={12} c="var(--g)" />
           <span style={{ color: "var(--gdk)", fontWeight: 600 }}>
-            invoiceapp.co
+            invoicin.pro
           </span>
           <span>· Secure invoice</span>
         </div>

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// InvoiceApp — main Hono router
+// Invoicin — main Hono router
 //
 // Mount in your entry point:
 //   import invoiceRouter from "./index";
