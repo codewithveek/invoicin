@@ -216,8 +216,8 @@ export default function ClientInvoiceView() {
             <div
               style={{ textAlign: "center", fontSize: 11, color: "var(--tx3)" }}
             >
-              Have questions? Contact{" "}
-              {invoice.client?.email || "the sender"} directly.
+              Have questions? Contact {invoice.client?.email || "the sender"}{" "}
+              directly.
             </div>
           </div>
         </div>

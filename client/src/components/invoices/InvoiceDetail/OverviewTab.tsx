@@ -352,10 +352,7 @@ export default function OverviewTab({
                   <Icon n="check" s={13} c="#fff" /> Mark as Paid
                 </button>
               )}
-              <button
-                className="btn bs btn-full btn-sm"
-                onClick={onEdit}
-              >
+              <button className="btn bs btn-full btn-sm" onClick={onEdit}>
                 <Icon n="edit" s={13} /> Edit Invoice
               </button>
               <button className="btn bd btn-full btn-sm" onClick={onCancel}>

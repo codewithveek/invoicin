@@ -17,7 +17,7 @@ export const invoicePublicController = {
   async confirmPayment(c: Context) {
     const body = await c.req
       .json<{ note?: string }>()
-      .catch(() => ({}) as { note?: string });
+      .catch(() => ({} as { note?: string }));
     await invoicePublicService.confirmPayment(
       c.req.param("linkId") as string,
       c.req.header("x-forwarded-for"),
