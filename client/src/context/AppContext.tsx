@@ -126,7 +126,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
         // If on a public page but already authed+onboarded, go to app
         // Don't redirect /i/ paths — those are guest-accessible invoice links
-        if (u.onboarded && isPublicPath(pathname) && !pathname.startsWith("/i/")) {
+        if (
+          u.onboarded &&
+          isPublicPath(pathname) &&
+          !pathname.startsWith("/i/")
+        ) {
           router.replace("/app");
         }
         // Load data
