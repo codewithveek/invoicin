@@ -11,6 +11,9 @@ invoicesPublicRouter.get("/:linkId", (c) => invoicePublicController.view(c));
 invoicesPublicRouter.post("/:linkId/confirm", (c) =>
   invoicePublicController.confirmPayment(c)
 );
+invoicesPublicRouter.get("/:linkId/pdf", (c) =>
+  invoicePublicController.downloadPdf(c)
+);
 invoicesPublicRouter.post("/:linkId/download", (c) =>
   invoicePublicController.trackDownload(c)
 );

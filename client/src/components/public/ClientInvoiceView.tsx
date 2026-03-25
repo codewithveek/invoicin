@@ -46,15 +46,11 @@ export default function ClientInvoiceView() {
     }
   }
 
-  async function downloadPdf() {
+  function downloadPdf() {
     if (!linkId) return;
-    try {
-      await fetch(`/api/i/${encodeURIComponent(linkId)}/download`, {
-        method: "POST",
-      });
-    } catch {
-      // tracking is best-effort
-    }
+    // Open the PDF endpoint directly — the browser will trigger the download
+    // via the Content-Disposition: attachment header returned by the server.
+    window.open(`/api/i/${encodeURIComponent(linkId)}/pdf`, "_blank");
   }
 
   if (loading) {
