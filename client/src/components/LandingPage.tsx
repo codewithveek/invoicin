@@ -1,5 +1,4 @@
 "use client";
-import "../landing.css";
 import { useRouter } from "next/navigation";
 
 /* ------------------------------------------------------------------ */

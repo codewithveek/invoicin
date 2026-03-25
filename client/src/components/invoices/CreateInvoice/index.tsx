@@ -181,7 +181,10 @@ export default function CreateInvoice() {
           taxAmt={taxAmt}
           total={total}
           busy={busy}
-          freelancer={{ name: user?.name ?? "", business: user?.businessName ?? "" }}
+          freelancer={{
+            name: user?.name ?? "",
+            business: user?.businessName ?? "",
+          }}
           onGenerate={generate}
           onBack={() => setStep(1)}
         />
