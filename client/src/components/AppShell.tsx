@@ -160,10 +160,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             <button
               onClick={signOut}
-              className="bg-transparent border-0 cursor-pointer p-1"
+              className="flex items-center gap-1.5 text-[12px] text-tx3 bg-transparent border border-bd rounded-md px-2 py-1 cursor-pointer hover:text-tx hover:border-tx2 transition-colors"
               title="Sign out"
             >
-              <Icon n="close" s={14} c="var(--tx3)" />
+              <Icon n="log-out" s={12} c="currentColor" />
+              Sign out
             </button>
           </div>
         </div>
@@ -171,8 +172,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="main">
           <div className="topbar">
             <div className="tb-logo">
-              <div className="sb-mark w-[27px] h-[27px] text-[12px]">I</div>
-              <div className="text-[13px] font-[800] text-tx tracking-[-0.02em]">
+              <div className="sb-mark w-6.75 h-6.75 text-[12px]">I</div>
+              <div className="text-[13px] font-extrabold text-tx tracking-[-0.02em]">
                 Invoicin
               </div>
             </div>

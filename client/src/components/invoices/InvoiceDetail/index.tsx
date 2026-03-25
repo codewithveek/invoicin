@@ -185,7 +185,7 @@ export default function InvoiceDetail() {
 
       <div className="pg-hd">
         <div>
-          <div className="flex items-center gap-[10px] flex-wrap">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <div className="pg-ttl">{inv.id}</div>
             <StatusBadge status={effectiveStatus} />
             <TypeBadge type={inv.type} />

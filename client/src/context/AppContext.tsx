@@ -96,7 +96,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setInvoices([]);
     setClients([]);
     setTemplates([]);
-    router.replace("/login");
+    // Use push so the login page is on the history stack and the browser
+    // treats this as a full navigation, ensuring cookies/session are cleared
+    // before the next page renders.
+    router.push("/login");
   }, [router]);
 
   // Auth check on mount and navigation
@@ -122,7 +125,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
           return;
         }
         // If on a public page but already authed+onboarded, go to app
-        if (u.onboarded && isPublicPath(pathname)) {
+        // Don't redirect /i/ paths — those are guest-accessible invoice links
+        if (u.onboarded && isPublicPath(pathname) && !pathname.startsWith("/i/")) {
           router.replace("/app");
         }
         // Load data
