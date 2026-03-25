@@ -58,7 +58,8 @@ export const invoicePublicService = {
 
   async downloadPdf(linkId: string, ip: string) {
     const inv = await invoiceRepository.findByLinkId(linkId);
-    if (!inv || inv.status === "cancelled") throw new NotFoundError("Invoice not found");
+    if (!inv || inv.status === "cancelled")
+      throw new NotFoundError("Invoice not found");
     await eventRepository.create(inv.id, "downloaded", { ip }, "client");
     return inv;
   },
