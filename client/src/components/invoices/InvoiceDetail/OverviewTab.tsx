@@ -1,3 +1,4 @@
+"use client";
 import Icon from "../../shared/Icon";
 import { isOverdue, currencySymbol, fmt, dateStr } from "../../../utils";
 import { TAX_TYPES } from "../../../constants";
@@ -36,14 +37,13 @@ export default function OverviewTab({
   onOpenMarkPaid,
   onCancel,
   onEdit,
-}: // onToast,
-OverviewTabProps) {
+}: OverviewTabProps) {
   return (
-    <div className="two-col flex flex-row flex-wrap gap-[18px]">
-      <div className="flex flex-col gap-4 flex-1 min-w-[280px]">
+    <div className="two-col flex flex-row flex-wrap gap-4.5">
+      <div className="flex flex-col gap-4 flex-1 min-w-70">
         {/* Amount card */}
         <div className="card">
-          <div className="flex justify-between flex-wrap gap-[10px] mb-[18px]">
+          <div className="flex justify-between flex-wrap gap-2.5 mb-4.5">
             <div>
               <div className="text-[11px] font-bold text-tx3 uppercase tracking-[.06em] mb-1">
                 Amount
@@ -65,8 +65,8 @@ OverviewTabProps) {
               </div>
             )}
           </div>
-          <div className="flex gap-[10px] flex-wrap">
-            <div className="flex-1 min-w-[140px] bg-sf2 rounded-lg px-[13px] py-[10px]">
+          <div className="flex gap-2.5 flex-wrap">
+            <div className="flex-1 min-w-35 bg-sf2 rounded-lg px-[13px] py-[10px]">
               <div className="text-[10px] font-bold text-tx3 uppercase tracking-[.06em] mb-[3px]">
                 Client
               </div>
@@ -77,7 +77,7 @@ OverviewTabProps) {
             </div>
             {inv.dueDate && (
               <div
-                className={`flex-1 min-w-[140px] rounded-lg px-[13px] py-[10px] ${
+                className={`flex-1 min-w-35 rounded-lg px-[13px] py-[10px] ${
                   isOverdue(inv) ? "bg-red-light" : "bg-sf2"
                 }`}
               >
@@ -110,7 +110,7 @@ OverviewTabProps) {
         {/* Line items card */}
         <div className="card">
           <div className="card-ttl">Line Items</div>
-          <div className="inv-items !m-0">
+          <div className="inv-items m-0!">
             {inv.items.map((it, i: number) => (
               <div key={i} className="ii-row">
                 <div>
@@ -156,7 +156,7 @@ OverviewTabProps) {
             </div>
           </div>
           {inv.notes && (
-            <div className="mt-3 px-3 py-[10px] bg-sf2 rounded-lg text-[12px] text-tx2 leading-relaxed">
+            <div className="mt-3 px-3 py-2.5 bg-sf2 rounded-lg text-[12px] text-tx2 leading-relaxed">
               {inv.notes}
             </div>
           )}
@@ -201,7 +201,7 @@ OverviewTabProps) {
         <div className="card mb3">
           <div className="card-ttl">Share</div>
           <div className="lbox mb3">
-            <span className="lurl">https://{shareUrl}</span>
+            <span className="lurl">{shareUrl}</span>
             <button className="btn bg btn-sm" onClick={onCopyLink}>
               {copied ? (
                 <Icon n="check" s={12} c="var(--g)" />
@@ -210,7 +210,7 @@ OverviewTabProps) {
               )}
             </button>
           </div>
-          <div className="flex flex-col gap-[7px]">
+          <div className="flex flex-col gap-1.75">
             <button className="btn bs btn-full btn-sm" onClick={onOpenSend}>
               <Icon n="mail" s={13} /> Send by Email
             </button>

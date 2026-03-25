@@ -1,5 +1,6 @@
+"use client";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import Icon from "../shared/Icon";
 import { StatusBadge, TypeBadge } from "../shared/Badges";
 import { isOverdue, fmt, currencySymbol } from "../../utils";
@@ -8,9 +9,9 @@ import type { AppInvoice } from "../../types";
 
 export default function InvoiceList() {
   const { invoices } = useInvoices();
-  const navigate = useNavigate();
-  const onNew = () => navigate("/app/invoices/new");
-  const onView = (inv: AppInvoice) => navigate("/app/invoices/" + inv.id);
+  const router = useRouter();
+  const onNew = () => router.push("/app/invoices/new");
+  const onView = (inv: AppInvoice) => router.push("/app/invoices/" + inv.id);
   const [filter, setFilter] = useState("all");
 
   const filters: [string, string][] = [

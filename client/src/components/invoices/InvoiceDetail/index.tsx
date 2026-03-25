@@ -1,5 +1,6 @@
+"use client";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useRouter, useParams } from "next/navigation";
 import Icon from "../../shared/Icon";
 import InvoicePreviewCard from "../../shared/InvoicePreviewCard";
 import { StatusBadge, TypeBadge } from "../../shared/Badges";
@@ -15,8 +16,9 @@ import { useApp } from "../../../context/AppContext";
 import type { AppInvoice } from "../../../types";
 
 export default function InvoiceDetail() {
-  const { id } = useParams<{ id: string }>();
-  const invoice = useInvoice(id!);
+  const params = useParams();
+  const id = params.id as string;
+  const invoice = useInvoice(id);
   const {
     syncInvoice,
     sendInvoice,
@@ -27,7 +29,7 @@ export default function InvoiceDetail() {
     showToast: toast,
   } = useInvoiceMutations();
   const { user } = useApp();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [inv, setInv] = useState<AppInvoice>(invoice!);
   const [sendModal, setSendModal] = useState(false);
@@ -50,7 +52,9 @@ export default function InvoiceDetail() {
   };
 
   const effectiveStatus = isOverdue(inv) ? "overdue" : inv.status;
-  const appOrigin = import.meta.env.VITE_APP_URL || window.location.origin;
+  const appOrigin =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (typeof window !== "undefined" ? window.location.origin : "");
   const shareUrl = `${appOrigin}/i/${inv.linkId}`;
   const canSend = ["draft", "sent", "viewed", "overdue"].includes(
     effectiveStatus
@@ -174,7 +178,7 @@ export default function InvoiceDetail() {
 
       <button
         className="btn bg btn-sm mb4"
-        onClick={() => navigate("/app/invoices")}
+        onClick={() => router.push("/app/invoices")}
       >
         <Icon n="chevL" s={13} /> Back
       </button>

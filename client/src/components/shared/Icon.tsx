@@ -1,3 +1,4 @@
+"use client";
 import type { CSSProperties, ReactElement } from "react";
 
 interface IconProps {

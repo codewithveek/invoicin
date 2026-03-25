@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import Icon from "../shared/Icon";
 import { useTemplates, useTemplateMutations } from "../../hooks/useTemplates";

@@ -1,3 +1,4 @@
+"use client";
 import { fmt, currencySymbol } from "../../utils";
 
 interface StatsGridProps {

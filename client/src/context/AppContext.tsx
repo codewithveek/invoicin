@@ -1,3 +1,5 @@
+"use client";
+
 import {
   createContext,
   useContext,
@@ -6,7 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
 import { authClient } from "../lib/auth-client";
 import { invoicesApi } from "../api/invoices.api";
 import { clientsApi } from "../api/clients.api";
@@ -38,11 +40,18 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
-const PUBLIC_PATHS = ["/", "/login", "/onboarding"];
+function isPublicPath(pathname: string) {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/i/")
+  );
+}
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [invoices, setInvoices] = useState<AppInvoice[]>([]);
   const [clients, setClients] = useState<AppClient[]>([]);
@@ -87,8 +96,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setInvoices([]);
     setClients([]);
     setTemplates([]);
-    navigate("/login", { replace: true });
-  }, [navigate]);
+    router.replace("/login");
+  }, [router]);
 
   // Auth check on mount and navigation
   useEffect(() => {
@@ -100,21 +109,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (!data?.session) {
           setUser(null);
           setAuthLoading(false);
-          if (!PUBLIC_PATHS.includes(location.pathname)) {
-            navigate("/login", { replace: true });
+          if (!isPublicPath(pathname)) {
+            router.replace("/login");
           }
           return;
         }
         const u = data.user as unknown as UserProfile;
         setUser(u);
-        if (!u.onboarded && location.pathname !== "/onboarding") {
-          navigate("/onboarding", { replace: true });
+        if (!u.onboarded && pathname !== "/onboarding") {
+          router.replace("/onboarding");
           setAuthLoading(false);
           return;
         }
         // If on a public page but already authed+onboarded, go to app
-        if (u.onboarded && PUBLIC_PATHS.includes(location.pathname)) {
-          navigate("/app", { replace: true });
+        if (u.onboarded && isPublicPath(pathname)) {
+          router.replace("/app");
         }
         // Load data
         await Promise.all([
@@ -125,8 +134,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       } catch {
         if (!cancelled) {
           setUser(null);
-          if (!PUBLIC_PATHS.includes(location.pathname)) {
-            navigate("/login", { replace: true });
+          if (!isPublicPath(pathname)) {
+            router.replace("/login");
           }
         }
       } finally {

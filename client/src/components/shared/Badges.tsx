@@ -1,3 +1,4 @@
+"use client";
 export function StatusBadge({ status }: { status: string }) {
   const map: Record<string, [string, string]> = {
     draft: ["Draft", "b-gray"],

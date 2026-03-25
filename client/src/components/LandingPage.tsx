@@ -1,5 +1,6 @@
+"use client";
 import "../landing.css";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 /* ------------------------------------------------------------------ */
 /*  Tiny reusable SVG icons (subset of app icon set)                   */
@@ -729,8 +730,8 @@ function SectionHeader({
 /*  Page entry                                                          */
 /* ------------------------------------------------------------------ */
 export default function LandingPage() {
-  const navigate = useNavigate();
-  const goLogin = () => navigate("/login");
+  const router = useRouter();
+  const goLogin = () => router.push("/login");
 
   return (
     <div className="font-sans bg-bg min-h-screen overflow-y-auto">

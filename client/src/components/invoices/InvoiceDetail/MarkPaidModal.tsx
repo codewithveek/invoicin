@@ -1,3 +1,4 @@
+"use client";
 import Icon from "../../shared/Icon";
 import { currencySymbol, fmt } from "../../../utils";
 import type { AppInvoice } from "../../../types";

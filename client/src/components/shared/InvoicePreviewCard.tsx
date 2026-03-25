@@ -1,3 +1,4 @@
+"use client";
 import Icon from "./Icon";
 import { currencySymbol, fmt, fmtHome, dateStr, calcTotal } from "../../utils";
 import { getRate, TAX_TYPES } from "../../constants";

@@ -1,12 +1,13 @@
-﻿import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+﻿"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { authClient } from "../../lib/auth-client";
 import { userApi } from "../../api/user.api";
 import { CURRENCIES, CURRENCY_NAMES } from "../../constants";
 import Icon from "../shared/Icon";
 
 export default function OnboardingPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [name, setName] = useState("");
   const [homeCurrency, setHomeCurrency] = useState("");
   const [loading, setLoading] = useState(true);
@@ -16,18 +17,18 @@ export default function OnboardingPage() {
   useEffect(() => {
     authClient.getSession().then(({ data }) => {
       if (!data?.session) {
-        navigate("/login", { replace: true });
+        router.replace("/login");
         return;
       }
       const user = data.user as Record<string, unknown>;
       if (user.onboarded) {
-        navigate("/app", { replace: true });
+        router.replace("/app");
         return;
       }
       if (data.user.name) setName(data.user.name);
       setLoading(false);
     });
-  }, [navigate]);
+  }, [router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,7 +43,7 @@ export default function OnboardingPage() {
         name: name.trim(),
         homeCurrency: homeCurrency || undefined,
       });
-      navigate("/app", { replace: true });
+      router.replace("/app");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

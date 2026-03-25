@@ -1,3 +1,4 @@
+"use client";
 import Icon from "../../shared/Icon";
 import InvoicePreviewCard from "../../shared/InvoicePreviewCard";
 import type { AppInvoice, InvoiceItem, InvoiceType } from "../../../types";

@@ -1,5 +1,6 @@
-﻿import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+﻿"use client";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Icon from "../shared/Icon";
 import InvoicePreviewCard from "../shared/InvoicePreviewCard";
 import type { AppInvoice } from "../../types";
@@ -7,7 +8,8 @@ import type { AppInvoice } from "../../types";
 type PublicInvoice = AppInvoice & { freelancerName?: string };
 
 export default function ClientInvoiceView() {
-  const { linkId } = useParams<{ linkId: string }>();
+  const params = useParams();
+  const linkId = params.linkId as string;
   const [invoice, setInvoice] = useState<PublicInvoice | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);

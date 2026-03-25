@@ -1,3 +1,4 @@
+"use client";
 import Icon from "../../shared/Icon";
 import { STATUS_META } from "../../../constants";
 import type { AppInvoice } from "../../../types";

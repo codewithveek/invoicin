@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import Icon from "../../shared/Icon";
 import type { AppInvoice } from "../../../types";
@@ -35,7 +36,7 @@ export default function EditInvoiceModal({
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-ttl">Edit Invoice</div>
-        <div className="flex flex-col gap-[14px]">
+        <div className="flex flex-col gap-3.5">
           <div>
             <label className="text-[12px] font-semibold text-tx2 mb-1 block">
               Due Date
@@ -60,7 +61,7 @@ export default function EditInvoiceModal({
             />
           </div>
         </div>
-        <div className="flex gap-2 mt-4">
+        <div className="flex flex-col gap-2 mt-4">
           <button className="btn bg btn-full" onClick={onClose}>
             Cancel
           </button>

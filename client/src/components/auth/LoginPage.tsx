@@ -1,4 +1,5 @@
-﻿import { useState } from "react";
+"use client";
+import { useState } from "react";
 import { authClient } from "../../lib/auth-client";
 import Icon from "../shared/Icon";
 
@@ -119,7 +120,7 @@ export default function LoginPage() {
               />
             </svg>
           )}
-          {googleLoading ? "Redirectingâ€¦" : "Continue with Google"}
+          {googleLoading ? "Redirecting…" : "Continue with Google"}
         </button>
 
         <div className="flex items-center gap-3 my-5">
@@ -155,7 +156,7 @@ export default function LoginPage() {
             disabled={anyLoading}
           >
             {loading && <Icon n="spin" s={16} c="#fff" />}
-            {loading ? "Sendingâ€¦" : "Send magic link"}
+            {loading ? "Sending…" : "Send magic link"}
           </button>
         </form>
 

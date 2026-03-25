@@ -1,36 +1,30 @@
-import { useState } from "react";
-import {
-  Routes,
-  Route,
-  Outlet,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
-import { useApp } from "./context/AppContext";
-import { isOverdue } from "./utils";
-import Toast from "./components/shared/Toast";
-import Icon from "./components/shared/Icon";
-import Dashboard from "./components/dashboard/index";
-import InvoiceList from "./components/invoices/InvoiceList";
-import CreateInvoice from "./components/invoices/CreateInvoice";
-import InvoiceDetail from "./components/invoices/InvoiceDetail";
-import ClientInvoiceView from "./components/public/ClientInvoiceView";
-import ClientsPage from "./components/clients/ClientsPage";
-import SettingsPage from "./components/settings";
-import LoginPage from "./components/auth/LoginPage";
-import OnboardingPage from "./components/auth/OnboardingPage";
-import LandingPage from "./components/LandingPage";
+"use client";
 
-function AppShell() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { invoices, toastMsg, clearToast, user, signOut } = useApp();
-  const [sbOpen, setSbOpen] = useState(false);
+import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useApp } from "~/context/AppContext";
+import { isOverdue } from "~/utils";
+import Toast from "~/components/shared/Toast";
+import Icon from "~/components/shared/Icon";
+
+export default function AppShell({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { invoices, toastMsg, clearToast, user, signOut, authLoading } =
+    useApp();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  if (authLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center font-sans text-tx3">
+        Loading…
+      </div>
+    );
+  }
 
   const overdue = invoices.filter(isOverdue).length;
-  const path = location.pathname;
+  const path = pathname;
 
-  // Detect the current invoice ID from the URL for contextual sidebar items
   const invoiceIdMatch = path.match(/^\/app\/invoices\/([^/]+)/);
   const currentInvoiceId = invoiceIdMatch?.[1];
   const activeInvoice =
@@ -73,8 +67,8 @@ function AppShell() {
   }
 
   function go(p: string) {
-    navigate(p);
-    setSbOpen(false);
+    router.push(p);
+    setSidebarOpen(false);
   }
 
   return (
@@ -82,10 +76,10 @@ function AppShell() {
       {toastMsg && <Toast msg={toastMsg} onClose={clearToast} />}
       <div className="app">
         <div
-          className={"overlay" + (sbOpen ? " open" : "")}
-          onClick={() => setSbOpen(false)}
+          className={"overlay" + (sidebarOpen ? " open" : "")}
+          onClick={() => setSidebarOpen(false)}
         />
-        <div className={"sb" + (sbOpen ? " open" : "")}>
+        <div className={"sb" + (sidebarOpen ? " open" : "")}>
           <div className="sb-top">
             <div className="sb-mark">I</div>
             <div className="flex-1">
@@ -99,7 +93,7 @@ function AppShell() {
                   : "Free plan"}
               </div>
             </div>
-            <button className="sb-close" onClick={() => setSbOpen(false)}>
+            <button className="sb-close" onClick={() => setSidebarOpen(false)}>
               <Icon n="close" s={17} />
             </button>
           </div>
@@ -182,43 +176,13 @@ function AppShell() {
                 Invoicin
               </div>
             </div>
-            <button className="tb-btn" onClick={() => setSbOpen(true)}>
+            <button className="tb-btn" onClick={() => setSidebarOpen(true)}>
               <Icon n="menu" s={20} />
             </button>
           </div>
-          <Outlet />
+          {children}
         </div>
       </div>
     </>
-  );
-}
-
-export default function InvoiceApp() {
-  const { authLoading } = useApp();
-
-  if (authLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center font-sans text-tx3">
-        Loading…
-      </div>
-    );
-  }
-
-  return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/onboarding" element={<OnboardingPage />} />
-      <Route path="/i/:linkId" element={<ClientInvoiceView />} />
-      <Route path="/app" element={<AppShell />}>
-        <Route index element={<Dashboard />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="invoices" element={<InvoiceList />} />
-        <Route path="invoices/new" element={<CreateInvoice />} />
-        <Route path="invoices/:id" element={<InvoiceDetail />} />
-        <Route path="clients" element={<ClientsPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-      </Route>
-    </Routes>
   );
 }

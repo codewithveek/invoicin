@@ -1,3 +1,4 @@
+"use client";
 import Icon from "../shared/Icon";
 import { StatusBadge, TypeBadge } from "../shared/Badges";
 import { isOverdue, fmt, currencySymbol } from "../../utils";

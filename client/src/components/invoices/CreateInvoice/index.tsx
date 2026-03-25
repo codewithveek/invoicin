@@ -1,5 +1,6 @@
+"use client";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { useApp } from "../../../context/AppContext";
 import Icon from "../../shared/Icon";
 import FormStep from "./FormStep";
@@ -22,7 +23,7 @@ export default function CreateInvoice() {
   const { clients } = useClients();
   const { templates } = useTemplates();
   const { createInvoice, showToast } = useInvoiceMutations();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [step, setStep] = useState(1);
   const [busy, setBusy] = useState(false);
@@ -95,7 +96,7 @@ export default function CreateInvoice() {
       });
       createInvoice(inv);
       showToast("Invoice created");
-      navigate("/app/invoices/" + inv.id);
+      router.push("/app/invoices/" + inv.id);
     } catch {
       showToast("Failed to create invoice");
     } finally {
@@ -122,7 +123,7 @@ export default function CreateInvoice() {
               <Icon n="chevL" s={13} /> Edit
             </button>
           )}
-          <button className="btn bs" onClick={() => navigate(-1)}>
+          <button className="btn bs" onClick={() => router.back()}>
             Cancel
           </button>
         </div>

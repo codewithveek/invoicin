@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+"use client";
+import { useRouter } from "next/navigation";
 import Icon from "../shared/Icon";
 import StatsGrid from "./StatsGrid";
 import RecentInvoicesTable from "./RecentInvoicesTable";
@@ -11,10 +12,10 @@ import type { AppInvoice } from "../../types";
 export default function Dashboard() {
   const { invoices } = useInvoices();
   const { user } = useApp();
-  const navigate = useNavigate();
+  const router = useRouter();
 
-  const onNew = () => navigate("/app/invoices/new");
-  const onView = (inv: AppInvoice) => navigate("/app/invoices/" + inv.id);
+  const onNew = () => router.push("/app/invoices/new");
+  const onView = (inv: AppInvoice) => router.push("/app/invoices/" + inv.id);
 
   const paid = invoices.filter((i) => i.status === "paid");
   const pending = invoices.filter((i) => ["sent", "viewed"].includes(i.status));

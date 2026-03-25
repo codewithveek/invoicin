@@ -1,3 +1,4 @@
+"use client";
 import Icon from "../shared/Icon";
 
 interface BillingTabProps {
