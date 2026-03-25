@@ -51,11 +51,11 @@ export default function LoginPage() {
   if (sent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg font-sans p-5">
-        <div className="bg-sf rounded-[14px] border border-bd shadow-md px-9 py-10 max-w-[400px] w-full text-center">
+        <div className="bg-sf rounded-lg border border-bd shadow-md px-9 py-10 max-w-[400px] w-full text-center">
           <div className="w-10 h-10 rounded-[11px] bg-brand inline-flex items-center justify-center text-[16px] font-[800] text-white mb-4">
             I
           </div>
-          <h1 className="text-[22px] font-[800] text-tx tracking-[-0.03em] mb-1.5">
+          <h1 className="text-[22px] font-extrabold text-tx tracking-[-0.03em] mb-1.5">
             Check your email
           </h1>
           <p className="text-[13px] text-tx2 mb-6 leading-relaxed">

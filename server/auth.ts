@@ -71,5 +71,5 @@ export const auth = betterAuth({
       onboarded: { type: "boolean", required: false, defaultValue: false },
     },
   },
-  trustedOrigins: [process.env.CLIENT_URL ?? "http://localhost:5173"],
+  trustedOrigins: [process.env.CLIENT_URL ?? "http://localhost:3000"],
 });

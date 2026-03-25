@@ -19,7 +19,7 @@ for (const key of REQUIRED_ENV) {
 
 const app = new Hono();
 
-const clientUrl = process.env.CLIENT_URL ?? "http://localhost:5173";
+const clientUrl = process.env.CLIENT_URL ?? "http://localhost:3000";
 
 // ── Simple in-memory rate limiter ─────────────────────────────────────────────
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
